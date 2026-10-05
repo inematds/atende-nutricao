@@ -21,4 +21,4 @@ BOT: nunca prescreve dieta, suplemento ou cálculo; responde só com o plano do 
 
 README: acrescente a seção "Deploy na VPS" (seção 21 da spec) SEM remover a seção "Como rodar no seu ambiente" nem a descrição do projeto; só atualize a linha de estado.
 
-RESTRIÇÕES: não altere tests/, pytest.ini, docs/, goal.md, hash-congelado.txt, congelar.sh, verificar-*, loop.env, prompt.md. Só biblioteca padrão do Python 3 (`python3`, não `python`). Nenhuma API, nenhuma rede externa, nenhuma chave. Servidor só em 127.0.0.1. Não use `pkill -f`; mate só o PID que você subiu. Não faça commit (o loop externo faz).
+RESTRIÇÕES: não altere tests/, pytest.ini, docs/, goal.md, hash-congelado.txt, congelar.sh, verificar-*, loop.env, prompt.md; não rode congelar.sh (só o humano congela). Só biblioteca padrão do Python 3 (`python3`, não `python`). Nenhuma API, nenhuma rede externa, nenhuma chave. Servidor só em 127.0.0.1. Não use `pkill -f`; mate só o PID que você subiu. Não faça commit (o loop externo faz).

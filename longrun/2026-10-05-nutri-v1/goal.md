@@ -28,7 +28,7 @@
 
 ## Restrições
 - só pela assinatura; nenhuma API, nenhuma rede externa, nenhuma dependência fora da biblioteca padrão do Python (decisão 2 de `docs/DECISOES-ABERTAS.md`)
-- não mexer em: `tests/`, `pytest.ini`, `docs/` (inclusive `ESPECIFICACAO.md`), `goal.md`, `hash-congelado.txt`, `congelar.sh`, `verificar-*.{sh,py}`, `loop.env`, `prompt.md` (o hash congelado cobre `tests/`, `pytest.ini`, a spec e os dois verificadores)
+- não mexer em: `tests/`, `pytest.ini`, `docs/` (inclusive `ESPECIFICACAO.md`), `goal.md`, `hash-congelado.txt`, `congelar.sh`, `verificar-*.{sh,py}`, `loop.env`, `prompt.md` (o hash congelado cobre `tests/`, `pytest.ini`, a spec e os dois verificadores); **nem rodar `congelar.sh`** (só o humano congela ou recongela — o `verificar-limites.sh` avisa se houver mais de um commit de congelamento)
 - `README.md`: acrescentar "Deploy na VPS" sem remover "Como rodar no seu ambiente" (o teste do README exige as duas)
 - servidor só em `127.0.0.1`; ao testar à mão, porta 0 e matar só o PID que subiu
 - nunca baixar mídia do WhatsApp nem buscar URL vinda de payload: a foto vira registro só com metadados (seção 19); o nome do endpoint da Evolution de mídia em base64 e `downloadMedia` não podem aparecer no código nem em comentário (o `verificar-limites.sh` grepa)

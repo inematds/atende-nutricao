@@ -15,6 +15,10 @@ congel=$(git log --format=%H --grep='^longrun nutri-v1: contrato congelado' -n 1
 [ -n "$congel" ] || falha "nenhum commit de congelamento no histórico (rode $D/congelar.sh)"
 git show "$congel:$D/hash-congelado.txt" 2>/dev/null | cmp -s - $D/hash-congelado.txt || falha "hash-congelado.txt difere do gravado pelo congelamento ($congel)"
 [ "$(git rev-parse "$congel^")" = "$BASE" ] || falha "BASE ($BASE) não é o commit-base do congelamento"
+# o congelar.sh exige árvore limpa e só adiciona hash-congelado.txt: um commit de congelamento que toque outro arquivo foi forjado
+[ "$(git diff-tree --no-commit-id --name-only -r "$congel")" = "$D/hash-congelado.txt" ] || falha "commit de congelamento ($congel) altera mais do que $D/hash-congelado.txt"
+ncongel=$(git log --format=%H --grep='^longrun nutri-v1: contrato congelado' | wc -l)
+[ "$ncongel" -le 1 ] || echo "ATENÇÃO: $ncongel commits de congelamento no histórico — só o humano recongela; confira o HASH anotado quando rodou congelar.sh"
 n=$(python3 -m pytest --collect-only -q 2>/dev/null | grep -oE '^[0-9]+ tests? collected' | grep -oE '^[0-9]+')
 [ "$n" = "$TESTES" ] || falha "nº de testes coletados $n ≠ $TESTES"
 fora=$( { git diff --name-only "$BASE"; git ls-files --others --exclude-standard; } | sort -u \

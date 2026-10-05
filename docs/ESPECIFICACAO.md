@@ -72,7 +72,7 @@ Toda resposta com corpo JSON (2xx e erros) sai com header `Content-Type: applica
 |---|---|---|
 | `GET /api/saude` | — | 200 `{"ok": true, "versao": "<conteúdo de VERSION>"}` |
 | `GET /api/servicos` | — | 200 `{"servicos": [{id, nome, duracao_min}]}` só os ativos, na ordem do JSON e depois ordem de criação |
-| `GET /api/horarios?servico=S&data=AAAA-MM-DD[&profissional=P]` | — | 200 `{"horarios": [{"inicio", "profissional"}]}` ordenado por `inicio`, depois `profissional`; serviço inexistente → 404; profissional inexistente → 404 |
+| `GET /api/horarios?servico=S&data=AAAA-MM-DD[&profissional=P]` | — | 200 `{"horarios": [{"inicio", "profissional"}]}` ordenado por `inicio`, depois `profissional` (ordem de cadastro dos profissionais); serviço inexistente → 404; profissional inexistente → 404; profissional que **existe** mas não faz o serviço ou está inativo → 200 com `horarios: []` |
 | `POST /api/pacientes` [E] | `{nome, telefone, consentimento_marketing?: bool, email?, nascimento?: "AAAA-MM-DD"}` | 201 `{id}`; telefone já cadastrado → 200 com o mesmo `{id}` (demais campos não mudam); telefone inválido → 400 |
 | `GET /api/pacientes?busca=T` [E] | — | 200 `{"pacientes": [{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}]}`; `busca` casa parte do nome (sem acento, sem caixa) ou dígitos do telefone; sem `busca` = todos, ordem de criação |
 | `PUT /api/pacientes/{id}` [E] | `{nome?, telefone?, email?, nascimento?, consentimento_marketing?, nao_contatar?}` | 200 com o paciente; telefone inválido → 400; telefone de outro paciente → 409 |
@@ -114,7 +114,7 @@ Ordem de decisão (a primeira regra que casa responde; cada regra diz se agenda 
 4. **Parar lembretes** — texto igual a `parar lembretes`: `lembretes_agua` vira `[]` e `lembretes_refeicoes` vira `false` (seção 10); `nao_contatar` **não** muda; resposta contém `lembretes`.
 5. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana `normal`, `motivo: "atendente"`; resposta contém `atendente`.
 6. **Fluxo em andamento** (agendamento pelo chat, abaixo) consome a mensagem.
-7. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`; respostas do bot na conversa não contam) para o telefone foi `confirmacao` (sem resposta ainda): texto **igual a** `1`, `sim` ou `confirmo` → status `confirmado`, resposta contém `confirmad`; texto **igual a** `2`, `cancelar` ou `nao` → status `cancelado` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): texto igual a `1` ou `sim` → agenda o horário ofertado se ainda livre (resposta contém `agendad`), senão resposta contém `ocupado`. Qualquer outro texto **não consome** a pendência (ex.: `nao comi` e `1 copo` seguem para a regra 8).
+7. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`; respostas do bot na conversa não contam) para o telefone foi `confirmacao` (sem resposta ainda): texto **igual a** `1`, `sim` ou `confirmo` → status `confirmado`, resposta contém `confirmad`; texto **igual a** `2`, `cancelar` ou `nao` → status `cancelado` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): texto igual a `1` ou `sim` → agenda **o mesmo horário e o mesmo profissional** liberados (seção 7) se ainda livres (resposta contém `agendad`), senão resposta contém `ocupado` (outro profissional livre no mesmo horário **não** é usado). Qualquer outro texto **não consome** a pendência (ex.: `nao comi` e `1 copo` seguem para a regra 8).
 8. **Registro no diário** (seção 10), nesta ordem:
    - **Peso:** contém o token `kg`, `quilo`, `quilos`, `peso`, `pesei` ou `pesando` **e** um número → registra o peso (regras de faixa, arredondamento e resposta na seção 10). Com o token `peso` e **sem** número → resposta contém o último peso registrado (o de maior `quando`; empate → maior `id`; vale o registrado pela equipe também) no formato `<v> kg` ou `nenhum peso`.
    - **Água:** contém o token `copo` ou `copos` → registra copos de água (quantidade = primeiro inteiro do texto; sem inteiro = 1).
@@ -130,7 +130,7 @@ Ordem de decisão (a primeira regra que casa responde; cada regra diz se agenda 
 13. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana (`normal`, `motivo: "nao_entendi"`) automaticamente.
 
 **Fluxo de agendamento pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
-- telefone sem paciente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome e o paciente é criado (`consentimento_marketing: false`). Telefone com paciente pula este passo;
+- telefone sem paciente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome, o paciente é criado (`consentimento_marketing: false`) e **a resposta a essa mensagem já lista os serviços** (passo seguinte). Telefone com paciente pula este passo e a resposta ao gatilho já lista os serviços;
 - lista os serviços ativos numerados `1 - <nome>` na ordem da seção 5;
 - escolhido o número, oferece os **3 primeiros** horários livres a partir de `agora + antecedencia_min_horas`, dentro de `janela_dias`, em todos os profissionais ativos, ordem da seção 5; cada linha `N) DD/MM HH:MM com <nome do profissional>`;
 - escolhido o número: com `atende_online: true`, pergunta a modalidade — resposta contém `1 - Presencial` e `2 - Online`; `1` = presencial, `2` = online. Com `atende_online: false`, não pergunta (presencial);
@@ -140,7 +140,7 @@ Ordem de decisão (a primeira regra que casa responde; cada regra diz se agenda 
 
 ## 7. Lista de espera
 
-Ao cancelar (pela API ou pela conversa), o primeiro pedido de espera ainda não atendido com o mesmo `servico` e a mesma `data` do horário liberado (ordem de criação), cujo paciente não esteja `nao_contatar`, recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. O pedido fica `ofertado` (não recebe outra oferta do mesmo horário). Não há oferta se nenhum pedido serve.
+Ao cancelar (pela API ou pela conversa), o primeiro pedido de espera ainda não atendido com o mesmo `servico` e a mesma `data` do horário liberado (ordem de criação), cujo paciente não esteja `nao_contatar`, recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. A oferta é do **horário e do profissional** que foram liberados (o `1` da regra 7 agenda exatamente esse par; se esse par estiver ocupado, resposta `ocupado`, mesmo que outro profissional esteja livre). O pedido fica `ofertado` (não recebe outra oferta do mesmo horário). Não há oferta se nenhum pedido serve.
 
 ## 8. Confirmação, retorno e lembretes (`POST /api/tarefas/rodar`)
 
@@ -189,7 +189,7 @@ Todo registro tem `quando` = relógio do processo no momento (`AAAA-MM-DDTHH:MM`
 | `GET /api/pacientes/{id}/metas` [E] | — | 200 `{lembretes_agua: ["HH:MM", ...], lembretes_refeicoes: bool, meta_agua_copos: int \| null}`; padrão `[]`, `false`, `null` |
 | `PUT /api/pacientes/{id}/metas` [E] | qualquer subconjunto dos três campos | 200 com os três campos; campo omitido não muda; horário fora de `HH:MM` ou `meta_agua_copos` não inteiro positivo (ou `null`) → 422 |
 
-**Peso pela conversa** (regra 8): valor = número com `,` ou `.` como separador, arredondado a **1 casa (meio para cima)**. Faixa aceita `20 <= peso <= 400`; fora dela a resposta contém `entre 20 e 400` e nada é registrado. Registro `{tipo: "peso", valor, origem: "chat"}`. A resposta é **neutra**: contém `registrad` e o valor no formato `<inteiro>,<decimal> kg` (ex.: `82,5 kg`; `82 kg` vira `82,0 kg`) e **não contém** nenhum destes trechos: `parabens`, `otimo`, `muito bem`, `que pena`, `cuidado`, `engordou`, `emagreceu`, `ganhou`, `perdeu`, `ruim` (texto normalizado). O sistema **nunca comenta** a evolução do peso com o paciente; a série é para o nutricionista.
+**Peso pela conversa** (regra 8): valor = número com `,` ou `.` como separador (`82,5` e `82.5` valem o mesmo), arredondado a **1 casa (meio para cima)**: `79.25` → `79.3` (não é o `round()` do Python, que dá `79.2`; use `decimal` com `ROUND_HALF_UP`). Faixa aceita `20 <= peso <= 400`; fora dela a resposta contém `entre 20 e 400` e nada é registrado. Registro `{tipo: "peso", valor, origem: "chat"}`. A resposta é **neutra**: contém `registrad` e o valor no formato `<inteiro>,<decimal> kg` (ex.: `82,5 kg`; `82 kg` vira `82,0 kg`) e **não contém** nenhum destes trechos: `parabens`, `otimo`, `muito bem`, `que pena`, `cuidado`, `engordou`, `emagreceu`, `ganhou`, `perdeu`, `ruim` (texto normalizado). O sistema **nunca comenta** a evolução do peso com o paciente; a série é para o nutricionista.
 
 **Água pela conversa:** registro `{tipo: "agua", valor: n}`; resposta contém `registrad` e o total do dia: `<total> de <meta> copos` quando `meta_agua_copos` está definida, senão `<total> copo` (`1 copo`, `3 copos`).
 
@@ -197,7 +197,7 @@ Todo registro tem `quando` = relógio do processo no momento (`AAAA-MM-DDTHH:MM`
 
 **Foto de refeição** (seção 19): registro `{tipo: "foto", mimetype, caption, message_id, origem: "whatsapp"}` só com metadados (`message_id` = `key.id` da Evolution, a referência para achar a imagem no próprio WhatsApp); a mídia **não é baixada nem guardada**.
 
-Telefone **sem paciente** cadastrado: peso, água, refeição e foto não são registrados; a resposta contém `cadastro` (o paciente precisa estar cadastrado pela equipe ou ter agendado pelo chat).
+Telefone **sem paciente** cadastrado: peso, água, refeição e foto não são registrados; a resposta contém `cadastro` (o paciente precisa estar cadastrado pela equipe ou ter agendado pelo chat). Essa checagem vem **antes** da de plano ativo: `comi` de telefone desconhecido responde `cadastro`, não `nutricionista`.
 
 ## 11. Campanhas e trava de publicidade
 
@@ -224,7 +224,7 @@ Só esses cinco ids vão em `valores` (são entradas do pacote `clinica` do Raio
 
 ## 13. LGPD (dado de saúde = sensível, art. 11)
 
-- `GET /api/pacientes/{id}/dados` devolve tudo o que há do paciente: `paciente` `{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}`, `agendamentos` (mesmo formato da listagem), `mensagens` = recebidas e enviadas, cada uma `{direcao: "entrada" | "saida", texto, quando}`, `planos` = todos os planos com refeições (ordem de versão), `diario` = registros (formato da seção 10), `pesos` (formato da seção 10) e `metas` (formato da seção 10).
+- `GET /api/pacientes/{id}/dados` devolve tudo o que há do paciente: `paciente` `{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}`, `agendamentos` (mesmo formato da listagem), `mensagens` = recebidas e enviadas, cada uma `{direcao: "entrada" | "saida", texto, quando}` — `entrada` = toda mensagem do paciente (chat e webhook); `saida` = **as respostas do bot na conversa** e as mensagens da caixa de saída (`/api/saida`) para o telefone dele; em ordem de criação —, `planos` = todos os planos com refeições (ordem de versão), `diario` = registros (formato da seção 10), `pesos` (formato da seção 10) e `metas` (formato da seção 10).
 - `DELETE /api/pacientes/{id}`: nome vira `removido`, telefone vira `null`, `email`/`nascimento` viram `null`, agendamentos `agendado`/`confirmado` viram `cancelado` (os `realizado`/`falta` ficam), textos de mensagens dele viram `""`, **planos, diário e pesos são apagados** (listas vazias em `/dados`) e `metas` volta ao padrão. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando os atendimentos passados.
 
 ## 14. Fora do v1 (não implementar; portão humano ou próxima versão)
@@ -299,6 +299,6 @@ Variáveis: `TELEGRAM_API_URL` (ex.: `https://api.telegram.org` — só nesta sp
 ## 21. Docker / VPS
 
 - `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./atende serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude` (a imagem não tem `curl`: usar `python3 -c` com `urllib`). O container precisa subir **sem volume** em `/dados` (a verificação independente faz `docker run` sem `-v`): o `serve` cria a pasta (seção 1).
-- `docker-compose.yml` com o serviço `atende`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em `127.0.0.1:8080` (na VPS fica atrás de proxy reverso com HTTPS).
+- `docker-compose.yml` com o serviço `atende`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em loopback — a linha é literalmente `"127.0.0.1:8080:8080"` (na VPS fica atrás de proxy reverso com HTTPS).
 - `.env.exemplo` com todas as variáveis das seções 19 e 20, **valores vazios** (`VARIAVEL=` e nada depois do `=`; nenhum segredo, nenhuma URL, e a palavra `http` não aparece em linha nenhuma — nem em comentário).
 - `README.md` com a seção **Deploy na VPS** (acrescentada pelo implementador **sem remover** a seção "Como rodar no seu ambiente"): subir o compose, proxy HTTPS, configurar o webhook da Evolution para `/webhook/evolution/<segredo>` (evento `MESSAGES_UPSERT`), registrar o webhook do Telegram com `setWebhook` + `secret_token`, e o backup diário (`./atende backup` no cron).

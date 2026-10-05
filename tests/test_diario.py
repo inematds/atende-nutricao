@@ -40,6 +40,10 @@ def test_peso_fora_da_faixa_e_sem_cadastro(api):
     r = norm(api.msg(TEL, "peso 500"))
     assert "entre 20 e 400" in r
     assert api.get(f"/api/pacientes/{pid}/pesos")[1]["pesos"] == [] and api.get(f"/api/pacientes/{pid}/pesos")[1]["variacao"] is None
+    # ponto como separador decimal e arredondamento "meio para cima" (seção 10): 79.25 → 79,3 (round() do Python daria 79,2)
+    r = norm(api.msg(TEL, "estou pesando 79.25"))
+    assert "registrad" in r and "79,3 kg" in r
+    assert [p["peso"] for p in api.get(f"/api/pacientes/{pid}/pesos")[1]["pesos"]] == [79.3]
     assert "cadastro" in norm(api.msg("41900001111", "pesei 70 kg"))   # telefone sem paciente
     assert "cadastro" in norm(api.msg("41900001111", "2 copos"))
 
@@ -84,11 +88,14 @@ def test_refeicao_sem_nome_usa_horario_e_exige_plano(dados):
     api2 = s2.subir()
     assert "almoco" in norm(api2.msg(TEL, "ja fiz"))         # 12:30 ≤ 13:00
     s2.parar()
-    api3 = Servidor(dados, agora="2026-10-06T06:00").subir()
+    # dia seguinte às 06:00 (e não 06/10 06:00): o diário sai ordenado por `quando` (seção 10), então o 4º registro
+    # precisa ser o mais recente — 07/10 06:00 > 06/10 13:00 — para ficar por último na lista abaixo
+    api3 = Servidor(dados, agora="2026-10-07T06:00").subir()
     assert "cafe da manha" in norm(api3.msg(TEL, "comi"))    # nenhuma ≤ 06:00 → a primeira do plano
     regs = api3.get(f"/api/pacientes/{pid}/diario")[1]["registros"]
     assert [(x["refeicao"], x["status"]) for x in regs] == \
         [("Café da manhã", "feita"), ("Café da manhã", "pulada"), ("Almoço", "feita"), ("Café da manhã", "feita")]
+    assert [x["quando"] for x in regs] == ["2026-10-06T09:00", "2026-10-06T09:00", "2026-10-06T13:00", "2026-10-07T06:00"]
 
 
 def test_diario_resumo_e_filtro_por_dia(dados):

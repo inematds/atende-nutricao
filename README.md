@@ -89,6 +89,7 @@ O chat do paciente fica em `/`, a página da equipe em `/equipe` (header `X-Toke
 - `docs/ESPECIFICACAO.md` — contrato (21 seções, tabela de rotas, regras com fronteiras, fora do v1).
 - `docs/DECISOES-ABERTAS.md` — decisões com proposta padrão; perguntas para o dono (inclusive o ⚠ do CFN).
 - `docs/MAPA-RAIO-X.md` — cada vazamento do pacote `clinica` → peça do v1 ou motivo de ficar fora.
+- `docs/VALIDACAO.md` — validação adversarial do plano (05/10/2026): checklist teste × spec, contas conferidas, saída dos checks de trava/harness.
 - `tests/` — 99 testes caixa-preta (`conftest.py` sobe o CLI, relógio fixo, servidor falso de Evolution/Telegram). Fixture em `tests/fixtures/nutricao.json`; cópia em `exemplos/`.
 - `longrun/2026-10-05-nutri-v1/` — goal (nível 3+), plan, state, canal, loop.env, prompts, `congelar.sh`, `verificar-limites.sh`, `verificar-independente.py`.
 - `FALHAS.md` — uma linha por falha (data, o que quebrou, menor correção, prompt | infra).
