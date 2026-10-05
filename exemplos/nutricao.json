@@ -1,0 +1,35 @@
+{
+  "nome": "Nutri Bem",
+  "token": "TROQUE-ESTE-TOKEN",
+  "passo_min": 30,
+  "antecedencia_min_horas": 2,
+  "janela_dias": 14,
+  "confirmacao_horas": 48,
+  "retorno_aviso_dias": 7,
+  "lembrete_tolerancia_min": 60,
+  "atende_online": true,
+  "feriados": ["2026-10-12"],
+  "horarios": {
+    "seg": [["08:00", "12:00"], ["14:00", "18:00"]],
+    "ter": [["08:00", "12:00"], ["14:00", "18:00"]],
+    "qua": [["08:00", "12:00"], ["14:00", "18:00"]],
+    "qui": [["08:00", "12:00"], ["14:00", "18:00"]],
+    "sex": [["08:00", "12:00"], ["14:00", "18:00"]],
+    "sab": [["08:00", "12:00"]],
+    "dom": []
+  },
+  "profissionais": [
+    {"id": "lia", "nome": "Dra. Lia", "servicos": ["primeira", "retorno", "bioimpedancia"]},
+    {"id": "marcos", "nome": "Dr. Marcos", "servicos": ["primeira", "retorno"]}
+  ],
+  "servicos": [
+    {"id": "primeira", "nome": "Primeira consulta", "duracao_min": 60, "retorno_dias": 30},
+    {"id": "retorno", "nome": "Retorno", "duracao_min": 30, "retorno_dias": 30},
+    {"id": "bioimpedancia", "nome": "Bioimpedância", "duracao_min": 30, "retorno_dias": null}
+  ],
+  "faq": [
+    {"id": "convenios", "perguntas": ["vocês aceitam convênio", "quais convênios atendem"], "resposta": "Atendemos Unimed e particular, com recibo para reembolso."},
+    {"id": "endereco", "perguntas": ["qual o endereço do consultório", "onde fica o consultório"], "resposta": "Rua das Flores, 100, sala 5, Batel, Curitiba."},
+    {"id": "estacionamento", "perguntas": ["tem estacionamento"], "resposta": "Temos convênio com o estacionamento ao lado (1 hora grátis)."}
+  ]
+}
