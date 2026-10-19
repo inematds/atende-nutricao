@@ -60,7 +60,8 @@ class Domain:
                 return 200, {'id': p['id']}
         p = self.save('pacientes', dict(nome=body['nome'], telefone=number,
                       email=body.get('email'), nascimento=body.get('nascimento'),
-                      consentimento_marketing=bool(body.get('consentimento_marketing', False)), nao_contatar=False))
+                      consentimento_marketing=bool(body.get('consentimento_marketing', False)),
+                      nao_contatar=any(x['id'] == number and x['nao_contatar'] for x in self.all('preferencias'))))
         return 201, {'id': p['id']}
 
     def candidates(self, service, professional, day):
@@ -136,7 +137,37 @@ class Domain:
             result.append(dict(a, nome=p['nome'], telefone=p['telefone']))
         return sorted(result, key=lambda a: (a['inicio'], a['id']))
 
+    def cancel(self, appointment):
+        from .tasks import Tasks
+        return Tasks(self).cancel(appointment)
+
     def route(self, method, path, query, body):
+        from .conversation import Conversation
+        from .tasks import Tasks
+        from .nutrition import Nutrition
+        nutrition_result = Nutrition(self).route(method, path, query, body)
+        if nutrition_result is not None:
+            return nutrition_result
+        task_result = Tasks(self).route(method, path, body)
+        if task_result is not None:
+            return task_result
+        if path == '/api/mensagens' and method == 'POST':
+            return 200, Conversation(self).message(body)
+        if path == '/api/atendimento-humano' and method == 'GET':
+            return 200, {'fila': [r for r in self.all('atendimentos') if r['status'] == 'aberto']}
+        human_match = re.fullmatch(r'/api/atendimento-humano/([^/]+)/(responder|encerrar)', path)
+        if human_match and method == 'POST':
+            row = self.get('atendimentos', human_match[1])
+            if human_match[2] == 'encerrar':
+                row['status'] = 'encerrado'
+                self.save('atendimentos', row)
+            else:
+                required(body, 'texto')
+                if not isinstance(body['texto'], str) or not body['texto'].strip():
+                    raise Error(422, 'Texto vazio')
+                p = next((p for p in self.all('pacientes') if p['telefone'] == row['telefone']), None)
+                Tasks(self).output(p or {'id': None, 'telefone': row['telefone'], 'nao_contatar': False}, 'humano', body['texto'])
+            return 200, row
         if path == '/api/servicos' and method == 'GET':
             return 200, {'servicos': [s for s in self.all('servicos') if s['ativo']]}
         if path == '/api/profissionais' and method == 'GET':
@@ -162,9 +193,7 @@ class Domain:
             a = self.get('agendamentos', match[1])
             action = match[2]
             if action == 'cancelar':
-                if a['status'] == 'cancelado':
-                    raise Error(409, 'Já cancelado')
-                a['status'] = 'cancelado'
+                return 200, self.cancel(a)
             elif action == 'remarcar':
                 required(body, 'inicio')
                 return 200, self.book(dict(a, inicio=body['inicio']), previous=a)
@@ -173,6 +202,7 @@ class Domain:
                 if not isinstance(body['compareceu'], bool):
                     raise Error(422, 'Compareceu deve ser booleano')
                 a['status'] = 'realizado' if body['compareceu'] else 'falta'
+                Tasks(self).presence(a)
             elif action == 'link':
                 if a['modalidade'] != 'online' or not isinstance(body.get('link'), str) or not body['link'].strip():
                     raise Error(422, 'Link inválido')

@@ -16,3 +16,7 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 
 - 2026-10-19 13:51 · fato · Primeira implementação em src/storage.py, src/domain.py e src/server.py. Estado em estado.sqlite3; semeia coleções só quando marcador sistema/semente inexiste. Agenda e pacientes persistiram em reinício manual; teste global de persistência ainda depende de plano/peso.
 - 2026-10-19 13:51 · armadilha · Testes de agenda incluem leitura /pacientes/id/dados; teste de autenticação termina com conversa pública. Ambos podem falhar por módulos pendentes embora as partes anteriores funcionem. Não criar respostas vazias artificiais para fazer esses testes passarem.
+
+- 2026-10-19 13:57 · fato · conversation.py implementa prioridades e fluxo; nutrition.py implementa plano/metas/diário; tasks.py cria saída simulada, confirmação/espera/retorno/lembretes. A integração futura precisa enviar por Tasks.output e encaminhar mensagens de Conversation.message sem duplicar o histórico.
+- 2026-10-19 13:57 · armadilha · Pendência usa exclusivamente a última saída do telefone, não mensagens da conversa; guarda inicio para não confirmar agendamento remarcado com uma mensagem antiga. Oferta de espera guarda profissional, inicio, servico e modalidade.
+- 2026-10-19 13:57 · fato · GET /dados já agrega as coleções reais, mas exclusão LGPD ainda falta. Pesos são uma visão dos registros tipo peso do diário: não criar outra série divergente. Preferências antes de cadastro ficam em preferencias por telefone.

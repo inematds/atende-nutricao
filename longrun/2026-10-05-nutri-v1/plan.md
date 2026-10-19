@@ -1,6 +1,6 @@
 # Plano
 
 ## Próximos 3 passos
-1. Conversa persistente: normalização preservando decimais, prioridades emergência/alerta/parar/humano, fluxo de agendamento, link/FAQ/não entendi; preparar integração com plano/diário e pendências sem consumir texto parcial.
-2. Confirmação, espera e retorno: caixa de saída simulada persistente, tarefas idempotentes, oferta do mesmo profissional/horário, confirmação após remarcação e retorno ao marcar presença. Rodar suíte inteira.
-3. Plano alimentar e diário/peso/metas (incluindo lembretes); depois campanhas → LGPD/Raio-X → cadastros/bloqueios/backup → integrações falsas → Docker/README → páginas. Atualizar registros e validar limites a cada ciclo.
+1. Campanhas com validação integral/consentimento; exclusão LGPD (anonimização, cancelamento e limpeza de saúde/histórico); Raio-X HTTP/CLI com limites corretos do retorno e merge do acompanhamento.
+2. Cadastros, bloqueios, backup/restauração e validações de ids; rodar suíte completa preservando os 62 testes que já passam.
+3. Evolution e Telegram com servidores falsos (sem rede real/mídia); depois Docker/compose/env/Deploy na VPS e páginas web. Validar suíte + limites e atualizar registros a cada ciclo.

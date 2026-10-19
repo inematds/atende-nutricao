@@ -2,6 +2,7 @@
 
 | data | o que quebrou | menor correção | prompt \| infra |
 |---|---|---|---|
+| 2026-10-19 13:57 | Conversa/tarefas/plano/diário ausentes impediam atendimento e persistência funcional | Acrescentar os módulos sobre a transação existente, com pendência exata e Decimal para peso | infra (implementação incompleta) |
 | 2026-10-05 | validação: `test_refeicao_sem_nome_usa_horario_e_exige_plano` subia o 3º servidor em 06/10 **06:00** e esperava esse registro por último, mas a §10 ordena o diário por `quando` (o das 06:00 iria para o início) → implementador honesto reprovava | 3º servidor em `2026-10-07T06:00` (mesmo cenário "nenhuma refeição ≤ 06:00") + asserção explícita da ordem por `quando` | prompt |
 | 2026-10-05 | validação: `test_espera_horario_ja_ocupado` exigia `ocupado` com o Dr. Marcos livre no mesmo horário, e a spec não dizia de qual profissional era a oferta da lista de espera | §7 e regra 7 da §6: oferta e `1` são do **mesmo horário e mesmo profissional** liberados | prompt |
 | 2026-10-05 | validação: `test_horarios_so_de_quem_faz_o_servico` esperava 200 `[]` para profissional existente que não faz o serviço; a §5 só previa "inexistente → 404" | linha de `/api/horarios` na §5: existente que não faz o serviço ou inativo → 200 `horarios: []`; ordem "depois `profissional`" definida como ordem de cadastro | prompt |
