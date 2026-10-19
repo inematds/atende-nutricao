@@ -1,6 +1,6 @@
 # Plano
 
 ## Próximos 3 passos
-1. Implementar edição/inativação de profissionais, serviços, pacientes e FAQ, bloqueios com conflitos e comandos backup/restaurar. Validar a suíte inteira preservando os 70 testes aprovados.
-2. Implementar Evolution (texto e foto apenas por metadados, saída síncrona e retry) e Telegram (avisos, encaminhamento, resposta e comandos), exclusivamente contra servidores falsos locais.
-3. Entregar Dockerfile/compose/env, acrescentar Deploy na VPS preservando README e implementar páginas chat/equipe. Rodar suíte + limites, atualizar registros; marcar concluído só com ambos aprovados.
+1. Implementar Evolution: segredo próprio, deduplicação, texto/foto por metadados e saída síncrona com retry; testar apenas no servidor falso local, preservando os 79 testes aprovados.
+2. Implementar Telegram: abertura/encaminhamento, resposta por referência, comandos e avisos de agenda/cancelamento, só por variáveis da spec e servidor falso.
+3. Entregar Docker/compose/env e Deploy na VPS sem remover README; páginas chat/equipe funcionais. Rodar suíte + limites, registrar resultados; marcar concluído somente com ambos aprovados.

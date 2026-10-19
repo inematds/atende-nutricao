@@ -18,3 +18,4 @@ When I correct you, or you catch yourself making a mistake: before continuing, a
 
 ## Lessons
 - `congelar.sh` grava `BASE = HEAD` antes do commit de congelamento: `BASE` é o **pai** do commit "contrato congelado", não ele. Toda guarda sobre o congelamento compara com `git show <commit-congelamento>:hash-congelado.txt` e `<commit>^`, e se prova num clone antes de valer. (05/10/2026)
+- Horário próprio vazio (`{}`) significa sem janelas; somente `null` herda os horários do consultório. Evitar fallback por truthiness. (19/10/2026)

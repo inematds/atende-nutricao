@@ -22,3 +22,6 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 - 2026-10-19 13:57 · fato · GET /dados já agrega as coleções reais, mas exclusão LGPD ainda falta. Pesos são uma visão dos registros tipo peso do diário: não criar outra série divergente. Preferências antes de cadastro ficam em preferencias por telefone.
 
 - 2026-10-19 14:03 · fato · src/reporting.py implementa campanhas, DELETE /pacientes/id e Raio-X HTTP/CLI. Histórico anonimizado usa paciente_id: nunca selecionar mensagens por telefone null (misturaria pacientes removidos). Verificação adicional local cobriu dois removidos, retorno no último dia e fora da janela, merge do mês anterior e repetição sem duplicata.
+
+- 2026-10-19 14:09 · fato · src/registrations.py implementa edição/inativação, FAQ e bloqueios; src/backup.py implementa CLI backup/restaurar. Checagem extra confirmou restauração inválida preservando banco, restauração em diretório novo e edição inválida sem mutação.
+- 2026-10-19 14:09 · armadilha · Horários próprios vazios não herdam os do consultório: só null herda. Agenda corrigida; Raio-X já distinguia null corretamente.

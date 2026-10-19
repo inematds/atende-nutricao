@@ -70,7 +70,18 @@ def main():
     report.add_argument('--dados', required=True)
     report.add_argument('--mes', required=True)
     report.add_argument('--acompanhamento', required=True)
+    backup = commands.add_parser('backup')
+    backup.add_argument('--dados', required=True)
+    backup.add_argument('--saida', required=True)
+    restore = commands.add_parser('restaurar')
+    restore.add_argument('--dados', required=True)
+    restore.add_argument('--entrada', required=True)
     args = parser.parse_args()
+    if args.command in ('backup', 'restaurar'):
+        from .backup import transfer
+        transfer(args.dados, args.saida if args.command == 'backup' else args.entrada,
+                 restore=args.command == 'restaurar')
+        return
     store = Store(args.dados)
     if args.command == 'raiox':
         from .reporting import Reporting

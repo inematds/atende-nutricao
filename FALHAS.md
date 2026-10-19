@@ -2,6 +2,7 @@
 
 | data | o que quebrou | menor correção | prompt \| infra |
 |---|---|---|---|
+| 2026-10-19 14:09 | Cadastros/bloqueios/backup ausentes; horário profissional vazio herdava o geral | Acrescentar rotas e cópia SQLite; herdar horário somente quando null | infra (implementação incompleta) |
 | 2026-10-19 14:03 | Campanhas, exclusão LGPD e Raio-X ausentes | Acrescentar módulo de validação/anonimização/agregação e comando raiox, preservando a transação existente | infra (implementação incompleta) |
 | 2026-10-19 13:57 | Conversa/tarefas/plano/diário ausentes impediam atendimento e persistência funcional | Acrescentar os módulos sobre a transação existente, com pendência exata e Decimal para peso | infra (implementação incompleta) |
 | 2026-10-05 | validação: `test_refeicao_sem_nome_usa_horario_e_exige_plano` subia o 3º servidor em 06/10 **06:00** e esperava esse registro por último, mas a §10 ordena o diário por `quando` (o das 06:00 iria para o início) → implementador honesto reprovava | 3º servidor em `2026-10-07T06:00` (mesmo cenário "nenhuma refeição ≤ 06:00") + asserção explícita da ordem por `quando` | prompt |

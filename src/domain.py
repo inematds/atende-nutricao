@@ -71,7 +71,7 @@ class Domain:
         date = datetime.strptime(day, '%Y-%m-%d')
         if not service['ativo'] or not professional['ativo'] or service['id'] not in professional['servicos'] or day in self.config['feriados']:
             return []
-        schedule = professional.get('horarios') or self.config['horarios']
+        schedule = professional['horarios'] if professional.get('horarios') is not None else self.config['horarios']
         weekday = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')[date.weekday()]
         duration = timedelta(minutes=service['duracao_min'])
         earliest = now() + timedelta(hours=self.config['antecedencia_min_horas'])
@@ -149,6 +149,10 @@ class Domain:
         from .tasks import Tasks
         from .nutrition import Nutrition
         from .reporting import Reporting
+        from .registrations import Registrations
+        registration_result = Registrations(self).route(method, path, query, body)
+        if registration_result is not None:
+            return registration_result
         reporting_result = Reporting(self).route(method, path, query, body)
         if reporting_result is not None:
             return reporting_result
