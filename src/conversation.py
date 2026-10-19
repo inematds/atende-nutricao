@@ -31,7 +31,11 @@ class Conversation:
                 d.save('atendimentos', row)
             return row
         p = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
-        return d.save('atendimentos', dict(telefone=number, nome=p['nome'] if p else None, motivo=reason, prioridade=priority, status='aberto'))
+        row = d.save('atendimentos', dict(telefone=number, nome=p['nome'] if p else None, motivo=reason, prioridade=priority, status='aberto'))
+        from .telegram import Telegram
+        entries = [m for m in d.all('mensagens') if m['telefone'] == number and m['direcao'] == 'entrada']
+        Telegram(d).forward(row, entries[-1]['texto'] if entries else '', opening=True)
+        return row
 
     def message(self, body):
         required(body, 'telefone', 'texto')
@@ -43,9 +47,13 @@ class Conversation:
         state = next((s for s in d.all('conversas') if s['id'] == number), {'id': number, 'fluxo': None, 'nao_entendi': 0})
         patient = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
         d.save('mensagens', dict(telefone=number, direcao='entrada', texto=original, quando=now().isoformat(timespec='minutes')))
+        opened = next((r for r in d.all('atendimentos') if r['telefone'] == number and r['status'] == 'aberto'), None)
         previous_misses = state['nao_entendi']
         state['nao_entendi'] = 0
         answer = self.decide(number, original, text, state, patient, previous_misses)
+        if opened:
+            from .telegram import Telegram
+            Telegram(d).forward(d.get('atendimentos', opened['id']), original)
         d.save('conversas', state)
         responses = [] if answer is None else [answer]
         for response in responses:
@@ -92,6 +100,8 @@ class Conversation:
                         d.save('agendamentos', a)
                         return 'Agendamento confirmado.'
                     d.cancel(a)
+                    from .telegram import Telegram
+                    Telegram(d).appointment(a, cancelled=True)
                     return 'Agendamento cancelado.'
             if m['tipo'] == 'espera' and text in ('1', 'sim'):
                 m['respondida'] = True
@@ -152,6 +162,8 @@ class Conversation:
         return self.prompt(state)
 
     def booked(self, a):
+        from .telegram import Telegram
+        Telegram(self.d).appointment(a)
         return f"Agendado para {timestamp(a['inicio']).strftime('%d/%m %H:%M')} ({a['modalidade']})."
 
     def flow(self, number, original, text, state, p):

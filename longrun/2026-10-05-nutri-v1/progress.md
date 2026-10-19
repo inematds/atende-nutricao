@@ -8,3 +8,5 @@
 | 2026-10-19 14:09 | Cadastros, bloqueios e backup/restauração; v0.4.0; validação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 79 passed / 20 failed (76,76 s); +9 aprovados | — | 0 |
 
 | 2026-10-19 14:15 | Evolution: webhook texto/foto, deduplicação persistente, envio síncrono/retry; v0.5.0; validação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 84 passed / 15 failed (67,37 s); +5 aprovados | — | 0 |
+
+| 2026-10-19 14:19 | Telegram: avisos, encaminhamento, respostas, comandos, proteção e persistência; v0.6.0; verificação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 94 passed / 5 failed; +10 aprovados | — | 0 |

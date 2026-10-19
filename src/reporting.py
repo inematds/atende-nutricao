@@ -62,6 +62,9 @@ class Reporting:
             d.delete('preferencias', number)
             for row in d.all('atendimentos'):
                 if row['telefone'] == number:
+                    for ref in d.all('telegram_referencias'):
+                        if ref['atendimento_id'] == row['id']:
+                            d.delete('telegram_referencias', ref['id'])
                     d.delete('atendimentos', row['id'])
         for row in d.all('lembretes_enviados'):
             if str(row['id']).startswith(str(pid) + ':'):

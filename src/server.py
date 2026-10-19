@@ -29,6 +29,13 @@ class Handler(BaseHTTPRequestHandler):
             ('GET', '/api/servicos'), ('GET', '/api/horarios'), ('POST', '/api/mensagens')}
         try:
             evolution = self.command == 'POST' and route.path.startswith('/webhook/evolution/')
+            telegram = self.command == 'POST' and route.path == '/webhook/telegram'
+            if telegram:
+                secret = os.environ.get('TELEGRAM_SEGREDO', '')
+                supplied = self.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
+                if not secret or not hmac.compare_digest(secret.encode(), supplied.encode()):
+                    raise Error(401, 'Segredo inválido')
+                public = True
             if evolution:
                 secret = os.environ.get('WEBHOOK_SEGREDO', '')
                 if not secret or not hmac.compare_digest(route.path.encode(), ('/webhook/evolution/' + secret).encode()):
@@ -52,7 +59,10 @@ class Handler(BaseHTTPRequestHandler):
                     # Reserva a escrita antes de verificar disponibilidade: duas reservas não vencem juntas.
                     db.execute('BEGIN IMMEDIATE')
                     domain = Domain(self.server.store, db)
-                    if evolution:
+                    if telegram:
+                        from .telegram import Telegram
+                        status, result = 200, Telegram(domain).receive(body)
+                    elif evolution:
                         from .integrations import Evolution
                         status, result = 200, Evolution(domain).receive(body)
                     else:
