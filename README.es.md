@@ -53,7 +53,7 @@ El chat del paciente queda en `/`, la página del equipo en `/equipe` (header `X
 ### 3. Verificaciones
 
 ```sh
-bash longrun/2026-10-05-nutri-v1/verificar-limites.sh            # LIMITES OK
+bash longrun/2026-10-05-nutri-v1/verificar-limites.sh            # LIMITES OK al cierre; hoy marca solo guia/ y README.en/es (docs posteriores)
 python3 longrun/2026-10-05-nutri-v1/verificar-independente.py   # INDEPENDENTE OK
 ```
 

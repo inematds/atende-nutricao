@@ -53,7 +53,7 @@ The patient chat is at `/`, the staff page at `/equipe` (header `X-Token`). `ATE
 ### 3. Verifications
 
 ```sh
-bash longrun/2026-10-05-nutri-v1/verificar-limites.sh            # LIMITES OK
+bash longrun/2026-10-05-nutri-v1/verificar-limites.sh            # LIMITES OK at close; now flags only guia/ and README.en/es (docs added later)
 python3 longrun/2026-10-05-nutri-v1/verificar-independente.py   # INDEPENDENTE OK
 ```
 
