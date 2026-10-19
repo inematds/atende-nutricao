@@ -1,9 +1,9 @@
-...................F........................................FFFF........ [ 72%]
+...................F.................................................... [ 72%]
 ...........................                                              [100%]
 =================================== FAILURES ===================================
 _________________________________ test_paginas _________________________________
 
-api = <conftest.Cliente object at 0xee558a84a900>
+api = <conftest.Cliente object at 0xfcbc45285a90>
 
     def test_paginas(api):
         st, html = api.get("/", token=None)
@@ -11,79 +11,6 @@ api = <conftest.Cliente object at 0xee558a84a900>
 E       assert (404 == 200)
 
 tests/test_basico.py:39: AssertionError
-_______________________________ test_dockerfile ________________________________
-
-    def test_dockerfile():
->       d = ler("Dockerfile")
-            ^^^^^^^^^^^^^^^^^
-
-tests/test_docker.py:14: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-nome = 'Dockerfile'
-
-    def ler(nome):
-        p = RAIZ / nome
->       assert p.exists(), f"falta {nome}"
-E       AssertionError: falta Dockerfile
-E       assert False
-E        +  where False = exists()
-E        +    where exists = PosixPath('/home/nmaldaner/projetos/atende-nutricao/Dockerfile').exists
-
-tests/test_docker.py:9: AssertionError
-_________________________________ test_compose _________________________________
-
-    def test_compose():
->       c = ler("docker-compose.yml")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_docker.py:22: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-nome = 'docker-compose.yml'
-
-    def ler(nome):
-        p = RAIZ / nome
->       assert p.exists(), f"falta {nome}"
-E       AssertionError: falta docker-compose.yml
-E       assert False
-E        +  where False = exists()
-E        +    where exists = PosixPath('/home/nmaldaner/projetos/atende-nutricao/docker-compose.yml').exists
-
-tests/test_docker.py:9: AssertionError
-________________ test_env_exemplo_tem_todas_as_variaveis_vazias ________________
-
-    def test_env_exemplo_tem_todas_as_variaveis_vazias():
->       e = ler(".env.exemplo")
-            ^^^^^^^^^^^^^^^^^^^
-
-tests/test_docker.py:28: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-nome = '.env.exemplo'
-
-    def ler(nome):
-        p = RAIZ / nome
->       assert p.exists(), f"falta {nome}"
-E       AssertionError: falta .env.exemplo
-E       assert False
-E        +  where False = exists()
-E        +    where exists = PosixPath('/home/nmaldaner/projetos/atende-nutricao/.env.exemplo').exists
-
-tests/test_docker.py:9: AssertionError
-__________________________ test_readme_explica_deploy __________________________
-
-    def test_readme_explica_deploy():
-        r = ler("README.md")
-        assert "Como rodar no seu ambiente" in r      # seção do dono: o implementador acrescenta o deploy sem removê-la
->       assert "Deploy na VPS" in r
-E       AssertionError: assert 'Deploy na VPS' in '# atende-nutricao\n\n**🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**\n\n[![At...ificar-independente.py`.\n- `FALHAS.md` — uma linha por falha (data, o que quebrou, menor correção, prompt | infra).\n'
-
-tests/test_docker.py:39: AssertionError
 =========================== short test summary info ============================
 FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
-FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
-FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
-FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
-FAILED tests/test_docker.py::test_readme_explica_deploy - AssertionError: ass...
-5 failed, 94 passed in 21.31s
+1 failed, 98 passed in 24.07s

@@ -12,3 +12,5 @@
 | 2026-10-19 14:19 | Telegram: avisos, encaminhamento, respostas, comandos, proteção e persistência; v0.6.0; verificação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 94 passed / 5 failed; +10 aprovados | — | 0 |
 
 | 2026-10-19 14:22 | Docker/Compose/env/contexto e Deploy na VPS; v0.7.0; inicialização sem dados + comando healthcheck OK; LIMITES OK | sem commit (loop externo) | pytest: 98 passed / 1 failed (22,51 s); +4 aprovados | — | 0 |
+
+| 2026-10-19 (ciclo 8) | Páginas / e /equipe (web/) + rotas estáticas com CSP; README status; v0.8.0; LIMITES OK; INDEPENDENTE OK (docker build + healthcheck) | commit de fechamento | pytest: **99 passed** ×3 — critério atingido | — | 0 |

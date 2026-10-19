@@ -22,12 +22,37 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def static(self, path):
+        # Lista fechada: nenhum caminho fornecido pelo visitante vira um arquivo.
+        assets = {
+            '/': ('index.html', 'text/html'),
+            '/equipe': ('equipe.html', 'text/html'),
+            '/web/style.css': ('style.css', 'text/css'),
+            '/web/chat.js': ('chat.js', 'text/javascript'),
+            '/web/equipe.js': ('equipe.js', 'text/javascript'),
+        }
+        if self.command != 'GET' or path not in assets:
+            return False
+        name, content_type = assets[path]
+        data = (ROOT / 'web' / name).read_bytes()
+        self.send_response(200)
+        self.send_header('Content-Type', content_type + '; charset=utf-8')
+        self.send_header('Content-Length', str(len(data)))
+        self.send_header('Cache-Control', 'no-store')
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
+        self.end_headers()
+        self.wfile.write(data)
+        return True
+
     def handle_request(self):
         route = urlsplit(self.path)
         public = (self.command, route.path) in {
             ('GET', '/'), ('GET', '/equipe'), ('GET', '/api/saude'),
             ('GET', '/api/servicos'), ('GET', '/api/horarios'), ('POST', '/api/mensagens')}
         try:
+            if self.static(route.path):
+                return
             evolution = self.command == 'POST' and route.path.startswith('/webhook/evolution/')
             telegram = self.command == 'POST' and route.path == '/webhook/telegram'
             if telegram:

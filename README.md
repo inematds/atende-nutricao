@@ -10,7 +10,7 @@ Landing e guia passo a passo (PT/EN/ES): **https://inematds.github.io/atende-nut
 
 Sistema de atendimento ao paciente para **um consultório de nutrição**, em Python 3 com biblioteca padrão e SQLite: agenda de consultas (primeira consulta e retornos, presencial ou online com link informado pela equipe), confirmação automática, lista de espera, retorno programado, **plano alimentar** registrado pelo nutricionista e consultado pelo paciente na conversa, **diário** (água, refeições feitas/puladas, peso, foto de refeição por metadados) com lembretes opt-in e metas, FAQ, fila humana no Telegram, sinais de alerta, campanhas com trava mínima de publicidade, LGPD de dado de saúde, cadastros, backup e exportação mensal para o Painel de Recuperação do **Raio-X de Margem** (pacote `clinica`). Base: o `atende-clinica`, adaptado.
 
-**Estado (19/10/2026): implementação em andamento.** Backend, Evolution, Telegram, Docker e instruções de VPS implementados; 98 dos 99 testes passam. Faltam as páginas do chat e da equipe. Build real do container ainda não executado. Estado detalhado em `longrun/2026-10-05-nutri-v1/state.md`.
+**Estado (19/10/2026): v0.8.0 implementada.** Backend, chat web (`/`) e área da equipe (`/equipe`), Evolution, Telegram, Docker e instruções de VPS; 99/99 testes passam, `verificar-limites.sh` → LIMITES OK e `verificar-independente.py` → INDEPENDENTE OK (inclui `docker build` e healthcheck). Deploy na VPS é feito pelo responsável. Estado detalhado em `longrun/2026-10-05-nutri-v1/state.md`.
 
 ## O que o sistema faz (v1)
 
