@@ -28,69 +28,52 @@ O que fica de fora do v1 está na seção 14 da especificação.
 
 ### Pré-requisitos
 
-- Linux/macOS com `git`, `python3` ≥ 3.10 e `pytest` (`pip install pytest`; é ferramenta de desenvolvimento, a aplicação não depende dela).
-- Um agente pela **assinatura**: Codex CLI (`codex`) ou Claude Code (`claude`). Nenhuma API é chamada.
-- Para a verificação independente final: `docker`.
-- Método e ferramentas de execução longa: clone de `~/projetos/execucao-longa` (`tools/loop-longrun.sh`, `docs/PLANO-EXECUCAO-LONGA.md`). Se não tiver, a rota `/goal` interativa (abaixo) não precisa dele.
+- Linux/macOS com `git` e `python3` ≥ 3.10. A aplicação não tem dependências externas.
+- `pytest` só para rodar os testes (`pip install pytest`; é ferramenta de desenvolvimento).
+- `docker` (com Compose) para a verificação independente e o deploy na VPS.
+- Evolution e bot do Telegram são opcionais: sem as variáveis, o WhatsApp usa caixa de saída simulada e nada é enviado ao Telegram.
 
-### 1. Responder as decisões e congelar o contrato
-
-```sh
-cd atende-nutricao
-# leia docs/DECISOES-ABERTAS.md; "ok em tudo" = nada a mudar
-python3 -m pytest -q --collect-only | tail -n 1     # 99 tests collected
-bash longrun/2026-10-05-nutri-v1/congelar.sh        # grava hash-congelado.txt e faz 1 commit
-```
-
-Se mudar algo marcado ⚠ nas decisões, edite `docs/ESPECIFICACAO.md` e os testes **antes** de congelar. Depois de congelado, contrato e testes são protegidos: o agente não os altera; se um teste contradizer a spec, ele registra em `failures.md` e para (portão humano).
-
-### 2a. Loop headless (Codex `gpt-6-astra`)
+### 1. Conferir os testes
 
 ```sh
-~/projetos/execucao-longa/tools/loop-longrun.sh longrun/2026-10-05-nutri-v1
+git clone https://github.com/inematds/atende-nutricao && cd atende-nutricao
+python3 -m pytest -q tests/ | tail -n 1     # 99 passed
+./atende --help                             # serve, raiox, backup, restaurar
 ```
 
-Configuração em `longrun/2026-10-05-nutri-v1/loop.env` (teste rápido/final, arquivos protegidos, 20 ciclos × 30 min, 8 GB, parada após 3 ciclos sem avanço, `CODEX_ARGS` liberando socket local no sandbox). O loop faz `flock`, `timeout`, `MemoryMax`, reverte ciclo que mexer em arquivo protegido, commita checkpoint por ciclo e para sozinho quando o teste final passa.
-
-### 2b. `/goal` no Codex TUI
-
-```sh
-codex -c sandbox_workspace_write.network_access=true
-```
-
-Cole o conteúdo de `longrun/2026-10-05-nutri-v1/prompt-goal-codex.md`. Acompanhe com `/goals`; pause/retome com `/goal pause|resume`.
-
-### 2c. `/goal` no Claude Code
-
-Abra uma sessão nova na pasta do projeto e siga `longrun/2026-10-05-nutri-v1/prompt-goal-claude.md` (a condição do `/goal` + o mesmo bloco do Codex como primeira mensagem).
-
-### 3. Acompanhar
-
-```sh
-tail -n 20 longrun/2026-10-05-nutri-v1/loop.log        # headless
-cat longrun/2026-10-05-nutri-v1/state.md               # Funciona / Falta / Como retomar
-tail -n 5 longrun/2026-10-05-nutri-v1/progress.md
-python3 -m pytest -q tests/ | tail -n 3
-```
-
-Pronto = `python3 -m pytest -q tests/` → **99 passed** e `bash longrun/2026-10-05-nutri-v1/verificar-limites.sh` → **LIMITES OK** (hash do contrato intacto, nº de testes igual, `hash-congelado.txt` igual ao gravado pelo commit de congelamento, só arquivos do escopo, sem dependência externa, sem URL externa, sem chave, sem download de mídia, sem `0.0.0.0` no código).
-
-### 4. Verificação independente (nível 4, humano)
-
-```sh
-python3 longrun/2026-10-05-nutri-v1/verificar-independente.py   # INDEPENDENTE OK
-```
-
-Procura valores do fixture copiados no código, sobe um consultório nunca visto (passo de 20 min, consulta de 40 min, retorno em 15 dias, sem atendimento online, plano com refeições de outros nomes, outro relógio) e confere regras que só passam se a lógica for geral — agenda, chat, plano, peso, água, refeição, lembrete, retorno, trava de campanha, concorrência, Raio-X, LGPD —; depois faz `docker build` e testa o healthcheck do container. Abra `/` e `/equipe` no navegador.
-
-## Executar (depois de implementado)
+### 2. Executar
 
 ```sh
 mkdir -p dados && cp exemplos/nutricao.json dados/nutricao.json   # troque TROQUE-ESTE-TOKEN
 ./atende serve --porta 8080 --dados dados
 ```
 
-O chat do paciente fica em `/`, a página da equipe em `/equipe` (header `X-Token`). `ATENDE_AGORA` fixa o relógio só para testes. A seção de deploy (compose, proxy HTTPS, webhooks da Evolution e do Telegram, backup diário) é escrita pelo implementador conforme a seção 21 da especificação.
+O chat do paciente fica em `/`, a página da equipe em `/equipe` (header `X-Token`). `ATENDE_AGORA` fixa o relógio só para testes. Antes de usar com pacientes, leia `docs/DECISOES-ABERTAS.md`: os itens marcados com ⚠ (trava de campanha, palavras de alerta, regras do peso, regras do CFN) pedem a confirmação do dono. O deploy (compose, proxy HTTPS, webhooks da Evolution e do Telegram, backup diário) está na seção [Deploy na VPS](#deploy-na-vps).
+
+### 3. Verificações
+
+```sh
+bash longrun/2026-10-05-nutri-v1/verificar-limites.sh            # LIMITES OK
+python3 longrun/2026-10-05-nutri-v1/verificar-independente.py   # INDEPENDENTE OK
+```
+
+`verificar-limites.sh` confere o hash do contrato, o nº de testes, `hash-congelado.txt` igual ao gravado pelo commit de congelamento, só arquivos do escopo, sem dependência externa, sem URL externa, sem chave, sem download de mídia, sem `0.0.0.0` no código. `verificar-independente.py` procura valores do fixture copiados no código, sobe um consultório nunca visto (passo de 20 min, consulta de 40 min, retorno em 15 dias, sem atendimento online, plano com refeições de outros nomes, outro relógio) e confere regras que só passam se a lógica for geral — agenda, chat, plano, peso, água, refeição, lembrete, retorno, trava de campanha, concorrência, Raio-X, LGPD —; depois faz `docker build` e testa o healthcheck do container.
+
+## Como foi feito (e como refazer ou adaptar)
+
+O sistema foi construído pelo método de execução longa (`~/projetos/execucao-longa`): primeiro o contrato (`docs/ESPECIFICACAO.md`), as decisões propostas e os 99 testes caixa-preta; depois o congelamento por hash (`longrun/2026-10-05-nutri-v1/congelar.sh`); então um agente pela **assinatura** (Codex ou Claude Code, nenhuma API) trabalhou em ciclos até `99 passed`, `LIMITES OK` e `INDEPENDENTE OK`. Com o contrato congelado, testes e especificação ficaram protegidos: o agente não podia alterá-los; teste em conflito com a spec ia para `failures.md` (portão humano).
+
+Para adaptar a outro consultório ou mudar uma regra marcada com ⚠, o método continua no repositório: edite `docs/ESPECIFICACAO.md` e os testes, congele de novo e rode um dos caminhos abaixo.
+
+```sh
+bash longrun/2026-10-05-nutri-v1/congelar.sh                                  # grava hash-congelado.txt e faz 1 commit
+~/projetos/execucao-longa/tools/loop-longrun.sh longrun/2026-10-05-nutri-v1   # loop headless (Codex gpt-6-astra)
+```
+
+- O loop usa `longrun/2026-10-05-nutri-v1/loop.env` (20 ciclos × 30 min, 8 GB, parada após 3 ciclos sem avanço, `CODEX_ARGS` liberando socket local no sandbox); faz `flock`, `timeout`, `MemoryMax`, reverte ciclo que mexer em arquivo protegido, commita checkpoint por ciclo e para sozinho quando o teste final passa.
+- `/goal` no Codex TUI: `codex -c sandbox_workspace_write.network_access=true` e cole `longrun/2026-10-05-nutri-v1/prompt-goal-codex.md`.
+- `/goal` no Claude Code: sessão nova na pasta do projeto, seguindo `longrun/2026-10-05-nutri-v1/prompt-goal-claude.md`.
+- Acompanhar: `longrun/2026-10-05-nutri-v1/loop.log`, `state.md` (Funciona / Falta / Como retomar) e `progress.md`.
 
 ## Arquivos
 

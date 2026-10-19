@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Atende Nutrição — kit de plan para la atención de un consultorio de nutrición: agenda, plan alimentario, diario y equipo en Telegram</title>
-<meta name="description" content="Kit de plan abierto para un sistema de atención de un consultorio de nutrición: especificación, 99 pruebas de aceptación, salvaguardas y prompts para que un agente (Claude Code o Codex) lo implemente en tu entorno. El sistema todavía no está implementado.">
+<title>Atende Nutrição — sistema abierto de atención de un consultorio de nutrición: agenda, plan alimentario, diario y equipo en Telegram</title>
+<meta name="description" content="Sistema abierto de atención de un consultorio de nutrición, implementado (v0.8.0, 99/99 pruebas): agenda presencial y en línea, plan alimentario, diario, recordatorios opt-in, WhatsApp por Evolution y equipo en Telegram. Corre en local con ./atende serve y en una VPS con Docker.">
 <link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/atende-nutricao/guia/">
 <link rel="alternate" hreflang="en" href="https://inematds.github.io/atende-nutricao/guia/en/">
 <link rel="alternate" hreflang="es" href="https://inematds.github.io/atende-nutricao/guia/es/">
@@ -125,9 +125,9 @@
   <div class="glow"></div>
   <div class="wrap">
     <div>
-      <span class="chip">Kit de plan · consultorio de nutrición · código abierto</span>
-      <h1>El plan completo para que el paciente <span class="amb">siga</span> el plan</h1>
-      <p class="lead">Especificación, 99 pruebas de aceptación, salvaguardas y prompts para que un agente construya, en tu entorno, la atención de un consultorio de nutrición: agenda presencial y en línea con confirmación y seguimiento, plan alimentario con versiones, diario de comidas, agua y peso, recordatorios opt-in y el equipo en Telegram. El bot nunca prescribe. <strong>El sistema todavía no está implementado: este repositorio es el plan, y tú ejecutas la implementación.</strong></p>
+      <span class="chip">Sistema implementado · v0.8.0 · 99/99 pruebas · código abierto</span>
+      <h1>El sistema listo para que el paciente <span class="amb">siga</span> el plan</h1>
+      <p class="lead">La atención de un consultorio de nutrición, lista para correr en tu entorno: agenda presencial y en línea con confirmación y seguimiento, plan alimentario con versiones, diario de comidas, agua y peso, recordatorios opt-in, chat del paciente y el equipo en Telegram. El bot nunca prescribe. <strong>Implementado el 19/10/2026: v0.8.0, 99 de 99 pruebas pasando y la verificación independiente con Docker aprobada.</strong></p>
       <div class="cta">
         <a class="btn" href="#guia">Empezar la guía</a>
         <a class="btn ghost" href="https://github.com/inematds/atende-nutricao" target="_blank" rel="noopener">Ver en GitHub</a>
@@ -139,12 +139,12 @@
 
 <section id="oque"><div class="wrap">
   <span class="chip">Qué es</span>
-  <h2>Un kit para pedirle al agente: del contrato a las 99 pruebas en verde</h2>
-  <p class="sub">Aquí no hay una aplicación lista. Hay el contrato de lo que la aplicación debe hacer, la batería de pruebas que lo demuestra y las salvaguardas que impiden que el agente haga trampa. Quien construye es Claude Code o Codex, en tu máquina, con tu suscripción. Su hermano <a href="https://inematds.github.io/atende-clinica/guia/es/" target="_blank" rel="noopener">Atende Clínica</a>, que sirvió de base, se hizo exactamente así y cerró 93 de 93 pruebas.</p>
+  <h2>Un sistema abierto, construido del contrato a las 99 pruebas en verde</h2>
+  <p class="sub">El repositorio trae la aplicación lista (servidor, chat del paciente en <code>/</code>, página del equipo en <code>/equipe</code>, Evolution, Telegram y Docker) y también el contrato que la definió, la batería de pruebas que la demuestra y las salvaguardas que impidieron que el agente hiciera trampa. La construyó un agente por suscripción, en ejecución larga, hasta 99 de 99 pruebas. Su hermano <a href="https://inematds.github.io/atende-clinica/guia/es/" target="_blank" rel="noopener">Atende Clínica</a>, que sirvió de base, se hizo del mismo modo y cerró 93 de 93.</p>
   <figure style="margin:0 0 26px;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000"><img src="../assets/banner-grade-es.jpg" alt="Agenda presencial y en línea, plan alimentario con versiones, diario de comidas, agua y peso, recordatorios opt-in, alertas 192 y 188, privacidad de datos de salud y equipo en Telegram" loading="lazy" style="width:100%;display:block"></figure>
   <div class="grid g3">
-    <div class="card"><h3>🥗 El sistema que sale del plan</h3><p>Agenda de primera consulta y controles, presencial o en línea (el enlace lo informa el equipo), sin doble reserva. Plan alimentario registrado por el nutricionista, con versiones, y un bot que responde solo lo que está en el plan de ese paciente. Python 3 solo con biblioteca estándar y SQLite, un consultorio por instalación.</p></div>
-    <div class="card"><h3>📦 El kit</h3><p>Especificación de 21 secciones, 99 pruebas de caja negra, 19 decisiones ya propuestas, mapa hacia Raio-X, prompts para <code>/goal</code> y para el loop headless, y las salvaguardas que congelan el contrato. Un validador adversarial revisó todo y corrigió 10 problemas, 1 de ellos habría bloqueado la ejecución.</p></div>
+    <div class="card"><h3>🥗 El sistema</h3><p>Agenda de primera consulta y controles, presencial o en línea (el enlace lo informa el equipo), sin doble reserva. Plan alimentario registrado por el nutricionista, con versiones, y un bot que responde solo lo que está en el plan de ese paciente. Python 3 solo con biblioteca estándar y SQLite, un consultorio por instalación.</p></div>
+    <div class="card"><h3>📦 El método incluido</h3><p>Especificación de 21 secciones, 99 pruebas de caja negra, 19 decisiones propuestas, mapa hacia Raio-X, los prompts de <code>/goal</code> y del loop headless usados en la construcción, y las salvaguardas que congelaron el contrato. Antes de la ejecución, un validador adversarial corrigió 10 problemas en el plan, 1 de ellos habría bloqueado la ejecución.</p></div>
     <div class="card"><h3>📈 Fuente: Raio-X de Margem</h3><p>Inasistencias, controles que no ocurren y horarios ociosos son las fugas que ataca la agenda. El sistema devuelve <code>atendimentos_mes</code>, <code>falta_pct</code>, <code>ocupacao_pct</code>, <code>clientes_novos_mes</code> y <code>retorno_atual_pct</code> para el panel del <a href="https://inematds.github.io/raio-x-margem/guia/es/" target="_blank" rel="noopener">Raio-X de Margem</a>, que es la fuente de las reglas de negocio.</p></div>
   </div>
   <div class="grid g3" style="margin-top:16px">
@@ -157,7 +157,7 @@
 <section id="fluxo"><div class="wrap">
   <span class="chip">Cómo funciona</span>
   <h2>De "quiero reservar" al diario de todos los días</h2>
-  <p class="sub">Este es el flujo del sistema planeado, lo que el agente va a construir. Servidor Python sin dependencias, SQLite en una carpeta de datos y Docker para la VPS. Evolution y Telegram entran solo por variables de entorno; sin ellas, la bandeja de salida es simulada y no sale ninguna llamada de red.</p>
+  <p class="sub">Este es el flujo del sistema implementado. Servidor Python sin dependencias, SQLite en una carpeta de datos y Docker para la VPS. Evolution y Telegram entran solo por variables de entorno; sin ellas, la bandeja de salida es simulada y no sale ninguna llamada de red.</p>
   <div class="flow">
     <span>Chat del sitio o WhatsApp (Evolution)</span><span class="arr">→</span>
     <span>Reservar: presencial o en línea</span><span class="arr">→</span>
@@ -181,12 +181,12 @@
 <section id="pre"><div class="wrap">
   <span class="chip">Requisitos</span>
   <h2>Lo que necesitas</h2>
-  <p class="sub">Para ejecutar el plan basta con Python para las pruebas y un agente con sesión iniciada en tu suscripción. Docker solo entra en la verificación final y en el despliegue; Evolution y Telegram son opcionales y tuyos.</p>
+  <p class="sub">Para correrlo en local basta con Python 3.10+ (pytest solo para las pruebas). Docker entra en la verificación independiente y en el despliegue; Evolution y Telegram son opcionales y tuyos. Un agente por suscripción solo hace falta si quieres rehacer o adaptar el sistema con el método.</p>
   <div class="grid g3">
-    <div class="card"><h3>Python 3.10+ y pytest</h3><p>Las pruebas usan pytest (herramienta de desarrollo). La aplicación en sí no tendrá dependencias.</p><pre><span class="c"># comprobar</span>
+    <div class="card"><h3>Python 3.10+ y pytest</h3><p>Las pruebas usan pytest (herramienta de desarrollo). La aplicación en sí no tiene dependencias.</p><pre><span class="c"># comprobar</span>
 <span class="k">python3</span> --version
 <span class="k">python3</span> -m pip install pytest</pre></div>
-    <div class="card"><h3>Claude Code o Codex</h3><p>Con tu suscripción, sin API de pago. Para el loop headless, clona <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> en <code>~/projetos</code>.</p><pre><span class="c"># comprobar</span>
+    <div class="card"><h3>Claude Code o Codex (opcional)</h3><p>Solo para rehacerlo o adaptarlo con el método, con tu suscripción, sin API de pago. Para el loop headless, clona <a href="https://github.com/inematds/execucao-longa" target="_blank" rel="noopener">execucao-longa</a> en <code>~/projetos</code>.</p><pre><span class="c"># comprobar</span>
 <span class="k">codex</span> --version   <span class="c"># o: claude --version</span></pre></div>
     <div class="card"><h3>Docker, Evolution y Telegram</h3><p>Docker hace el build final y el despliegue en la VPS. Una instancia de Evolution y un bot de Telegram solo si quieres esos canales; las credenciales quedan en <code>.env</code>.</p><pre><span class="c"># comprobar</span>
 <span class="k">docker</span> --version</pre></div>
@@ -195,72 +195,69 @@
 
 <section id="guia"><div class="wrap">
   <span class="chip">Guía de uso · paso a paso</span>
-  <h2>Del clon al sistema implementado, en tu entorno</h2>
-  <p class="sub">Los comandos de abajo son los del repositorio. El ciclo: responder las decisiones, congelar el contrato, ejecutar el agente hasta <code>99 passed</code> y <code>LIMITES OK</code>, y comprobar con la verificación independiente.</p>
+  <h2>Del clon al sistema funcionando, en tu entorno</h2>
+  <p class="sub">Los comandos de abajo son los del repositorio. El ciclo: clonar y comprobar las pruebas, configurar el consultorio, ejecutarlo en local, comprobar con las verificaciones y publicar en tu VPS.</p>
 
   <div class="step"><div class="b">1</div><div>
-    <h3>Clona el repositorio</h3>
-    <p>Todavía no existe <code>./atende</code>: el repositorio solo tiene el plan. Comprueba que la suite se recolecta sin errores y que aún nada pasa (sin la implementación las pruebas fallan o dan error, y eso es lo esperado).</p>
+    <h3>Clona el repositorio y comprueba las pruebas</h3>
+    <p>El sistema ya está implementado (v0.8.0). Comprueba que toda la batería pasa en tu máquina.</p>
 <pre><span class="k">git clone</span> <span class="s">https://github.com/inematds/atende-nutricao</span> && <span class="k">cd</span> atende-nutricao
-<span class="k">python3</span> -m pytest -q --collect-only | tail -n 1   <span class="c"># 99 tests collected</span>
-<span class="k">python3</span> -m pytest -q | tail -n 1                  <span class="c"># 15 failed, 84 errors (0 passed)</span></pre>
+<span class="k">python3</span> -m pytest -q tests/ | tail -n 1                <span class="c"># 99 passed</span>
+<span class="k">./atende</span> --help                                     <span class="c"># serve, raiox, backup, restaurar</span></pre>
   </div></div>
 
   <div class="step"><div class="b">2</div><div>
-    <h3>Responde las decisiones abiertas</h3>
-    <p>Lee <code>docs/DECISOES-ABERTAS.md</code>: son 19 propuestas por defecto ya aplicadas en la especificación y en las pruebas. Responder "ok em tudo" (todo bien) destraba la ejecución. Si cambias algo marcado con ⚠ (por ejemplo la salvaguarda de campañas, las palabras de alerta o las reglas del peso), edita <code>docs/ESPECIFICACAO.md</code> y las pruebas antes de congelar. Para un piloto real, cambia también <code>exemplos/nutricao.json</code> por tus horarios, servicios, FAQ y plan de ejemplo. Responde además la pregunta sobre el CFN, descrita en el recuadro de abajo. Los documentos están en portugués.</p>
-<pre><span class="k">less</span> docs/DECISOES-ABERTAS.md</pre>
+    <h3>Configura tu consultorio</h3>
+    <p>Copia el ejemplo a una carpeta de datos y edítalo: cambia <code>TROQUE-ESTE-TOKEN</code> por un secreto propio y ajusta consultorio, profesionales, servicios, horarios y FAQ. Profesionales, servicios y FAQ siembran la base solo en la primera ejecución; después se modifican por la API o por la página <code>/equipe</code>. Lee también <code>docs/DECISOES-ABERTAS.md</code>: 19 propuestas por defecto ya aplicadas; los ítems marcados con ⚠ (salvaguarda de campañas, palabras de alerta, reglas del peso) requieren la confirmación del dueño, incluida la pregunta sobre el CFN del recuadro de abajo.</p>
+<pre><span class="k">mkdir</span> -p dados && <span class="k">cp</span> exemplos/nutricao.json dados/nutricao.json
+<span class="k">less</span> docs/DECISOES-ABERTAS.md</pre>
   </div></div>
 
   <div class="step"><div class="b">3</div><div>
-    <h3>Congela el contrato</h3>
-    <p>Con todo commiteado, el script graba el hash de <code>tests/</code>, <code>pytest.ini</code>, la especificación y los dos verificadores, más el commit base en <code>hash-congelado.txt</code>, y hace un commit. Desde entonces, cualquier cambio en las pruebas se detecta. Si hay cambios pendientes, el script se detiene y pide el commit antes.</p>
-<pre><span class="k">git add</span> -A && <span class="k">git commit</span> -m <span class="s">"contrato v1"</span>
-<span class="k">bash</span> longrun/2026-10-05-nutri-v1/congelar.sh</pre>
+    <h3>Ejecútalo en local</h3>
+    <p>Levanta el servidor. El chat del paciente queda en <code>/</code> y la página del equipo en <code>/equipe</code> (header <code>X-Token</code>). Sin las variables de Evolution y Telegram, WhatsApp usa una bandeja de salida simulada y no sale ninguna llamada de red. <code>ATENDE_AGORA</code> fija el reloj solo para pruebas.</p>
+<pre><span class="k">./atende</span> serve --porta 8080 --dados dados
+<span class="c"># abre http://127.0.0.1:8080/ y http://127.0.0.1:8080/equipe</span></pre>
   </div></div>
 
   <div class="step"><div class="b">4</div><div>
-    <h3>Ejecuta el agente (elige un camino)</h3>
-    <p><strong>a) Loop headless con Codex (recomendado).</strong> <code>loop.env</code> define 20 ciclos de 30 min, 8 GB por ciclo, parada tras 3 ciclos sin avance, modelo <code>gpt-6-astra</code> y <code>CODEX_ARGS="-c sandbox_workspace_write.network_access=true"</code>: sin eso el sandbox de Codex bloquea el servidor local de las pruebas.</p>
-<pre><span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-nutri-v1</pre>
-    <p><strong>b) <code>/goal</code> en Claude Code.</strong> Abre una sesión nueva de Claude Code en la carpeta del proyecto y sigue <code>longrun/2026-10-05-nutri-v1/prompt-goal-claude.md</code>: pega la condición de <code>/goal</code> (la salida debe mostrar <code>99 passed</code> y <code>LIMITES OK</code>) y, como primer mensaje, el bloque de <code>prompt-goal-codex.md</code> desde <code>RESULTADO:</code>.</p>
-<pre><span class="k">claude</span>   <span class="c"># sesión nueva, dentro de atende-nutricao</span></pre>
-    <p><strong>c) Codex TUI abierto.</strong> Pega el contenido de <code>longrun/2026-10-05-nutri-v1/prompt-goal-codex.md</code>.</p>
-<pre><span class="k">codex</span> -c sandbox_workspace_write.network_access=true</pre>
-  </div></div>
-
-  <div class="step"><div class="b">5</div><div>
-    <h3>Haz el seguimiento</h3>
-    <p>En el loop, <code>loop.log</code> muestra cada ciclo y <code>progress.md</code> trae una línea por checkpoint. El código de salida del loop dice qué pasó: <code>0</code> concluido (pasó la prueba final), <code>1</code> se alcanzó el tope de ciclos, <code>2</code> detenido por 3 ciclos sin avance, <code>3</code> ya hay otro loop corriendo en la carpeta. Una prueba en conflicto con la especificación va a <code>failures.md</code>: es una compuerta humana, y el agente no debe ajustar ni la prueba ni la especificación.</p>
-<pre><span class="k">tail</span> -f longrun/2026-10-05-nutri-v1/loop.log
-<span class="k">cat</span> longrun/2026-10-05-nutri-v1/state.md</pre>
-  </div></div>
-
-  <div class="step"><div class="b">6</div><div>
-    <h3>Comprueba con la verificación independiente</h3>
-    <p>Cuando el agente diga "concluido", ejecuta los tres comandos. El último el agente nunca lo vio: busca valores de la fixture copiados en el código, levanta un consultorio que nunca apareció (paso de 20 min, consulta de 40 min, control en 15 días, sin atención en línea, plan con comidas de otros nombres, otro reloj) y hace <code>docker build</code> con healthcheck. Después, abre <code>/</code> y <code>/equipe</code> en el navegador.</p>
-<pre><span class="k">python3</span> -m pytest -q tests/                                         <span class="c"># 99 passed</span>
-<span class="k">bash</span> longrun/2026-10-05-nutri-v1/verificar-limites.sh               <span class="c"># LIMITES OK</span>
+    <h3>Comprueba con las verificaciones</h3>
+    <p>Las mismas que cerraron la implementación. La primera revisa las salvaguardas (contrato y pruebas intactos, solo archivos del alcance, sin dependencia externa, sin clave, sin <code>0.0.0.0</code>). La segunda, que el agente nunca vio, busca valores del fixture copiados en el código, levanta un consultorio que nunca apareció (paso de 20 min, consulta de 40 min, control a los 15 días, sin atención en línea, plan con comidas de otros nombres, otro reloj) y hace <code>docker build</code> con healthcheck.</p>
+<pre><span class="k">bash</span> longrun/2026-10-05-nutri-v1/verificar-limites.sh               <span class="c"># LIMITES OK</span>
 <span class="k">python3</span> longrun/2026-10-05-nutri-v1/verificar-independente.py      <span class="c"># INDEPENDENTE OK</span></pre>
   </div></div>
 
-  <div class="step"><div class="b">7</div><div>
-    <h3>Ejecuta tu consultorio y despliega en la VPS</h3>
-    <p>Con el sistema implementado, copia el ejemplo, cambia <code>TROQUE-ESTE-TOKEN</code> y levanta el servidor. El chat del paciente queda en <code>/</code> y la página del equipo en <code>/equipe</code> (header <code>X-Token</code>).</p>
-<pre><span class="k">mkdir</span> -p dados && <span class="k">cp</span> exemplos/nutricao.json dados/nutricao.json
-<span class="k">./atende</span> serve --porta 8080 --dados dados</pre>
-    <p>El despliegue es tuyo, con tus credenciales. El propio agente escribe el README de despliegue como parte del goal: levantar <code>docker compose</code> (puerto solo en <code>127.0.0.1:8080</code>, detrás de un proxy HTTPS), el webhook de Evolution en <code>/webhook/evolution/&lt;secreto&gt;</code> (evento <code>MESSAGES_UPSERT</code>), el webhook de Telegram con <code>setWebhook</code> y <code>secret_token</code>, y el respaldo diario (<code>./atende backup</code> en el cron).</p>
-<pre><span class="k">cp</span> .env.exemplo .env && <span class="k">chmod</span> 600 .env   <span class="c"># completa EVOLUTION_*, TELEGRAM_*, WEBHOOK_SEGREDO</span>
-<span class="k">docker compose</span> up -d --build</pre>
+  <div class="step"><div class="b">5</div><div>
+    <h3>Despliega en tu VPS</h3>
+    <p>El despliegue es tuyo, con tus credenciales, en una VPS con Docker y Compose. El puerto publicado queda solo en <code>127.0.0.1:8080</code>, detrás de tu proxy HTTPS (reenvía <code>/</code>, <code>/equipe</code>, <code>/api/</code> y <code>/webhook/</code>). El volumen <code>./dados</code> guarda base y configuración; <code>./backups</code> recibe los respaldos.</p>
+<pre><span class="k">umask</span> 077 && <span class="k">cp</span> .env.exemplo .env && <span class="k">mkdir</span> -p dados backups
+<span class="k">test</span> -f dados/nutricao.json || <span class="k">cp</span> exemplos/nutricao.json dados/nutricao.json
+<span class="k">chmod</span> 700 dados backups && <span class="k">chmod</span> 600 .env dados/nutricao.json
+<span class="k">docker compose</span> up -d --build && <span class="k">docker compose</span> ps</pre>
+    <p>Integraciones, solo las que vayas a usar, en el <code>.env</code>: Evolution (<code>EVOLUTION_URL</code>, <code>EVOLUTION_API_KEY</code>, <code>EVOLUTION_INSTANCIA</code>, <code>WEBHOOK_SEGREDO</code>; webhook en <code>/webhook/evolution/&lt;secreto&gt;</code>, evento <code>MESSAGES_UPSERT</code>) y Telegram (<code>TELEGRAM_*</code>; <code>setWebhook</code> hacia <code>/webhook/telegram</code> con <code>secret_token</code>). Programa una llamada a <code>POST /api/tarefas/rodar</code> por minuto (confirmaciones, controles, recordatorios) y el respaldo diario en el cron.</p>
+<pre><span class="k">docker compose</span> exec -T atende ./atende backup --dados /dados --saida /backups/estado.sqlite3</pre>
+    <p>El paso a paso completo (proxy, webhooks, tareas, respaldo y restauración) está en la sección "Despliegue en la VPS" del <a href="https://github.com/inematds/atende-nutricao/blob/main/README.es.md#despliegue-en-la-vps" target="_blank" rel="noopener">README</a>.</p>
   </div></div>
 
-  <div class="card" style="border-color:var(--amb)"><h3>⚠️ Antes de publicar cualquier campaña: el CFN</h3><p>Las reglas de publicidad del nutricionista, del Consejo Federal de Nutricionistas de Brasil (CFN), todavía no se investigaron en este kit. La salvaguarda de campañas (sección 11 de la especificación) es el mínimo común a los consejos de médicos, odontólogos y fisioterapeutas: bloquea <code>promessa_resultado</code> (garantizado, resultado garantizado, 100%) y <code>antes_depois</code> (antes y después). No se cita ningún artículo del CFN, a propósito. <strong>El dueño del consultorio confirma las reglas del CFN (precio, promoción, testimonios, antes y después) antes de publicar cualquier campaña</strong>; si hay una regla adicional, entra como un código nuevo y cambia el contrato (decisión 4 en <code>docs/DECISOES-ABERTAS.md</code>).</p></div>
+  <div class="step"><div class="b">6</div><div>
+    <h3>Lo que depende de ti</h3>
+    <p>El código está listo; el resto es del dueño del consultorio: las credenciales reales de Evolution (WhatsApp) y del bot de Telegram, el despliegue en la VPS, los datos reales (horarios, servicios, FAQ, planes), la confirmación con el nutricionista de las palabras de alerta y las reglas del CFN antes de cualquier campaña.</p>
+  </div></div>
+
+  <div class="step"><div class="b">7</div><div>
+    <h3>Cómo se hizo (y cómo rehacerlo o adaptarlo)</h3>
+    <p>El sistema se construyó con el método de <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">ejecución larga</a>: primero el contrato (<code>docs/ESPECIFICACAO.md</code>) y las 99 pruebas, después el congelamiento por hash (<code>congelar.sh</code>), y luego un agente por suscripción trabajó en ciclos hasta <code>99 passed</code>, <code>LIMITES OK</code> e <code>INDEPENDENTE OK</code>. ¿Quieres adaptarlo a otro consultorio o cambiar una regla marcada con ⚠? El método sigue en el repositorio: edita la especificación y las pruebas, vuelve a congelar y ejecuta el loop headless (<code>loop-longrun.sh</code>) o el <code>/goal</code> en Claude Code o en Codex, siguiendo los prompts de <code>longrun/2026-10-05-nutri-v1/</code>.</p>
+<pre><span class="k">bash</span> longrun/2026-10-05-nutri-v1/congelar.sh
+<span class="k">~/projetos/execucao-longa/tools/loop-longrun.sh</span> longrun/2026-10-05-nutri-v1</pre>
+  </div></div>
+
+  <div class="card" style="border-color:var(--amb)"><h3>⚠️ Antes de publicar cualquier campaña: el CFN</h3><p>Las reglas de publicidad del nutricionista, del Consejo Federal de Nutricionistas de Brasil (CFN), todavía no se investigaron en este proyecto. La salvaguarda de campañas (sección 11 de la especificación) es el mínimo común a los consejos de médicos, odontólogos y fisioterapeutas: bloquea <code>promessa_resultado</code> (garantizado, resultado garantizado, 100%) y <code>antes_depois</code> (antes y después). No se cita ningún artículo del CFN, a propósito. <strong>El dueño del consultorio confirma las reglas del CFN (precio, promoción, testimonios, antes y después) antes de publicar cualquier campaña</strong>; si hay una regla adicional, entra como un código nuevo y cambia el contrato (decisión 4 en <code>docs/DECISOES-ABERTAS.md</code>).</p></div>
 </div></section>
 
 <section id="kit"><div class="wrap">
   <span class="chip">Qué incluye el kit</span>
   <h2>Contrato, pruebas y salvaguardas, con los números reales</h2>
-  <p class="sub">Todo lo que el agente necesita para construir, y todo lo que impide que finja haber construido.</p>
+  <p class="sub">Todo lo que el agente usó para construir el sistema, y todo lo que le impidió fingir que lo había construido. Sigue en el repositorio para rehacerlo o adaptarlo.</p>
   <div class="grid g3">
     <div class="card"><h3>99 pruebas de aceptación</h3><p>De caja negra, por HTTP y por línea de comandos, en 11 archivos.</p><pre>test_agenda.py                16
 test_integracoes.py           15
@@ -288,17 +285,17 @@ test_lgpd_raiox.py             3</pre></div>
 <section id="roadmap"><div class="wrap">
   <span class="chip">Roadmap</span>
   <h2>Dónde está y hacia dónde va</h2>
-  <p class="sub">El plan está listo y validado. La implementación todavía no existe: nace cuando ejecutas el <code>/goal</code> o el loop, con el método <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a>. <a href="https://inematds.github.io/atende-clinica/guia/es/" target="_blank" rel="noopener">Atende Clínica</a> siguió el mismo camino y cerró 93 de 93.</p>
+  <p class="sub">Plan e implementación están hechos: el sistema se construyó el 19/10/2026 con el método <a href="https://inematds.github.io/execucao-longa/guia/" target="_blank" rel="noopener">execucao-longa</a>, como <a href="https://inematds.github.io/atende-clinica/guia/es/" target="_blank" rel="noopener">Atende Clínica</a>, que cerró 93 de 93. El próximo paso es el piloto en un consultorio real.</p>
   <div class="phase"><div class="tag">Plan ✅</div><div class="d"><strong>Especificación, pruebas y salvaguardas validadas</strong><span>Contrato de 21 secciones, 99 pruebas de aceptación, decisiones propuestas, mapa hacia Raio-X y validación adversarial concluida el 05/10/2026.</span></div></div>
-  <div class="phase"><div class="tag">Implementación</div><div class="d"><strong>Tú ejecutas el /goal o el loop</strong><span>Responder las decisiones, congelar el contrato y dejar que el agente trabaje hasta <code>99 passed</code> y <code>LIMITES OK</code>, y luego la verificación independiente. Hoy el sistema no está implementado.</span></div></div>
-  <div class="phase"><div class="tag">Piloto</div><div class="d"><strong>En un consultorio real</strong><span>Configurar horarios, servicios, FAQ y plan de ejemplo verdaderos, confirmar con el nutricionista las palabras de alerta y las reglas del CFN, publicar en la VPS y seguir inasistencias, ocupación y control en el Panel de Recuperación de Raio-X.</span></div></div>
+  <div class="phase"><div class="tag">Implementación ✅</div><div class="d"><strong>v0.8.0 entregada</strong><span>Backend, chat del paciente en <code>/</code>, página <code>/equipe</code>, Evolution, Telegram, Docker e instrucciones de VPS. 99 de 99 pruebas, <code>LIMITES OK</code> e <code>INDEPENDENTE OK</code> (con <code>docker build</code> y healthcheck) el 19/10/2026.</span></div></div>
+  <div class="phase"><div class="tag">Piloto</div><div class="d"><strong>En un consultorio real</strong><span>Configurar horarios, servicios, FAQ y planes verdaderos, conectar las credenciales reales de Evolution y Telegram, confirmar con el nutricionista las palabras de alerta y las reglas del CFN, publicar en la VPS y seguir inasistencias, ocupación y control en el Panel de Recuperación de Raio-X.</span></div></div>
   <div class="phase"><div class="tag">Después</div><div class="d"><strong>Fuera de la v1</strong><span>Cálculo nutricional, análisis de fotos, pagos, convenios, varios consultorios, LLM en las respuestas e interfaz en EN/ES quedan para una próxima versión, con compuerta humana.</span></div></div>
 </div></section>
 
 <footer>
   <div class="wrap">
     <div class="pill">Python 3 · biblioteca estándar</div><div class="pill">SQLite</div><div class="pill">Docker</div><div class="pill">Evolution API</div><div class="pill">Telegram</div><div class="pill">LGPD</div>
-    <p style="margin-top:18px">Atende Nutrição · kit de plan abierto ·
+    <p style="margin-top:18px">Atende Nutrição · sistema abierto · v0.8.0 ·
       <a href="https://github.com/inematds/atende-nutricao">inematds/atende-nutricao</a> ·
       <a href="https://inema.club">INEMA.CLUB</a></p>
   </div>
