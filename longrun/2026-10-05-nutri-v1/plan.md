@@ -1,9 +1,6 @@
-# Plano (reescrever, não acumular)
+# Plano
 
-## Estratégia atual
-Contrato (`docs/ESPECIFICACAO.md`) e 99 testes caixa-preta prontos; nenhuma implementação ainda. Após `congelar.sh`, implementar em camadas, do que destrava mais testes para o que destrava menos, rodando a suíte a cada passo.
-
-## Próximos passos
-1. Base: `./atende serve` com `PORTA=<n>`, `--dados` (cria a pasta), cópia de `exemplos/nutricao.json`, SQLite com semente de profissionais/serviços/FAQ, `X-Token` antes de tudo, `Content-Type: application/json`, `/api/saude`, `/api/servicos`, páginas `/` e `/equipe` (destrava `test_basico`).
-2. Agenda: grade, 422/409/404, concorrência (transação), modalidade/link, cancelar/remarcar/presença, listagens ordenadas, pacientes e telefone (destrava `test_agenda`); depois cadastros/bloqueios/backup (`test_cadastros`).
-3. Conversa na ordem das 13 regras (normalização que preserva `,`/`.` entre dígitos; pendência só com texto igual), lembretes/espera/retorno, plano alimentar, diário/peso/metas, campanhas, LGPD, Raio-X, Evolution (texto e foto por metadados), Telegram, Docker/README.
+## Próximos 3 passos
+1. Conversa persistente: normalização preservando decimais, prioridades emergência/alerta/parar/humano, fluxo de agendamento, link/FAQ/não entendi; preparar integração com plano/diário e pendências sem consumir texto parcial.
+2. Confirmação, espera e retorno: caixa de saída simulada persistente, tarefas idempotentes, oferta do mesmo profissional/horário, confirmação após remarcação e retorno ao marcar presença. Rodar suíte inteira.
+3. Plano alimentar e diário/peso/metas (incluindo lembretes); depois campanhas → LGPD/Raio-X → cadastros/bloqueios/backup → integrações falsas → Docker/README → páginas. Atualizar registros e validar limites a cada ciclo.
