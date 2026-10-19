@@ -14,7 +14,7 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def respond(self, status, body):
-        data = json.dumps(body, ensure_ascii=False).encode('utf-8')
+        data = b'' if status == 204 else json.dumps(body, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(data)))
@@ -66,8 +66,22 @@ def main():
     serve.add_argument('--porta', type=int, default=8080)
     serve.add_argument('--dados', required=True)
     serve.add_argument('--host', default='127.0.0.1')
+    report = commands.add_parser('raiox')
+    report.add_argument('--dados', required=True)
+    report.add_argument('--mes', required=True)
+    report.add_argument('--acompanhamento', required=True)
     args = parser.parse_args()
     store = Store(args.dados)
+    if args.command == 'raiox':
+        from .reporting import Reporting
+        db = store.connect()
+        try:
+            with db:
+                db.execute('BEGIN')
+                Reporting(Domain(store, db)).export(args.mes, args.acompanhamento)
+        finally:
+            db.close()
+        return
     server = ThreadingHTTPServer((args.host, args.porta), Handler)
     server.store = store
     print(f'PORTA={server.server_address[1]}', flush=True)

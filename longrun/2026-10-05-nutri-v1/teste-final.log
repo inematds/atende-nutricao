@@ -1,49 +1,9 @@
-...............F..FFF.FFFFFFF.FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF [ 72%]
-FFFFFFFFFFFFFFFFFFFFFFFFFFF                                              [100%]
+...................F..FFFFFFF.FFFFFFF.......................FFFFFFFFFFFF [ 72%]
+FFFFFFF.........FFF........                                              [100%]
 =================================== FAILURES ===================================
-____________________ test_telefone_normalizado_e_duplicado _____________________
-
-api = <conftest.Cliente object at 0xf3f89a5114c0>
-
-    def test_telefone_normalizado_e_duplicado(api):
-        st, r = api.post("/api/pacientes", {"nome": "A", "telefone": "(41) 99999-0001"})
-        assert st == 201
-        st2, r2 = api.post("/api/pacientes", {"nome": "A", "telefone": "+55 41 99999 0001"})
-        assert st2 == 200 and r2["id"] == r["id"]
-        st3, r3 = api.post("/api/pacientes", {"nome": "B", "telefone": "41 3333-4444"})
-        assert st3 == 201 and r3["id"] != r["id"]
-        st, dados = api.get(f"/api/pacientes/{r3['id']}/dados")
->       assert dados["paciente"]["telefone"] == "+554133334444"
-               ^^^^^^^^^^^^^^^^^
-E       KeyError: 'paciente'
-
-tests/test_agenda.py:179: KeyError
-_______________ test_rotas_da_equipe_exigem_token_antes_de_tudo ________________
-
-api = <conftest.Cliente object at 0xf3f89a512780>
-
-    def test_rotas_da_equipe_exigem_token_antes_de_tudo(api):
-        # corpo vazio e id inexistente: mesmo assim 401 (a checagem do token vem antes de 404/422)
-        for metodo, rota in [("GET", "/api/saida"), ("GET", "/api/agendamentos?data=2026-10-07"),
-                             ("POST", "/api/pacientes"), ("GET", "/api/atendimento-humano"),
-                             ("GET", "/api/raiox?mes=2026-10"), ("POST", "/api/campanhas"),
-                             ("GET", "/api/pacientes/1/plano"), ("POST", "/api/pacientes/1/plano"),
-                             ("GET", "/api/pacientes/1/diario"), ("GET", "/api/pacientes/1/pesos"),
-                             ("POST", "/api/pacientes/1/pesos"), ("PUT", "/api/pacientes/1/metas"),
-                             ("POST", "/api/agendamentos/1/link"), ("GET", "/api/profissionais")]:
-            corpo = {} if metodo in ("POST", "PUT") else None
-            assert api.req(metodo, rota, corpo, token=None)[0] == 401, rota
-            assert api.req(metodo, rota, corpo, token="errado")[0] == 401, rota
-        # públicas
-        assert api.get("/api/horarios?servico=retorno&data=2026-10-07", token=None)[0] == 200
-        assert api.get("/api/servicos", token=None)[0] == 200
->       assert api.post("/api/mensagens", {"telefone": "41911112222", "texto": "oi"}, token=None)[0] == 200
-E       assert 404 == 200
-
-tests/test_basico.py:34: AssertionError
 _________________________________ test_paginas _________________________________
 
-api = <conftest.Cliente object at 0xf3f89a512f30>
+api = <conftest.Cliente object at 0xe944a57114f0>
 
     def test_paginas(api):
         st, html = api.get("/", token=None)
@@ -51,34 +11,9 @@ api = <conftest.Cliente object at 0xf3f89a512f30>
 E       assert (404 == 200)
 
 tests/test_basico.py:39: AssertionError
-______________________ test_estado_persiste_ao_reiniciar _______________________
-
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_estado_persiste_ao_reinic0/dados')
-
-    def test_estado_persiste_ao_reiniciar(dados):
-        s = Servidor(dados)
-        api = s.subir()
-        pid = api.paciente()
-        st, ag = api.agenda(pid, "2026-10-07T09:00", profissional="lia")
-        assert st == 201
->       api.plano(pid)
-
-tests/test_basico.py:53: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a513c20>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
 __________________ test_profissional_novo_com_horario_proprio __________________
 
-api = <conftest.Cliente object at 0xf3f89a577560>
+api = <conftest.Cliente object at 0xe944a5711e20>
 
     def test_profissional_novo_com_horario_proprio(api):
         st, r = api.post("/api/profissionais", {
@@ -91,7 +26,7 @@ E       assert 404 == 201
 tests/test_cadastros.py:18: AssertionError
 _________________________ test_profissional_validacoes _________________________
 
-api = <conftest.Cliente object at 0xf3f89a574e60>
+api = <conftest.Cliente object at 0xe944a57135c0>
 
     def test_profissional_validacoes(api):
 >       assert api.post("/api/profissionais", {"id": "lia", "nome": "X", "servicos": ["retorno"]})[0] == 409
@@ -100,7 +35,7 @@ E       assert 404 == 409
 tests/test_cadastros.py:30: AssertionError
 _____________________ test_editar_e_desativar_profissional _____________________
 
-api = <conftest.Cliente object at 0xf3f89a574950>
+api = <conftest.Cliente object at 0xe944a57a0440>
 
     def test_editar_e_desativar_profissional(api):
         st, r = api.put("/api/profissionais/marcos", {"servicos": ["primeira", "retorno", "bioimpedancia"]})
@@ -110,7 +45,7 @@ E       assert (404 == 200)
 tests/test_cadastros.py:37: AssertionError
 ___________________ test_servicos_crud_e_chat_usa_so_ativos ____________________
 
-api = <conftest.Cliente object at 0xf3f89a575d90>
+api = <conftest.Cliente object at 0xe944a57a05c0>
 
     def test_servicos_crud_e_chat_usa_so_ativos(api):
 >       assert api.post("/api/servicos", {"id": "avaliacao", "nome": "Avaliação física", "duracao_min": 90, "retorno_dias": None})[0] == 201
@@ -119,7 +54,7 @@ E       assert 404 == 201
 tests/test_cadastros.py:49: AssertionError
 ________________________ test_pacientes_busca_e_edicao _________________________
 
-api = <conftest.Cliente object at 0xf3f89a576f30>
+api = <conftest.Cliente object at 0xe944a57a0890>
 
     def test_pacientes_busca_e_edicao(api):
         p1 = api.paciente("José Antônio Souza", "41999990001")
@@ -137,7 +72,7 @@ E       assert (404 == 200)
 tests/test_cadastros.py:74: AssertionError
 __________________________ test_faq_crud_vale_na_hora __________________________
 
-api = <conftest.Cliente object at 0xf3f89a540500>
+api = <conftest.Cliente object at 0xe944a57a0e00>
 
     def test_faq_crud_vale_na_hora(api):
         st, r = api.post("/api/faq", {"perguntas": ["atendem criança"], "resposta": "Sim, a partir de 3 anos."})
@@ -147,7 +82,7 @@ E       assert 404 == 201
 tests/test_cadastros.py:82: AssertionError
 _________________ test_bloqueio_tira_horarios_e_avisa_conflito _________________
 
-api = <conftest.Cliente object at 0xf3f89a576150>
+api = <conftest.Cliente object at 0xe944a57a1d30>
 
     def test_bloqueio_tira_horarios_e_avisa_conflito(api):
         pid = api.paciente()
@@ -160,7 +95,7 @@ E       assert (404 == 201)
 tests/test_cadastros.py:95: AssertionError
 _______________________ test_semente_so_na_primeira_vez ________________________
 
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_semente_so_na_primeira_ve0/dados')
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_semente_so_na_primeira_ve0/dados')
 
     def test_semente_so_na_primeira_vez(dados):
         s = Servidor(dados)
@@ -178,32 +113,26 @@ E         Use -v to get more diff
 tests/test_cadastros.py:124: AssertionError
 ___________________________ test_backup_e_restaurar ____________________________
 
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_backup_e_restaurar0/dados')
-tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_backup_e_restaurar0')
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_backup_e_restaurar0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_backup_e_restaurar0')
 
     def test_backup_e_restaurar(dados, tmp_path):
         s = Servidor(dados)
         api = s.subir()
         pid = api.paciente("Guardada", "41999990009")
         api.agenda(pid, "2026-10-07T09:00", "retorno", "lia")
->       api.plano(pid)
+        api.plano(pid)
+        arq = tmp_path / "copia.bak"
+        r = subprocess.run([str(RAIZ / "atende"), "backup", "--dados", str(dados), "--saida", str(arq)],
+                           cwd=RAIZ, capture_output=True, timeout=30)
+>       assert r.returncode == 0 and arq.exists() and arq.stat().st_size > 0
+E       assert (2 == 0)
+E        +  where 2 = CompletedProcess(args=['/home/nmaldaner/projetos/atende-nutricao/atende', 'backup', '--dados', '/tmp/pytest-of-nmaldan...r=b"usage: atende [-h] {serve} ...\natende: error: argument command: invalid choice: 'backup' (choose from 'serve')\n").returncode
 
-tests/test_cadastros.py:132: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5745c0>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
+tests/test_cadastros.py:136: AssertionError
 ___________________ test_trava_minima_de_publicidade[caso-0] ___________________
 
-api = <conftest.Cliente object at 0xf3f89a511910>
+api = <conftest.Cliente object at 0xe944a5768530>
 texto = 'Emagreça 10 kg com resultado garantido'
 esperado = {'promessa_resultado'}
 
@@ -223,7 +152,7 @@ E           assert 404 == 422
 tests/test_campanhas.py:22: AssertionError
 ___________________ test_trava_minima_de_publicidade[caso-1] ___________________
 
-api = <conftest.Cliente object at 0xf3f89a513c20>
+api = <conftest.Cliente object at 0xe944a57a0e60>
 texto = 'Veja o antes e depois das nossas pacientes'
 esperado = {'antes_depois'}
 
@@ -243,7 +172,7 @@ E           assert 404 == 422
 tests/test_campanhas.py:22: AssertionError
 ___________________ test_trava_minima_de_publicidade[caso-2] ___________________
 
-api = <conftest.Cliente object at 0xf3f89a511580>
+api = <conftest.Cliente object at 0xe944a57a0a70>
 texto = 'Dieta 100% eficaz: veja o antes e depois'
 esperado = {'antes_depois', 'promessa_resultado'}
 
@@ -263,7 +192,7 @@ E           assert 404 == 422
 tests/test_campanhas.py:22: AssertionError
 ___________________ test_trava_minima_de_publicidade[caso-3] ___________________
 
-api = <conftest.Cliente object at 0xf3f89a5b42c0>
+api = <conftest.Cliente object at 0xe944a57a0560>
 texto = 'Semana da alimentação saudável: agende sua consulta.', esperado = None
 
     @pytest.mark.parametrize("texto,esperado", CASOS, ids=[f"caso-{i}" for i in range(len(CASOS))])
@@ -278,542 +207,18 @@ E           assert (404 == 200)
 tests/test_campanhas.py:18: AssertionError
 ________________ test_publico_so_com_consentimento_e_sem_parar _________________
 
-api = <conftest.Cliente object at 0xf3f89a5b4ce0>
+api = <conftest.Cliente object at 0xe944a5712de0>
 
     def test_publico_so_com_consentimento_e_sem_parar(api):
         api.paciente("Com", "41999990001", marketing=True)
         api.paciente("Sem", "41999990002", marketing=False)
         api.paciente("Parou", "41999990003", marketing=True)
->       api.msg("41999990003", "parar")
-
-tests/test_campanhas.py:31: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b4ce0>, telefone = '41999990003'
-texto = 'parar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_________________________ test_faq_responde_exatamente _________________________
-
-api = <conftest.Cliente object at 0xf3f89a5b53d0>
-
-    def test_faq_responde_exatamente(api):
->       assert api.msg(TEL, "Oi, vcs aceitam convenio?") == "Atendemos Unimed e particular, com recibo para reembolso."
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:16: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b53d0>, telefone = '41988887777'
-texto = 'Oi, vcs aceitam convenio?'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_________________ test_nao_entendi_e_depois_passa_para_humano __________________
-
-api = <conftest.Cliente object at 0xf3f89a5b5ac0>
-
-    def test_nao_entendi_e_depois_passa_para_humano(api):
->       r = norm(api.msg(TEL, "posso tomar whey depois do treino?"))   # fora do FAQ e do plano: o bot não orienta
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:22: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b5ac0>, telefone = '41988887777'
-texto = 'posso tomar whey depois do treino?'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-___________________________ test_pedido_de_atendente ___________________________
-
-api = <conftest.Cliente object at 0xf3f89a513920>
-
-    def test_pedido_de_atendente(api):
->       assert "atendente" in norm(api.msg(TEL, "quero falar com um atendente"))
-                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:31: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a513920>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-____________________________ test_emergencia_fisica ____________________________
-
-api = <conftest.Cliente object at 0xf3f89a5749b0>
-
-    def test_emergencia_fisica(api):
->       r = norm(api.msg(TEL, "Estou com DOR NO PEITO e falta de ar"))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:37: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5749b0>, telefone = '41988887777'
-texto = 'Estou com DOR NO PEITO e falta de ar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-__________________________ test_alerta_comportamental __________________________
-
-api = <conftest.Cliente object at 0xf3f89a575820>
-
-    def test_alerta_comportamental(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_conversa.py:45: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a575820>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-______________________ test_emergencia_vence_agendamento _______________________
-
-api = <conftest.Cliente object at 0xf3f89a5b5c10>
-
-    def test_emergencia_vence_agendamento(api):
->       r = norm(api.msg(TEL, "quero marcar consulta, estou sangrando muito"))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:54: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b5c10>, telefone = '41988887777'
-texto = 'quero marcar consulta, estou sangrando muito'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_______________ test_agendamento_pelo_chat_paciente_novo_online ________________
-
-api = <conftest.Cliente object at 0xf3f89a5b6d50>
-
-    def test_agendamento_pelo_chat_paciente_novo_online(api):
->       assert "nome" in norm(api.msg(TEL, "quero marcar uma consulta"))
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:60: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b6d50>, telefone = '41988887777'
-texto = 'quero marcar uma consulta'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-________ test_agendamento_pelo_chat_paciente_conhecido_e_opcao_invalida ________
-
-api = <conftest.Cliente object at 0xf3f89a5b5c40>
-
-    def test_agendamento_pelo_chat_paciente_conhecido_e_opcao_invalida(api):
-        api.paciente("Maria", TEL)
->       r = api.msg(TEL, "quero agendar")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:81: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b5c40>, telefone = '41988887777'
-texto = 'quero agendar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-___________ test_chat_nao_pergunta_modalidade_sem_atendimento_online ___________
-
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_chat_nao_pergunta_modalid0/dados')
-
-    def test_chat_nao_pergunta_modalidade_sem_atendimento_online(dados):
-        com_config(dados, atende_online=False)
-        api = Servidor(dados).subir()
-        api.paciente("Maria", TEL)
->       api.msg(TEL, "quero agendar")
-
-tests/test_conversa.py:101: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5111f0>, telefone = '41988887777'
-texto = 'quero agendar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_______________ test_chat_oferece_proximos_dias_quando_hoje_lota _______________
-
-api = <conftest.Cliente object at 0xf3f89a513620>
-
-    def test_chat_oferece_proximos_dias_quando_hoje_lota(api):
-        pid = api.paciente("Ocupa", "41900000001")
-        for prof in ("lia", "marcos"):
-            for h in ("11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"):
-                assert api.agenda(pid, f"2026-10-06T{h}", "retorno", prof)[0] == 201
->       api.msg(TEL, "quero agendar")
-
-tests/test_conversa.py:115: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a513620>, telefone = '41988887777'
-texto = 'quero agendar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-__________________________ test_cancelar_sai_do_fluxo __________________________
-
-api = <conftest.Cliente object at 0xf3f89a5b7080>
-
-    def test_cancelar_sai_do_fluxo(api):
-        api.paciente("Maria", TEL)
->       api.msg(TEL, "quero agendar")
-
-tests/test_conversa.py:123: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b7080>, telefone = '41988887777'
-texto = 'quero agendar'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_________________________ test_parar_bloqueia_contato __________________________
-
-api = <conftest.Cliente object at 0xf3f89a5b5850>
-
-    def test_parar_bloqueia_contato(api):
-        pid = api.paciente("Maria", TEL)
-        api.agenda(pid, "2026-10-07T09:00", profissional="lia")
-        api.put(f"/api/pacientes/{pid}/metas", {"lembretes_agua": ["09:00"]})
->       assert "nao vai mais receber" in norm(api.msg(TEL, "PARAR"))
-                                              ^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:133: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5b5850>, telefone = '41988887777'
-texto = 'PARAR'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_______________________ test_link_da_consulta_pelo_chat ________________________
-
-api = <conftest.Cliente object at 0xf3f89a57c890>
-
-    def test_link_da_consulta_pelo_chat(api):
-        pid = api.paciente("Maria", TEL)
->       assert "nao encontrei" in norm(api.msg(TEL, "qual o link da consulta?"))
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_conversa.py:143: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57c890>, telefone = '41988887777'
-texto = 'qual o link da consulta?'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-__________________ test_peso_registra_serie_e_resposta_neutra __________________
-
-api = <conftest.Cliente object at 0xf3f89a57cb00>
-
-    def test_peso_registra_serie_e_resposta_neutra(api):
-        pid = api.paciente("Maria", TEL)
->       assert "nenhum peso" in norm(api.msg(TEL, "qual meu peso?"))
-                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_diario.py:16: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57cb00>, telefone = '41988887777'
-texto = 'qual meu peso?'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-____________________ test_peso_fora_da_faixa_e_sem_cadastro ____________________
-
-api = <conftest.Cliente object at 0xf3f89a5125a0>
-
-    def test_peso_fora_da_faixa_e_sem_cadastro(api):
-        pid = api.paciente("Maria", TEL)
->       r = norm(api.msg(TEL, "peso 500"))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_diario.py:40: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5125a0>, telefone = '41988887777'
-texto = 'peso 500'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_____________________ test_agua_copos_total_do_dia_e_meta ______________________
-
-api = <conftest.Cliente object at 0xf3f89a5750a0>
-
-    def test_agua_copos_total_do_dia_e_meta(api):
-        pid = api.paciente("Maria", TEL)
->       r = norm(api.msg(TEL, "2 copos"))
-                 ^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_diario.py:53: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5750a0>, telefone = '41988887777'
-texto = '2 copos'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-____________________ test_refeicao_feita_e_pulada_por_nome _____________________
-
-api = <conftest.Cliente object at 0xf3f89a57fbc0>
-
-    def test_refeicao_feita_e_pulada_por_nome(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_diario.py:66: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57fbc0>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_______________ test_refeicao_sem_nome_usa_horario_e_exige_plano _______________
-
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_refeicao_sem_nome_usa_hor0/dados')
-
-    def test_refeicao_sem_nome_usa_horario_e_exige_plano(dados):
-        s = Servidor(dados)   # 09:00 (um servidor por vez no mesmo --dados: parar antes de subir o próximo)
-        api = s.subir()
-        pid = api.paciente("Maria", TEL)
->       assert "nutricionista" in norm(api.msg(TEL, "comi"))
-                                       ^^^^^^^^^^^^^^^^^^^^
-
-tests/test_diario.py:81: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57ecc0>, telefone = '41988887777'
-texto = 'comi'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-_____________________ test_diario_resumo_e_filtro_por_dia ______________________
-
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_diario_resumo_e_filtro_po0/dados')
-
-    def test_diario_resumo_e_filtro_por_dia(dados):
-        s = Servidor(dados)   # 06/10
-        api = s.subir()
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_diario.py:105: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57c200>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_______________________ test_metas_put_get_e_validacoes ________________________
-
-api = <conftest.Cliente object at 0xf3f89a57d070>
-
-    def test_metas_put_get_e_validacoes(api):
-        pid = api.paciente("Maria", TEL)
->       chaves(api.get(f"/api/pacientes/{pid}/metas")[1], lembretes_agua=[], lembretes_refeicoes=False, meta_agua_copos=None)
-
-tests/test_diario.py:125: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-d = {'erro': 'Rota não implementada'}
-esperado = {'lembretes_agua': [], 'lembretes_refeicoes': False, 'meta_agua_copos': None}
-k = 'lembretes_agua', v = []
-@py_assert1 = <built-in method get of dict object at 0xf3f89a581b00>
-@py_assert4 = None, @py_assert6 = False
-@py_format8 = "None\n{None = <built-in method get of dict object at 0xf3f89a581b00>\n{<built-in method get of dict object at 0xf3f89a581b00> = {'erro': 'Rota não implementada'}.get\n}('lembretes_agua')\n} == []"
-@py_format10 = "('lembretes_agua', {'erro': 'Rota não implementada'})\n>assert None\n{None = <built-in method get of dict object at 0...-in method get of dict object at 0xf3f89a581b00> = {'erro': 'Rota não implementada'}.get\n}('lembretes_agua')\n} == []"
-
-    def chaves(d, **esperado):
-        """Compara chave a chave (um corpo HTTP pode ganhar campos novos sem quebrar o contrato)."""
-        for k, v in esperado.items():
->           assert d.get(k) == v, (k, d)
-E           AssertionError: ('lembretes_agua', {'erro': 'Rota não implementada'})
-E           assert None == []
-E            +  where None = <built-in method get of dict object at 0xf3f89a581b00>('lembretes_agua')
-E            +    where <built-in method get of dict object at 0xf3f89a581b00> = {'erro': 'Rota não implementada'}.get
-
-tests/conftest.py:45: AssertionError
-______________ test_lembretes_de_agua_so_na_janela_de_tolerancia _______________
-
-api = <conftest.Cliente object at 0xf3f89a5b5880>
-
-    def test_lembretes_de_agua_so_na_janela_de_tolerancia(api):
-        pid = api.paciente("Maria", TEL)
-        api.put(f"/api/pacientes/{pid}/metas", {"lembretes_agua": ["09:00", "15:00"]})
->       assert rodar(api) == 1                            # agora 09:00: 09:00 ≤ 09:00 ≤ 10:00
-               ^^^^^^^^^^
-
-tests/test_diario.py:141: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f89a5b5880>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_diario.py:10: AssertionError
-__________________ test_lembretes_de_refeicao_seguem_o_plano ___________________
-
-api = <conftest.Cliente object at 0xf3f89a57d6a0>
-
-    def test_lembretes_de_refeicao_seguem_o_plano(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_diario.py:154: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57d6a0>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_____________________ test_parar_lembretes_e_nao_contatar ______________________
-
-api = <conftest.Cliente object at 0xf3f89a57f020>
-
-    def test_parar_lembretes_e_nao_contatar(api):
-        p1 = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        for p in (p1, p2):
-            api.put(f"/api/pacientes/{p}/metas", {"lembretes_agua": ["09:00"], "meta_agua_copos": 8})
-        api.agenda(p2, "2026-10-07T09:00", profissional="lia")
->       assert "lembretes" in norm(api.msg("41999990002", "parar lembretes"))
-                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_diario.py:172: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57f020>, telefone = '41999990002'
-texto = 'parar lembretes'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
+        api.msg("41999990003", "parar")
+        st, r = api.post("/api/campanhas", {"texto": "Semana da alimentação saudável: agende sua consulta."})
+>       assert st == 200 and r["enviadas"] == 1
+E       assert (404 == 200)
+
+tests/test_campanhas.py:33: AssertionError
 _______________________________ test_dockerfile ________________________________
 
     def test_dockerfile():
@@ -885,42 +290,42 @@ E       AssertionError: assert 'Deploy na VPS' in '# atende-nutricao\n\n**🇧�
 tests/test_docker.py:39: AssertionError
 ____________________ test_whatsapp_responde_pela_evolution _____________________
 
-api_int = <conftest.Cliente object at 0xf3f899c70560>
-externo = <conftest.Externo object at 0xf3f89a5ce870>
+api_int = <conftest.Cliente object at 0xe944a57e90a0>
+externo = <conftest.Externo object at 0xe944a5768a70>
 
     def test_whatsapp_responde_pela_evolution(api_int, externo):
 >       assert evo(api_int, "tem estacionamento?") == 200
 E       AssertionError: assert 401 == 200
-E        +  where 401 = evo(<conftest.Cliente object at 0xf3f899c70560>, 'tem estacionamento?')
+E        +  where 401 = evo(<conftest.Cliente object at 0xe944a57e90a0>, 'tem estacionamento?')
 
 tests/test_integracoes.py:61: AssertionError
 _________________ test_whatsapp_ignora_o_que_nao_e_do_paciente _________________
 
-api_int = <conftest.Cliente object at 0xf3f899c70b30>
-externo = <conftest.Externo object at 0xf3f899c70290>
+api_int = <conftest.Cliente object at 0xe944a57e97c0>
+externo = <conftest.Externo object at 0xe944a57e9ac0>
 
     def test_whatsapp_ignora_o_que_nao_e_do_paciente(api_int, externo):
 >       assert evo(api_int, "tem estacionamento?", segredo="errado") == 404
 E       AssertionError: assert 401 == 404
-E        +  where 401 = evo(<conftest.Cliente object at 0xf3f899c70b30>, 'tem estacionamento?', segredo='errado')
+E        +  where 401 = evo(<conftest.Cliente object at 0xe944a57e97c0>, 'tem estacionamento?', segredo='errado')
 
 tests/test_integracoes.py:69: AssertionError
 _______________________ test_whatsapp_sem_texto_nem_foto _______________________
 
-api_int = <conftest.Cliente object at 0xf3f899c71340>
-externo = <conftest.Externo object at 0xf3f899c70ad0>
+api_int = <conftest.Cliente object at 0xe944a57ea060>
+externo = <conftest.Externo object at 0xe944a57e9760>
 
     def test_whatsapp_sem_texto_nem_foto(api_int, externo):
         evo(api_int, message={"audioMessage": {"seconds": 5}}, tipo="audioMessage")
 >       assert esperar(lambda: textos_whats(externo) == ["Por enquanto só consigo ler mensagens de texto e fotos."])
 E       assert False
-E        +  where False = esperar(<function test_whatsapp_sem_texto_nem_foto.<locals>.<lambda> at 0xf3f899c2d580>)
+E        +  where False = esperar(<function test_whatsapp_sem_texto_nem_foto.<locals>.<lambda> at 0xe944a4dbb420>)
 
 tests/test_integracoes.py:81: AssertionError
 __________________ test_whatsapp_foto_vira_registro_no_diario __________________
 
-api_int = <conftest.Cliente object at 0xf3f899c71eb0>
-externo = <conftest.Externo object at 0xf3f899c712e0>
+api_int = <conftest.Cliente object at 0xe944a57eac60>
+externo = <conftest.Externo object at 0xe944a57ea000>
 
     def test_whatsapp_foto_vira_registro_no_diario(api_int, externo):
         pid = api_int.paciente("Maria", TEL)
@@ -929,13 +334,13 @@ externo = <conftest.Externo object at 0xf3f899c712e0>
         evo(api_int, message=foto, tipo="imageMessage", msg_id="FOTO-77")
 >       assert esperar(lambda: any("foto" in norm(t) and "registrad" in norm(t) for t in textos_whats(externo)))
 E       assert False
-E        +  where False = esperar(<function test_whatsapp_foto_vira_registro_no_diario.<locals>.<lambda> at 0xf3f899c2d3a0>)
+E        +  where False = esperar(<function test_whatsapp_foto_vira_registro_no_diario.<locals>.<lambda> at 0xe944a4dbb240>)
 
 tests/test_integracoes.py:89: AssertionError
 _____________________ test_whatsapp_agenda_e_avisa_equipe ______________________
 
-api_int = <conftest.Cliente object at 0xf3f899c72bd0>
-externo = <conftest.Externo object at 0xf3f899c71e20>
+api_int = <conftest.Cliente object at 0xe944a57ebbf0>
+externo = <conftest.Externo object at 0xe944a57eac00>
 
     def test_whatsapp_agenda_e_avisa_equipe(api_int, externo):
         def tem(trecho):
@@ -944,28 +349,32 @@ externo = <conftest.Externo object at 0xf3f899c71e20>
         evo(api_int, "quero marcar uma consulta")
 >       assert tem("nome")
 E       AssertionError: assert False
-E        +  where False = <function test_whatsapp_agenda_e_avisa_equipe.<locals>.tem at 0xf3f899c2ccc0>('nome')
+E        +  where False = <function test_whatsapp_agenda_e_avisa_equipe.<locals>.tem at 0xe944a4dbab60>('nome')
 
 tests/test_integracoes.py:105: AssertionError
 ____________ test_saida_pela_evolution_com_reenvio_e_plano_sincrono ____________
 
-api_int = <conftest.Cliente object at 0xf3f89a57eba0>
-externo = <conftest.Externo object at 0xf3f89a5cd880>
+api_int = <conftest.Cliente object at 0xe944a4df0530>
+externo = <conftest.Externo object at 0xe944a57ebaa0>
 
     def test_saida_pela_evolution_com_reenvio_e_plano_sincrono(api_int, externo):
         pid = api_int.paciente("Maria", TEL)
         api_int.agenda(pid, "2026-10-07T09:00", profissional="lia")
         externo.falhas = 1
         st, r = api_int.post("/api/tarefas/rodar", {})
->       assert r["enviadas"] == 1                 # criada, mesmo com o envio falhando
-               ^^^^^^^^^^^^^
-E       KeyError: 'enviadas'
+        assert r["enviadas"] == 1                 # criada, mesmo com o envio falhando
+        [m] = api_int.saida("confirmacao")
+>       assert m["status"] == "pendente"
+E       AssertionError: assert 'simulado' == 'pendente'
+E         
+E         - pendente
+E         + simulado
 
-tests/test_integracoes.py:126: KeyError
+tests/test_integracoes.py:128: AssertionError
 __________________________ test_abertura_vai_ao_grupo __________________________
 
-api_int = <conftest.Cliente object at 0xf3f89a57ee70>
-externo = <conftest.Externo object at 0xf3f89a5cd6a0>
+api_int = <conftest.Cliente object at 0xe944a57e91c0>
+externo = <conftest.Externo object at 0xe944a57eb650>
 
     def test_abertura_vai_ao_grupo(api_int, externo):
 >       at, abertura = abre_atendimento(api_int, externo)
@@ -973,24 +382,21 @@ externo = <conftest.Externo object at 0xf3f89a5cd6a0>
 
 tests/test_integracoes.py:143: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f89a57ee70>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a57e91c0>
+externo = <conftest.Externo object at 0xe944a57eb650>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a4dbbd80>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 ___________________ test_alerta_marca_alta_e_comando_alertas ___________________
 
-api_int = <conftest.Cliente object at 0xf3f89a5139b0>
-externo = <conftest.Externo object at 0xf3f89a57d850>
+api_int = <conftest.Cliente object at 0xe944a57e8b00>
+externo = <conftest.Externo object at 0xe944a57ea060>
 
     def test_alerta_marca_alta_e_comando_alertas(api_int, externo):
 >       normal, _ = abre_atendimento(api_int, externo)
@@ -998,24 +404,21 @@ externo = <conftest.Externo object at 0xf3f89a57d850>
 
 tests/test_integracoes.py:151: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f89a5139b0>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a57e8b00>
+externo = <conftest.Externo object at 0xe944a57ea060>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a4dbb420>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 ________________ test_atendimento_aberto_silencia_bot_e_repassa ________________
 
-api_int = <conftest.Cliente object at 0xf3f899c72c90>
-externo = <conftest.Externo object at 0xf3f89a513020>
+api_int = <conftest.Cliente object at 0xe944a5768380>
+externo = <conftest.Externo object at 0xe944a57e8e30>
 
     def test_atendimento_aberto_silencia_bot_e_repassa(api_int, externo):
 >       at, abertura = abre_atendimento(api_int, externo)
@@ -1023,24 +426,21 @@ externo = <conftest.Externo object at 0xf3f89a513020>
 
 tests/test_integracoes.py:166: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f899c72c90>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a5768380>
+externo = <conftest.Externo object at 0xe944a57e8e30>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a4dbae80>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 ___________________ test_equipe_responde_em_cima_da_mensagem ___________________
 
-api_int = <conftest.Cliente object at 0xf3f899c73950>
-externo = <conftest.Externo object at 0xf3f899c71bb0>
+api_int = <conftest.Cliente object at 0xe944a57a30e0>
+externo = <conftest.Externo object at 0xe944a5768620>
 
     def test_equipe_responde_em_cima_da_mensagem(api_int, externo):
 >       at, abertura = abre_atendimento(api_int, externo)
@@ -1048,24 +448,21 @@ externo = <conftest.Externo object at 0xf3f899c71bb0>
 
 tests/test_integracoes.py:177: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f899c73950>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a57a30e0>
+externo = <conftest.Externo object at 0xe944a5768620>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a4dba160>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 _______________________ test_webhook_telegram_protegido ________________________
 
-api_int = <conftest.Cliente object at 0xf3f899c70980>
-externo = <conftest.Externo object at 0xf3f899c730b0>
+api_int = <conftest.Cliente object at 0xe944a57a0560>
+externo = <conftest.Externo object at 0xe944a5768b00>
 
     def test_webhook_telegram_protegido(api_int, externo):
 >       at, abertura = abre_atendimento(api_int, externo)
@@ -1073,24 +470,21 @@ externo = <conftest.Externo object at 0xf3f899c730b0>
 
 tests/test_integracoes.py:185: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f899c70980>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a57a0560>
+externo = <conftest.Externo object at 0xe944a5768b00>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a5760860>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 ____________________ test_comandos_responder_encerrar_fila _____________________
 
-api_int = <conftest.Cliente object at 0xf3f899c74830>
-externo = <conftest.Externo object at 0xf3f899c709b0>
+api_int = <conftest.Cliente object at 0xe944a4df2000>
+externo = <conftest.Externo object at 0xe944a57a16a0>
 
     def test_comandos_responder_encerrar_fila(api_int, externo):
 >       at, _ = abre_atendimento(api_int, externo)
@@ -1098,24 +492,21 @@ externo = <conftest.Externo object at 0xf3f899c709b0>
 
 tests/test_integracoes.py:193: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f899c74830>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a4df2000>
+externo = <conftest.Externo object at 0xe944a57a16a0>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a57609a0>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 _____________________________ test_comando_agenda ______________________________
 
-api_int = <conftest.Cliente object at 0xf3f899c708c0>
-externo = <conftest.Externo object at 0xf3f899c71550>
+api_int = <conftest.Cliente object at 0xe944a4df2fc0>
+externo = <conftest.Externo object at 0xe944a57a2870>
 
     def test_comando_agenda(api_int, externo):
         pid = api_int.paciente("Maria Lima", "41999990001")
@@ -1130,13 +521,13 @@ externo = <conftest.Externo object at 0xf3f899c71550>
                        and "15:00" not in t for t in textos_tg(externo))
 >       assert esperar(achou)
 E       assert False
-E        +  where False = esperar(<function test_comando_agenda.<locals>.achou at 0xf3f89a5485e0>)
+E        +  where False = esperar(<function test_comando_agenda.<locals>.achou at 0xe944a4dbb600>)
 
 tests/test_integracoes.py:215: AssertionError
 __________________ test_equipe_responde_e_encerra_pela_pagina __________________
 
-api_int = <conftest.Cliente object at 0xf3f89a510740>
-externo = <conftest.Externo object at 0xf3f899c72600>
+api_int = <conftest.Cliente object at 0xe944a4df3110>
+externo = <conftest.Externo object at 0xe944a4df2bd0>
 
     def test_equipe_responde_e_encerra_pela_pagina(api_int, externo):
 >       at, _ = abre_atendimento(api_int, externo)
@@ -1144,253 +535,35 @@ externo = <conftest.Externo object at 0xf3f899c72600>
 
 tests/test_integracoes.py:219: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/test_integracoes.py:51: in abre_atendimento
-    api.msg(tel, "quero falar com um atendente")
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <conftest.Cliente object at 0xf3f89a510740>, telefone = '41988887777'
-texto = 'quero falar com um atendente'
+api = <conftest.Cliente object at 0xe944a4df3110>
+externo = <conftest.Externo object at 0xe944a4df2bd0>, tel = '41988887777'
 
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
+    def abre_atendimento(api, externo, tel=TEL):
+        api.msg(tel, "quero falar com um atendente")
+>       assert esperar(lambda: len(externo.telegram()) >= 1)
+E       assert False
+E        +  where False = esperar(<function abre_atendimento.<locals>.<lambda> at 0xe944a4dcc7c0>)
 
-tests/conftest.py:102: AssertionError
+tests/test_integracoes.py:52: AssertionError
 ___________________ test_cancelamento_pelo_chat_avisa_equipe ___________________
 
-api_int = <conftest.Cliente object at 0xf3f89a57ddf0>
-externo = <conftest.Externo object at 0xf3f89a511dc0>
+api_int = <conftest.Cliente object at 0xe944a4df1040>
+externo = <conftest.Externo object at 0xe944a4df2a20>
 
     def test_cancelamento_pelo_chat_avisa_equipe(api_int, externo):
         pid = api_int.paciente("Maria", TEL)
         api_int.agenda(pid, "2026-10-07T09:00", profissional="lia")
         api_int.post("/api/tarefas/rodar", {})
->       assert "cancelad" in norm(api_int.msg(TEL, "2"))
-                                  ^^^^^^^^^^^^^^^^^^^^^
+        assert "cancelad" in norm(api_int.msg(TEL, "2"))
+>       assert esperar(lambda: any(t.startswith("Cancelado:") and "07/10 09:00" in t for t in textos_tg(externo)))
+E       assert False
+E        +  where False = esperar(<function test_cancelamento_pelo_chat_avisa_equipe.<locals>.<lambda> at 0xe944a4dcc5e0>)
 
-tests/test_integracoes.py:231: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a57ddf0>, telefone = '41988887777'
-texto = '2'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-____________________ test_confirmacao_dentro_de_48h_uma_vez ____________________
-
-api = <conftest.Cliente object at 0xf3f89a5cfc50>
-
-    def test_confirmacao_dentro_de_48h_uma_vez(api):
-        p1 = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        _, a = api.agenda(p1, "2026-10-07T09:00", profissional="lia")   # 24 h depois de 06/10 09:00
-        _, b = api.agenda(p2, "2026-10-09T09:00", profissional="lia")   # 72 h
->       assert rodar(api) == 1
-               ^^^^^^^^^^
-
-tests/test_lembretes.py:18: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f89a5cfc50>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-__________________ test_confirmacao_online_traz_link_ou_avisa __________________
-
-api = <conftest.Cliente object at 0xf3f899c740b0>
-
-    def test_confirmacao_online_traz_link_ou_avisa(api):
-        p = api.paciente("Maria", "41999990001")
-        _, a = api.agenda(p, "2026-10-07T09:00", "retorno", "lia", modalidade="online")
-        _, b = api.agenda(p, "2026-10-07T10:00", "retorno", "lia", modalidade="online")
-        api.post(f"/api/agendamentos/{b['id']}/link", {"link": LINK})
->       assert rodar(api) == 2
-               ^^^^^^^^^^
-
-tests/test_lembretes.py:36: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f899c740b0>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-_________________ test_responder_1_confirma_so_com_texto_igual _________________
-
-api = <conftest.Cliente object at 0xf3f899c74e90>
-
-    def test_responder_1_confirma_so_com_texto_igual(api):
-        p = api.paciente("Maria", "41999990001")
-        _, a = api.agenda(p, "2026-10-07T09:00", profissional="lia")
->       rodar(api)
-
-tests/test_lembretes.py:45: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f899c74e90>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-___________________________ test_responder_2_cancela ___________________________
-
-api = <conftest.Cliente object at 0xf3f899c745c0>
-
-    def test_responder_2_cancela(api):
-        p = api.paciente("Maria", "41999990001")
-        _, a = api.agenda(p, "2026-10-07T09:00", profissional="lia")
->       rodar(api)
-
-tests/test_lembretes.py:55: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f899c745c0>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-____________________ test_lista_de_espera_oferece_e_agenda _____________________
-
-api = <conftest.Cliente object at 0xf3f899c64950>
-
-    def test_lista_de_espera_oferece_e_agenda(api):
-        p1 = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        p3 = api.paciente("Rita", "41999990003")
-        _, a = api.agenda(p1, "2026-10-07T09:00", profissional="lia")
->       assert api.post("/api/espera", {"paciente_id": p2, "servico": "retorno", "data": "2026-10-07"})[0] == 201
-E       assert 404 == 201
-
-tests/test_lembretes.py:67: AssertionError
-____________ test_espera_horario_ja_ocupado_e_outro_dia_nao_recebe _____________
-
-api = <conftest.Cliente object at 0xf3f899c65490>
-
-    def test_espera_horario_ja_ocupado_e_outro_dia_nao_recebe(api):
-        p1 = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        p3 = api.paciente("Rita", "41999990003")
-        p4 = api.paciente("Ana", "41999990004")
-        _, a = api.agenda(p1, "2026-10-07T09:00", profissional="lia")
-        api.post("/api/espera", {"paciente_id": p3, "servico": "retorno", "data": "2026-10-08"})   # outro dia
-        api.post("/api/espera", {"paciente_id": p2, "servico": "retorno", "data": "2026-10-07"})
-        api.post(f"/api/agendamentos/{a['id']}/cancelar")
->       assert [m["telefone"] for m in api.saida("espera")] == ["+5541999990002"]
-                                       ^^^^^^^^^^^^^^^^^^^
-
-tests/test_lembretes.py:87: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f899c65490>, tipo = 'espera'
-
-    def saida(self, tipo=None):
-        st, r = self.get("/api/saida")
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:107: AssertionError
-__________________ test_cancelar_pela_conversa_dispara_espera __________________
-
-api = <conftest.Cliente object at 0xf3f899c775f0>
-
-    def test_cancelar_pela_conversa_dispara_espera(api):
-        p1 = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        api.agenda(p1, "2026-10-07T09:00", profissional="lia")
-        api.post("/api/espera", {"paciente_id": p2, "servico": "retorno", "data": "2026-10-07"})
->       rodar(api)
-
-tests/test_lembretes.py:97: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f899c775f0>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-________________ test_retorno_programado_e_servico_sem_retorno _________________
-
-api = <conftest.Cliente object at 0xf3f899c762a0>
-
-    def test_retorno_programado_e_servico_sem_retorno(api):
-        p = api.paciente("Maria", "41999990001")
-        p2 = api.paciente("José", "41999990002")
-        _, a = api.agenda(p, "2026-10-07T09:00", servico="primeira", profissional="lia")
-        _, b = api.agenda(p2, "2026-10-07T10:00", servico="bioimpedancia", profissional="lia")   # retorno_dias null
-        api.post(f"/api/agendamentos/{a['id']}/presenca", {"compareceu": True})
-        api.post(f"/api/agendamentos/{b['id']}/presenca", {"compareceu": True})
-        # retorno = 07/10/2026 + 30 dias = 06/11/2026 (sexta); aviso a partir de 06/11 − 7 = 30/10
->       assert rodar(api, "2026-10-29T09:00") == 0
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_lembretes.py:110: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f899c762a0>, agora = '2026-10-29T09:00'
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
-____________________ test_confirmacao_sobrevive_a_reinicio _____________________
-
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_confirmacao_sobrevive_a_r0/dados')
-
-    def test_confirmacao_sobrevive_a_reinicio(dados):
-        s = Servidor(dados)
-        api = s.subir()
-        p = api.paciente("Maria", "41999990001")
-        _, a = api.agenda(p, "2026-10-07T09:00", profissional="lia")
->       assert rodar(api) == 1
-               ^^^^^^^^^^
-
-tests/test_lembretes.py:123: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-api = <conftest.Cliente object at 0xf3f89a57c500>, agora = None
-
-    def rodar(api, agora=None):
-        st, r = api.post("/api/tarefas/rodar", {"agora": agora} if agora else {})
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/test_lembretes.py:9: AssertionError
+tests/test_integracoes.py:232: AssertionError
 ____________________________ test_dados_e_exclusao _____________________________
 
-api = <conftest.Cliente object at 0xf3f89a511d30>
+api = <conftest.Cliente object at 0xe944a4e408f0>
 
     def test_dados_e_exclusao(api):
         tel = "41999990001"
@@ -1398,24 +571,28 @@ api = <conftest.Cliente object at 0xf3f89a511d30>
         _, a = api.agenda(pid, "2026-10-07T09:00", profissional="lia")
         _, b = api.agenda(pid, "2026-10-08T09:00", profissional="lia")
         api.post(f"/api/agendamentos/{b['id']}/presenca", {"compareceu": True})
->       api.plano(pid)
+        api.plano(pid)
+        api.put(f"/api/pacientes/{pid}/metas", {"lembretes_agua": ["09:00"]})
+        api.msg(tel, "peso 82,5")
+        api.msg(tel, "2 copos")
+        api.msg(tel, "tem estacionamento")
+        st, d = api.get(f"/api/pacientes/{pid}/dados")
+        assert st == 200
+        assert d["paciente"]["nome"] == "Maria Silva" and d["paciente"]["telefone"] == "+5541999990001"
+        assert {x["id"] for x in d["agendamentos"]} == {a["id"], b["id"]}
+        assert {"entrada", "saida"} <= {m["direcao"] for m in d["mensagens"]}
+        assert any("estacionamento" in m["texto"] for m in d["mensagens"])
+        assert len(d["planos"]) == 1 and len(d["planos"][0]["refeicoes"]) == 5
+        assert [x["tipo"] for x in d["diario"]] == ["peso", "agua"] and [p["peso"] for p in d["pesos"]] == [82.5]
+        assert d["metas"]["lembretes_agua"] == ["09:00"]
+    
+>       assert api.delete(f"/api/pacientes/{pid}")[0] == 204
+E       assert 404 == 204
 
-tests/test_lgpd_raiox.py:17: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a511d30>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
+tests/test_lgpd_raiox.py:32: AssertionError
 __________________________ test_raiox_numeros_do_mes ___________________________
 
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_raiox_numeros_do_mes0/dados')
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_raiox_numeros_do_mes0/dados')
 
     def test_raiox_numeros_do_mes(dados):
         s, api = montar_mes(dados)
@@ -1426,8 +603,8 @@ E       assert (404 == 200)
 tests/test_lgpd_raiox.py:84: AssertionError
 ________________ test_cli_grava_mes_no_acompanhamento_do_painel ________________
 
-dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_cli_grava_mes_no_acompanh0/dados')
-tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_cli_grava_mes_no_acompanh0')
+dados = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_cli_grava_mes_no_acompanh0/dados')
+tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-88/test_cli_grava_mes_no_acompanh0')
 
     def test_cli_grava_mes_no_acompanhamento_do_painel(dados, tmp_path):
         s, _ = montar_mes(dados)
@@ -1443,166 +620,12 @@ tmp_path = PosixPath('/tmp/pytest-of-nmaldaner/pytest-58/test_cli_grava_mes_no_a
 >           assert subprocess.run(cmd, cwd=RAIZ, capture_output=True, timeout=30).returncode == 0
 E           assert 2 == 0
 E            +  where 2 = CompletedProcess(args=['/home/nmaldaner/projetos/atende-nutricao/atende', 'raiox', '--dados', '/tmp/pytest-of-nmaldane...rr=b"usage: atende [-h] {serve} ...\natende: error: argument command: invalid choice: 'raiox' (choose from 'serve')\n").returncode
-E            +    where CompletedProcess(args=['/home/nmaldaner/projetos/atende-nutricao/atende', 'raiox', '--dados', '/tmp/pytest-of-nmaldane...rr=b"usage: atende [-h] {serve} ...\natende: error: argument command: invalid choice: 'raiox' (choose from 'serve')\n") = <function run at 0xf3f89b664360>(['/home/nmaldaner/projetos/atende-nutricao/atende', 'raiox', '--dados', '/tmp/pytest-of-nmaldaner/pytest-58/test_cli_grava_mes_no_acompanh0/dados', '--mes', '2026-10', ...], cwd=PosixPath('/home/nmaldaner/projetos/atende-nutricao'), capture_output=True, timeout=30)
-E            +      where <function run at 0xf3f89b664360> = subprocess.run
+E            +    where CompletedProcess(args=['/home/nmaldaner/projetos/atende-nutricao/atende', 'raiox', '--dados', '/tmp/pytest-of-nmaldane...rr=b"usage: atende [-h] {serve} ...\natende: error: argument command: invalid choice: 'raiox' (choose from 'serve')\n") = <function run at 0xe944a6894360>(['/home/nmaldaner/projetos/atende-nutricao/atende', 'raiox', '--dados', '/tmp/pytest-of-nmaldaner/pytest-88/test_cli_grava_mes_no_acompanh0/dados', '--mes', '2026-10', ...], cwd=PosixPath('/home/nmaldaner/projetos/atende-nutricao'), capture_output=True, timeout=30)
+E            +      where <function run at 0xe944a6894360> = subprocess.run
 
 tests/test_lgpd_raiox.py:108: AssertionError
-_________________ test_criar_e_ler_plano_ordenado_por_horario __________________
-
-api = <conftest.Cliente object at 0xf3f899c67080>
-
-    def test_criar_e_ler_plano_ordenado_por_horario(api):
-        pid = api.paciente("Maria", TEL)
-        desordenado = copy.deepcopy(PLANO)
-        desordenado["refeicoes"] = [desordenado["refeicoes"][2]] + desordenado["refeicoes"][:2] + desordenado["refeicoes"][3:]
-        st, r = api.post(f"/api/pacientes/{pid}/plano", desordenado)
->       assert st == 201 and r["versao"] == 1
-E       assert (404 == 201)
-
-tests/test_plano.py:22: AssertionError
-____________________________ test_plano_validacoes _____________________________
-
-api = <conftest.Cliente object at 0xf3f899c66540>
-
-    def test_plano_validacoes(api):
-        pid = api.paciente("Maria", TEL)
-        assert api.get(f"/api/pacientes/{pid}/plano")[0] == 404   # ainda sem plano
->       assert api.post(f"/api/pacientes/{pid}/plano", {})[0] == 422
-E       assert 404 == 422
-
-tests/test_plano.py:35: AssertionError
-____________________ test_nova_versao_substitui_e_historico ____________________
-
-api = <conftest.Cliente object at 0xf3f899c66450>
-
-    def test_nova_versao_substitui_e_historico(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_plano.py:47: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f899c66450>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_________________ test_enviar_plano_cria_mensagem_com_o_texto __________________
-
-api = <conftest.Cliente object at 0xf3f89a512c90>
-
-    def test_enviar_plano_cria_mensagem_com_o_texto(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_plano.py:59: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a512c90>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_________________ test_enviar_sem_plano_404_e_nao_contatar_409 _________________
-
-api = <conftest.Cliente object at 0xf3f89a5cecf0>
-
-    def test_enviar_sem_plano_404_e_nao_contatar_409(api):
-        pid = api.paciente("Maria", TEL)
-        assert api.post(f"/api/pacientes/{pid}/plano/enviar")[0] == 404
->       api.plano(pid)
-
-tests/test_plano.py:77: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f89a5cecf0>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-_____________________ test_chat_meu_plano_sem_e_com_plano ______________________
-
-api = <conftest.Cliente object at 0xf3f899c76480>
-
-    def test_chat_meu_plano_sem_e_com_plano(api):
->       assert "nutricionista" in norm(api.msg(TEL, "qual é a minha dieta?"))   # telefone sem paciente
-                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-tests/test_plano.py:85: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f899c76480>, telefone = '41988887777'
-texto = 'qual é a minha dieta?'
-
-    def msg(self, telefone, texto):
-        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
->       assert st == 200, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 200
-
-tests/conftest.py:102: AssertionError
-________________ test_chat_refeicao_especifica_responde_so_ela _________________
-
-api = <conftest.Cliente object at 0xf3f899c77c50>
-
-    def test_chat_refeicao_especifica_responde_so_ela(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_plano.py:101: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f899c77c50>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
-________________ test_chat_duvida_fora_do_plano_vai_para_humano ________________
-
-api = <conftest.Cliente object at 0xf3f899c65670>
-
-    def test_chat_duvida_fora_do_plano_vai_para_humano(api):
-        pid = api.paciente("Maria", TEL)
->       api.plano(pid)
-
-tests/test_plano.py:115: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <conftest.Cliente object at 0xf3f899c65670>, paciente_id = 1
-plano = None
-
-    def plano(self, paciente_id, plano=None):
-        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
->       assert st == 201, (st, r)
-E       AssertionError: (404, {'erro': 'Rota não implementada'})
-E       assert 404 == 201
-
-tests/conftest.py:97: AssertionError
 =========================== short test summary info ============================
-FAILED tests/test_agenda.py::test_telefone_normalizado_e_duplicado - KeyError...
-FAILED tests/test_basico.py::test_rotas_da_equipe_exigem_token_antes_de_tudo
 FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
-FAILED tests/test_basico.py::test_estado_persiste_ao_reiniciar - AssertionErr...
 FAILED tests/test_cadastros.py::test_profissional_novo_com_horario_proprio - ...
 FAILED tests/test_cadastros.py::test_profissional_validacoes - assert 404 == 409
 FAILED tests/test_cadastros.py::test_editar_e_desativar_profissional - assert...
@@ -1611,35 +634,12 @@ FAILED tests/test_cadastros.py::test_pacientes_busca_e_edicao - assert (404 =...
 FAILED tests/test_cadastros.py::test_faq_crud_vale_na_hora - assert 404 == 201
 FAILED tests/test_cadastros.py::test_bloqueio_tira_horarios_e_avisa_conflito
 FAILED tests/test_cadastros.py::test_semente_so_na_primeira_vez - AssertionEr...
-FAILED tests/test_cadastros.py::test_backup_e_restaurar - AssertionError: (40...
+FAILED tests/test_cadastros.py::test_backup_e_restaurar - assert (2 == 0)
 FAILED tests/test_campanhas.py::test_trava_minima_de_publicidade[caso-0] - As...
 FAILED tests/test_campanhas.py::test_trava_minima_de_publicidade[caso-1] - As...
 FAILED tests/test_campanhas.py::test_trava_minima_de_publicidade[caso-2] - As...
 FAILED tests/test_campanhas.py::test_trava_minima_de_publicidade[caso-3] - As...
 FAILED tests/test_campanhas.py::test_publico_so_com_consentimento_e_sem_parar
-FAILED tests/test_conversa.py::test_faq_responde_exatamente - AssertionError:...
-FAILED tests/test_conversa.py::test_nao_entendi_e_depois_passa_para_humano - ...
-FAILED tests/test_conversa.py::test_pedido_de_atendente - AssertionError: (40...
-FAILED tests/test_conversa.py::test_emergencia_fisica - AssertionError: (404,...
-FAILED tests/test_conversa.py::test_alerta_comportamental - AssertionError: (...
-FAILED tests/test_conversa.py::test_emergencia_vence_agendamento - AssertionE...
-FAILED tests/test_conversa.py::test_agendamento_pelo_chat_paciente_novo_online
-FAILED tests/test_conversa.py::test_agendamento_pelo_chat_paciente_conhecido_e_opcao_invalida
-FAILED tests/test_conversa.py::test_chat_nao_pergunta_modalidade_sem_atendimento_online
-FAILED tests/test_conversa.py::test_chat_oferece_proximos_dias_quando_hoje_lota
-FAILED tests/test_conversa.py::test_cancelar_sai_do_fluxo - AssertionError: (...
-FAILED tests/test_conversa.py::test_parar_bloqueia_contato - AssertionError: ...
-FAILED tests/test_conversa.py::test_link_da_consulta_pelo_chat - AssertionErr...
-FAILED tests/test_diario.py::test_peso_registra_serie_e_resposta_neutra - Ass...
-FAILED tests/test_diario.py::test_peso_fora_da_faixa_e_sem_cadastro - Asserti...
-FAILED tests/test_diario.py::test_agua_copos_total_do_dia_e_meta - AssertionE...
-FAILED tests/test_diario.py::test_refeicao_feita_e_pulada_por_nome - Assertio...
-FAILED tests/test_diario.py::test_refeicao_sem_nome_usa_horario_e_exige_plano
-FAILED tests/test_diario.py::test_diario_resumo_e_filtro_por_dia - AssertionE...
-FAILED tests/test_diario.py::test_metas_put_get_e_validacoes - AssertionError...
-FAILED tests/test_diario.py::test_lembretes_de_agua_so_na_janela_de_tolerancia
-FAILED tests/test_diario.py::test_lembretes_de_refeicao_seguem_o_plano - Asse...
-FAILED tests/test_diario.py::test_parar_lembretes_e_nao_contatar - AssertionE...
 FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
 FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
 FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
@@ -1650,33 +650,16 @@ FAILED tests/test_integracoes.py::test_whatsapp_sem_texto_nem_foto - assert F...
 FAILED tests/test_integracoes.py::test_whatsapp_foto_vira_registro_no_diario
 FAILED tests/test_integracoes.py::test_whatsapp_agenda_e_avisa_equipe - Asser...
 FAILED tests/test_integracoes.py::test_saida_pela_evolution_com_reenvio_e_plano_sincrono
-FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - AssertionError...
+FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - assert False
 FAILED tests/test_integracoes.py::test_alerta_marca_alta_e_comando_alertas - ...
 FAILED tests/test_integracoes.py::test_atendimento_aberto_silencia_bot_e_repassa
 FAILED tests/test_integracoes.py::test_equipe_responde_em_cima_da_mensagem - ...
-FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - Assertion...
-FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - Ass...
+FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - assert False
+FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - ass...
 FAILED tests/test_integracoes.py::test_comando_agenda - assert False
 FAILED tests/test_integracoes.py::test_equipe_responde_e_encerra_pela_pagina
 FAILED tests/test_integracoes.py::test_cancelamento_pelo_chat_avisa_equipe - ...
-FAILED tests/test_lembretes.py::test_confirmacao_dentro_de_48h_uma_vez - Asse...
-FAILED tests/test_lembretes.py::test_confirmacao_online_traz_link_ou_avisa - ...
-FAILED tests/test_lembretes.py::test_responder_1_confirma_so_com_texto_igual
-FAILED tests/test_lembretes.py::test_responder_2_cancela - AssertionError: (4...
-FAILED tests/test_lembretes.py::test_lista_de_espera_oferece_e_agenda - asser...
-FAILED tests/test_lembretes.py::test_espera_horario_ja_ocupado_e_outro_dia_nao_recebe
-FAILED tests/test_lembretes.py::test_cancelar_pela_conversa_dispara_espera - ...
-FAILED tests/test_lembretes.py::test_retorno_programado_e_servico_sem_retorno
-FAILED tests/test_lembretes.py::test_confirmacao_sobrevive_a_reinicio - Asser...
-FAILED tests/test_lgpd_raiox.py::test_dados_e_exclusao - AssertionError: (404...
+FAILED tests/test_lgpd_raiox.py::test_dados_e_exclusao - assert 404 == 204
 FAILED tests/test_lgpd_raiox.py::test_raiox_numeros_do_mes - assert (404 == 200)
 FAILED tests/test_lgpd_raiox.py::test_cli_grava_mes_no_acompanhamento_do_painel
-FAILED tests/test_plano.py::test_criar_e_ler_plano_ordenado_por_horario - ass...
-FAILED tests/test_plano.py::test_plano_validacoes - assert 404 == 422
-FAILED tests/test_plano.py::test_nova_versao_substitui_e_historico - Assertio...
-FAILED tests/test_plano.py::test_enviar_plano_cria_mensagem_com_o_texto - Ass...
-FAILED tests/test_plano.py::test_enviar_sem_plano_404_e_nao_contatar_409 - As...
-FAILED tests/test_plano.py::test_chat_meu_plano_sem_e_com_plano - AssertionEr...
-FAILED tests/test_plano.py::test_chat_refeicao_especifica_responde_so_ela - A...
-FAILED tests/test_plano.py::test_chat_duvida_fora_do_plano_vai_para_humano - ...
-80 failed, 19 passed in 35.28s
+37 failed, 62 passed in 75.47s (0:01:15)

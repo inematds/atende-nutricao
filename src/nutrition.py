@@ -131,7 +131,7 @@ class Nutrition:
         p = self.d.get('pacientes', match[1])
         pid, action = p['id'], match[2]
         if action == 'dados' and method == 'GET':
-            return 200, dict(paciente=p, agendamentos=[a for a in self.d.appointments({}) if a['paciente_id'] == pid], mensagens=[m for m in self.d.all('mensagens') if m['telefone'] == p['telefone']], planos=self.plans(pid), diario=self.entries(pid), pesos=self.weights(pid)['pesos'], metas=self.goals(pid))
+            return 200, dict(paciente=p, agendamentos=[a for a in self.d.appointments({}) if a['paciente_id'] == pid], mensagens=[m for m in self.d.all('mensagens') if m.get('paciente_id') == pid or (p['telefone'] is not None and m['telefone'] == p['telefone'])], planos=self.plans(pid), diario=self.entries(pid), pesos=self.weights(pid)['pesos'], metas=self.goals(pid))
         if action == 'plano' and method == 'POST':
             meals = body.get('refeicoes')
             if not isinstance(meals, list) or not meals:

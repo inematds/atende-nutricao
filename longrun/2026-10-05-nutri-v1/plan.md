@@ -1,6 +1,6 @@
 # Plano
 
 ## Próximos 3 passos
-1. Campanhas com validação integral/consentimento; exclusão LGPD (anonimização, cancelamento e limpeza de saúde/histórico); Raio-X HTTP/CLI com limites corretos do retorno e merge do acompanhamento.
-2. Cadastros, bloqueios, backup/restauração e validações de ids; rodar suíte completa preservando os 62 testes que já passam.
-3. Evolution e Telegram com servidores falsos (sem rede real/mídia); depois Docker/compose/env/Deploy na VPS e páginas web. Validar suíte + limites e atualizar registros a cada ciclo.
+1. Implementar edição/inativação de profissionais, serviços, pacientes e FAQ, bloqueios com conflitos e comandos backup/restaurar. Validar a suíte inteira preservando os 70 testes aprovados.
+2. Implementar Evolution (texto e foto apenas por metadados, saída síncrona e retry) e Telegram (avisos, encaminhamento, resposta e comandos), exclusivamente contra servidores falsos locais.
+3. Entregar Dockerfile/compose/env, acrescentar Deploy na VPS preservando README e implementar páginas chat/equipe. Rodar suíte + limites, atualizar registros; marcar concluído só com ambos aprovados.

@@ -52,6 +52,9 @@ class Domain:
     def save(self, collection, entry):
         return self.store.save(self.db, collection, entry)
 
+    def delete(self, collection, key):
+        self.db.execute('DELETE FROM registros WHERE colecao=? AND id=?', (collection, str(key)))
+
     def patient(self, body):
         required(body, 'nome', 'telefone')
         number = phone(body['telefone'])
@@ -145,6 +148,10 @@ class Domain:
         from .conversation import Conversation
         from .tasks import Tasks
         from .nutrition import Nutrition
+        from .reporting import Reporting
+        reporting_result = Reporting(self).route(method, path, query, body)
+        if reporting_result is not None:
+            return reporting_result
         nutrition_result = Nutrition(self).route(method, path, query, body)
         if nutrition_result is not None:
             return nutrition_result

@@ -6,3 +6,7 @@
 2026-10-19 13:52:34 ciclo 2: começa
 2026-10-19 13:58:50 ciclo 2: agente saiu rc=0 em 376s
 2026-10-19 14:00:06 ciclo 2: rápido=62 passed (melhor antes: 19)
+2026-10-19 14:00:07 ciclo 2: checkpoint commitado
+2026-10-19 14:01:22 ciclo 3: começa
+2026-10-19 14:04:15 ciclo 3: agente saiu rc=0 em 173s
+2026-10-19 14:05:32 ciclo 3: rápido=70 passed (melhor antes: 62)
