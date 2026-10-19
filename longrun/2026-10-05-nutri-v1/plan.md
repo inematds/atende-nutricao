@@ -1,6 +1,6 @@
 # Plano
 
 ## Próximos 3 passos
-1. Entregar Dockerfile, compose, .env.exemplo e Deploy na VPS sem remover a descrição nem Como rodar no seu ambiente; preservar os 94 testes aprovados.
-2. Implementar páginas funcionais chat/equipe em web/, com token e operações da seção 15, sem CDN.
-3. Rodar suíte inteira + limites, verificar páginas localmente e registrar resultados; marcar concluído somente quando ambos passarem integralmente.
+1. Implementar chat do paciente em web/ servido por GET /, com telefone, mensagens e respostas pela API pública.
+2. Implementar /equipe funcional com token, agenda, pacientes, plano, diário/adesão, pesos, FAQ, saída e fila humana com responder/encerrar; sem CDN.
+3. Verificar as páginas localmente, rodar suíte inteira + limites e atualizar registros; marcar concluído somente com ambos aprovados, deixando a validação independente do container para o humano.

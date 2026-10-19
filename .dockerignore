@@ -1,0 +1,11 @@
+*
+!atende
+!VERSION
+!src/
+!src/**
+!exemplos/
+!exemplos/**
+!web/
+!web/**
+**/__pycache__/
+**/*.pyc

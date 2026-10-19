@@ -10,3 +10,5 @@
 | 2026-10-19 14:15 | Restam Telegram, páginas e Docker/README; teste misto WhatsApp/Telegram falha só no aviso à equipe | Implementada Evolution e executada suíte inteira | 84 passed / 15 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
 
 | 2026-10-19 14:19 | Restam páginas e Docker/README | Implementado Telegram e executada suíte inteira | 94 passed / 5 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
+
+| 2026-10-19 14:22 | test_paginas: GET / ainda retorna 404 | Concluída entrega Docker/README e executada suíte inteira | 98 passed / 1 failed; páginas seguem para próximo ciclo, sem conflito teste/spec | infra (implementação incompleta) |

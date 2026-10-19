@@ -2,6 +2,7 @@
 
 | data | o que quebrou | menor correção | prompt \| infra |
 |---|---|---|---|
+| 2026-10-19 14:22 | Entrega Docker e instruções de VPS ausentes | Acrescentar Dockerfile, Compose, ambiente vazio, contexto restrito e seção de deploy; quatro testes de entrega aprovados | infra (implementação incompleta) |
 | 2026-10-19 14:19 | Telegram ausente impedia avisos e resposta da equipe; referências poderiam sobreviver à exclusão de atendimento | Acrescentar adaptador e referências persistentes, removidas junto ao atendimento na LGPD | infra (implementação incompleta) |
 | 2026-10-19 14:15 | Evolution ausente impedia entrada WhatsApp e entrega da caixa de saída | Acrescentar adaptador de texto/metadados, deduplicação persistente e envio/retry centralizado | infra (implementação incompleta) |
 | 2026-10-19 14:09 | Cadastros/bloqueios/backup ausentes; horário profissional vazio herdava o geral | Acrescentar rotas e cópia SQLite; herdar horário somente quando null | infra (implementação incompleta) |

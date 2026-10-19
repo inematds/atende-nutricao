@@ -14,3 +14,5 @@
 - 2026-10-19 14:15 · Evolution reutiliza Conversation para texto e Nutrition.record para foto; só campos explícitos são persistidos. Transporte por urllib sem redirecionamento e timeout de 3 s, configuração somente no ambiente. Tasks.output tenta enviar sincronamente; tarefas reenvia somente pendências existentes no início da rodada. Deduplicação do webhook na mesma transação do estado.
 
 - 2026-10-19 14:19 · Telegram usa transporte síncrono com timeout/sem redirecionamento e configurações somente no ambiente. Referências de abertura e encaminhamentos são persistidas; comandos reutilizam as mesmas rotas da equipe. Deduplicação por update_id evita reenvio da resposta humana. LGPD remove referências ao apagar atendimento, evitando associação indevida após reutilização de id.
+
+- 2026-10-19 14:22 · Docker usa cópias explícitas e .dockerignore por lista permitida, excluindo dados, segredos, testes e logs do contexto. Bind geral só no comando do container; publicação Compose só loopback. Backups em volume separado; configuração e ambiente exigem cópia própria, pois backup CLI copia o banco.

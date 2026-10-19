@@ -29,3 +29,5 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 - 2026-10-19 14:15 · fato · src/integrations.py implementa Evolution e send_whatsapp; Handler valida segredo antes do corpo. Texto usa Conversation.message (já grava histórico); foto/sem texto usa history específico. Deduplicação persiste em evolution_recebidas; confirmada após reinício. Retry não cria novo histórico e respeita nao_contatar para automáticas. Telegram ainda ausente.
 
 - 2026-10-19 14:19 · fato · Telegram em src/telegram.py: message_id da abertura fica no atendimento; telegram_referencias relaciona abertura/encaminhamento ao atendimento; telegram_recebidas deduplica update_id. Conversation encaminha após decidir para incluir prioridade elevada sem abrir fila duplicada. Referências são removidas em Reporting.erase. Sem as quatro variáveis Telegram não há envio.
+
+- 2026-10-19 14:22 · fato · Entrega Docker e README pronta; 98/99 testes, único restante test_paginas. web/.gitkeep mantém diretório para COPY; páginas ainda não existem. Healthcheck real validado contra servidor local em porta efêmera e dados novos; nenhum build Docker ou acesso externo realizado.
