@@ -2,6 +2,7 @@
 import argparse
 import hmac
 import json
+import os
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qsl, urlsplit
@@ -27,6 +28,12 @@ class Handler(BaseHTTPRequestHandler):
             ('GET', '/'), ('GET', '/equipe'), ('GET', '/api/saude'),
             ('GET', '/api/servicos'), ('GET', '/api/horarios'), ('POST', '/api/mensagens')}
         try:
+            evolution = self.command == 'POST' and route.path.startswith('/webhook/evolution/')
+            if evolution:
+                secret = os.environ.get('WEBHOOK_SEGREDO', '')
+                if not secret or not hmac.compare_digest(route.path.encode(), ('/webhook/evolution/' + secret).encode()):
+                    raise Error(404, 'Rota inexistente')
+                public = True
             if not public and not hmac.compare_digest(self.headers.get('X-Token', '').encode(), self.server.store.config['token'].encode()):
                 raise Error(401, 'Token inválido')
             body = {}
@@ -44,7 +51,12 @@ class Handler(BaseHTTPRequestHandler):
                 with db:
                     # Reserva a escrita antes de verificar disponibilidade: duas reservas não vencem juntas.
                     db.execute('BEGIN IMMEDIATE')
-                    status, result = Domain(self.server.store, db).route(self.command, route.path, dict(parse_qsl(route.query)), body)
+                    domain = Domain(self.server.store, db)
+                    if evolution:
+                        from .integrations import Evolution
+                        status, result = 200, Evolution(domain).receive(body)
+                    else:
+                        status, result = domain.route(self.command, route.path, dict(parse_qsl(route.query)), body)
             finally:
                 db.close()
             self.respond(status, result)

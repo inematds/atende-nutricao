@@ -10,3 +10,5 @@
 - 2026-10-19 14:03 · Reporting centraliza campanhas, LGPD e Raio-X sobre a transação existente. Anonimização mantém vínculo do histórico por paciente_id, remove telefone/texto e estado da conversa, preservando realizados/faltas e retornos para agregação. CLI mescla o mês anterior cronológico (ou base) e substitui o arquivo por rename.
 
 - 2026-10-19 14:09 · Cadastros editados por lista explícita de campos; inativação preserva referências históricas. Backup usa sqlite3.Connection.backup para snapshot consistente com servidor ativo; valida origem somente leitura e substitui destino por arquivo temporário + rename. Restauração exige servidor parado; configuração nutricao.json permanece externa ao banco, conforme leitura no início.
+
+- 2026-10-19 14:15 · Evolution reutiliza Conversation para texto e Nutrition.record para foto; só campos explícitos são persistidos. Transporte por urllib sem redirecionamento e timeout de 3 s, configuração somente no ambiente. Tasks.output tenta enviar sincronamente; tarefas reenvia somente pendências existentes no início da rodada. Deduplicação do webhook na mesma transação do estado.

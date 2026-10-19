@@ -2,6 +2,7 @@
 from datetime import timedelta
 from .domain import now, timestamp, required
 from .storage import Error
+from .integrations import send_whatsapp
 
 
 class Tasks:
@@ -14,6 +15,8 @@ class Tasks:
         message = self.d.save('saida', dict(tipo=kind, telefone=p['telefone'], paciente_id=p['id'], texto=text,
                             agendamento_id=None, status='simulado', quando=(instant or now()).isoformat(timespec='minutes'), **extra))
         self.d.save('mensagens', dict(telefone=p['telefone'], direcao='saida', texto=text, quando=message['quando']))
+        message['status'] = send_whatsapp(p['telefone'], text)
+        self.d.save('saida', message)
         return message
 
     def cancel(self, a):
@@ -44,6 +47,19 @@ class Tasks:
     def run(self, body):
         d = self.d
         instant = timestamp(body['agora']) if 'agora' in body else now()
+        retried = 0
+        # Apenas pendências anteriores à rodada: uma nova falha espera a próxima execução.
+        for message in d.all('saida'):
+            if message['status'] != 'pendente' or not message['telefone']:
+                continue
+            patient = next((p for p in d.all('pacientes') if p['telefone'] == message['telefone']), None)
+            if patient and patient['nao_contatar'] and message['tipo'] != 'humano':
+                continue
+            status = send_whatsapp(message['telefone'], message['texto'])
+            if status == 'enviado':
+                message['status'] = status
+                d.save('saida', message)
+                retried += 1
         count = 0
         for a in d.all('agendamentos'):
             if a['status'] != 'agendado' or a.get('confirmacao_enviada') or not instant < timestamp(a['inicio']) <= instant + timedelta(hours=d.config['confirmacao_horas']):
@@ -86,7 +102,7 @@ class Tasks:
                 if self.output(p, 'lembrete', text, instant):
                     d.save('lembretes_enviados', {'id': marker})
                     count += 1
-        return {'enviadas': count, 'reenviadas': 0}
+        return {'enviadas': count, 'reenviadas': retried}
 
     def route(self, method, path, body):
         d = self.d

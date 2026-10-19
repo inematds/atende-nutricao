@@ -1,0 +1,2402 @@
+OpenAI Codex v0.163.0
+--------
+workdir: /home/nmaldaner/projetos/atende-nutricao
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR] (network access enabled)
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a15526-6c54-7fe1-95bc-a0bedc4bdbef
+--------
+user
+Você está num ciclo de uma execução longa no repo /home/nmaldaner/projetos/atende-nutricao.
+
+RESULTADO: `./atende` (Python 3, só biblioteca padrão; código em `src/` e páginas em `web/`) implementa docs/ESPECIFICACAO.md por inteiro — atendimento de consultório de nutrição: agenda (presencial/online com link), confirmação, espera, retorno, plano alimentar, diário (água, refeições, peso, foto por metadados) com lembretes e metas, FAQ, fila humana, sinais de alerta, campanhas com trava mínima, LGPD, cadastros, backup, WhatsApp pela Evolution, equipe no Telegram, Raio-X e Docker.
+
+ANTES DE AGIR: leia longrun/2026-10-05-nutri-v1/goal.md → state.md → plan.md → canal.md → últimas linhas de progress.md e failures.md. Na primeira vez, leia docs/ESPECIFICACAO.md inteiro e tests/conftest.py.
+
+NESTE CICLO: escolha a próxima ação útil (comece pela base: `./atende serve` imprimindo `PORTA=<n>`, SQLite em --dados, semente de nutricao.json, auth; depois agenda (modalidade/link) → conversa (ordem das 13 regras da seção 6, normalização que preserva `,`/`.` entre dígitos, pendência só com texto igual) → lembretes/espera/retorno → plano alimentar → diário/peso/metas → campanhas → LGPD → raiox → cadastros/bloqueios/backup → Evolution (texto e foto por metadados) → Telegram → Docker/README → páginas), implemente, rode `python3 -m pytest -q tests/` (leva segundos). Leia só o fim da saída (`| tail -n 30`); saída longa vai para arquivo.
+
+AO TERMINAR O CICLO (obrigatório):
+- reescreva state.md (Funciona / Falta / Como retomar) e plan.md (próximos 3 passos);
+- acrescente 1 linha em progress.md: data-hora, o que mudou, resultado do pytest (N passed / N failed);
+- se algo deu errado, 1 linha em failures.md: erro → tentativa → resultado;
+- decisões de design em decisions.md; fatos e armadilhas novos em canal.md (só acrescentar);
+- quando `python3 -m pytest -q tests/` passar inteiro E `bash longrun/2026-10-05-nutri-v1/verificar-limites.sh` imprimir LIMITES OK, escreva "concluído" na primeira linha de "## Funciona" do state.md.
+
+SE UM TESTE CONTRADIZ A ESPECIFICAÇÃO: não altere o teste nem a spec. Registre em failures.md (teste, trecho da spec, o conflito) e siga com os outros itens; isso é portão humano.
+
+INTEGRAÇÕES: Evolution e Telegram só pelas variáveis de ambiente da spec; teste só contra o servidor falso dos testes. Nunca chame api.telegram.org nem uma Evolution real; nunca baixe mídia (a foto vira registro só com `mimetype`/`caption`/`message_id`) e não escreva o nome do endpoint da Evolution que devolve mídia em base64 nem em comentário (o verificar-limites.sh grepa esse nome e `downloadMedia`); nunca escreva URL externa no código.
+
+BOT: nunca prescreve dieta, suplemento ou cálculo; responde só com o plano do paciente e o FAQ; peso registrado sem comentário de julgamento (lista de palavras proibidas na seção 10).
+
+README: acrescente a seção "Deploy na VPS" (seção 21 da spec) SEM remover a seção "Como rodar no seu ambiente" nem a descrição do projeto; só atualize a linha de estado.
+
+RESTRIÇÕES: não altere tests/, pytest.ini, docs/, goal.md, hash-congelado.txt, congelar.sh, verificar-*, loop.env, prompt.md; não rode congelar.sh (só o humano congela). Só biblioteca padrão do Python 3 (`python3`, não `python`). Nenhuma API, nenhuma rede externa, nenhuma chave. Servidor só em 127.0.0.1. Não use `pkill -f`; mate só o PID que você subiu. Não faça commit (o loop externo faz).
+
+2026-10-19T17:12:24.334237Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer error=\"invalid_token\", resource_metadata=\"https://mcp.magnific.com/.well-known/oauth-protected-resource\", scope=\"openid profile email mcp:custom-audience\"" })
+2026-10-19T17:12:24.818476Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer error=\"invalid_token\", resource_metadata=\"https://mcp.magnific.com/.well-known/oauth-protected-resource\", scope=\"openid profile email mcp:custom-audience\"" })
+2026-10-19T17:12:25.058025Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when AuthRequired(AuthRequiredError { www_authenticate_header: "Bearer resource_metadata=\"https://ai.metricool.com/.well-known/oauth-protected-resource\"" })
+codex
+Vou ler o estado da execução e a especificação, escolher o próximo item pendente e verificar com a suíte completa e o script de limites. Ao final, atualizarei os registros do ciclo, sem commit nem acesso externo.
+
+exec
+/bin/bash -lc "pwd; rg --files -g 'AGENTS.md' -g 'CLAUDE.md' -g 'context/*' -g 'tasks/current.md' -g 'handoffs/latest.md' -g 'longrun/2026-10-05-nutri-v1/*'" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+/home/nmaldaner/projetos/atende-nutricao
+CLAUDE.md
+longrun/2026-10-05-nutri-v1/.loop.lock
+longrun/2026-10-05-nutri-v1/prompt-goal-claude.md
+longrun/2026-10-05-nutri-v1/ciclo-1.log
+longrun/2026-10-05-nutri-v1/ciclo-3.log
+longrun/2026-10-05-nutri-v1/verificar-independente.py
+longrun/2026-10-05-nutri-v1/failures.md
+longrun/2026-10-05-nutri-v1/loop.env
+longrun/2026-10-05-nutri-v1/loop.log
+longrun/2026-10-05-nutri-v1/ciclo-4.log
+longrun/2026-10-05-nutri-v1/progress.md
+longrun/2026-10-05-nutri-v1/congelar.sh
+longrun/2026-10-05-nutri-v1/hash-congelado.txt
+longrun/2026-10-05-nutri-v1/verificar-limites.sh
+longrun/2026-10-05-nutri-v1/canal.md
+longrun/2026-10-05-nutri-v1/state.md
+longrun/2026-10-05-nutri-v1/prompt-goal-codex.md
+longrun/2026-10-05-nutri-v1/teste-final.log
+longrun/2026-10-05-nutri-v1/ciclo-2.log
+longrun/2026-10-05-nutri-v1/ciclo-5.log
+longrun/2026-10-05-nutri-v1/plan.md
+longrun/2026-10-05-nutri-v1/decisions.md
+longrun/2026-10-05-nutri-v1/prompt.md
+longrun/2026-10-05-nutri-v1/goal.md
+
+exec
+/bin/bash -lc 'cat longrun/2026-10-05-nutri-v1/goal.md longrun/2026-10-05-nutri-v1/state.md longrun/2026-10-05-nutri-v1/plan.md longrun/2026-10-05-nutri-v1/canal.md; tail -n 15 longrun/2026-10-05-nutri-v1/progress.md longrun/2026-10-05-nutri-v1/failures.md' in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+# Goal — nutri-v1
+
+- **Início:** (preencher ao iniciar) · **Agente:** `codex exec` (gpt-6-astra, assinatura) em loop headless — `tools/loop-longrun.sh` · alternativa: `/goal` no Codex TUI ou no Claude Code
+- **Tetos:** 20 ciclos × 30 min (≤ 10 h) · memória 8G por ciclo · estagnação 3 ciclos
+
+## Resultado
+`./atende` sobe um sistema de atendimento ao paciente para um consultório de nutrição — agenda de consultas (presencial ou online com link da equipe), confirmação, lista de espera, retorno programado, plano alimentar registrado pelo nutricionista e consultado pelo paciente na conversa, diário (água, refeições, peso, foto por metadados) com lembretes opt-in e metas, FAQ, fila humana, sinais de alerta, campanhas com trava mínima de publicidade e LGPD de dado de saúde, cadastros, bloqueios, backup, WhatsApp pela Evolution API, equipe pelo Telegram, exportação para o Painel do Raio-X (pacote `clinica`) e entrega em Docker para VPS —, conforme `docs/ESPECIFICACAO.md`.
+
+## Especificação
+**`docs/ESPECIFICACAO.md`** (contrato completo, congelado). Contexto: `docs/MAPA-RAIO-X.md`. Fora do escopo: seção 14 da especificação.
+
+## Critérios de pronto (verificáveis)
+
+**Função**
+- [ ] `python3 -m pytest -q tests/` → **99 passed**, 0 failed, 0 errors, 0 skipped
+
+**Regressão**
+- [ ] a mesma suíte inteira no teste final (o loop só fecha se todas passam juntas; teste que passava e voltou a falhar impede o fecho)
+- [ ] `./atende serve` reiniciado com o mesmo `--dados` mantém o estado (coberto por `test_estado_persiste_ao_reiniciar`, `test_confirmacao_sobrevive_a_reinicio`, `test_semente_so_na_primeira_vez` e `test_diario_resumo_e_filtro_por_dia`)
+
+**Limite**
+- [ ] `bash longrun/2026-10-05-nutri-v1/verificar-limites.sh` → `LIMITES OK` (hash do contrato = `hash-congelado.txt`, nº de testes coletados igual, `hash-congelado.txt` igual ao gravado pelo commit de congelamento, só arquivos do escopo — `atende`, `src/`, `web/`, `exemplos/`, `README.md`, `VERSION`, `Dockerfile`, `docker-compose.yml`, `.env.exemplo`, `.dockerignore`, `.gitignore`, `CLAUDE.md`, `FALHAS.md`, esta pasta —, sem SDK/dependência externa, sem URL externa, sem chave de API, sem `0.0.0.0` no código)
+
+**Teste rápido por ciclo**: `python3 -m pytest -q tests/`
+**Teste completo no final**: `python3 -m pytest -q tests/ && bash longrun/2026-10-05-nutri-v1/verificar-limites.sh`
+
+**Depois do "concluído" (humano, nível 4):** `python3 longrun/2026-10-05-nutri-v1/verificar-independente.py` → `INDEPENDENTE OK` (sem valores do fixture no código + consultório nunca visto, com passo de 20 min, consulta de 40 min, retorno em 15 dias, sem atendimento online, plano com refeições de outros nomes, trava de campanha, peso e água + `docker build` e healthcheck do container) e abrir `/` e `/equipe` no navegador.
+
+## Restrições
+- só pela assinatura; nenhuma API, nenhuma rede externa, nenhuma dependência fora da biblioteca padrão do Python (decisão 2 de `docs/DECISOES-ABERTAS.md`)
+- não mexer em: `tests/`, `pytest.ini`, `docs/` (inclusive `ESPECIFICACAO.md`), `goal.md`, `hash-congelado.txt`, `congelar.sh`, `verificar-*.{sh,py}`, `loop.env`, `prompt.md` (o hash congelado cobre `tests/`, `pytest.ini`, a spec e os dois verificadores); **nem rodar `congelar.sh`** (só o humano congela ou recongela — o `verificar-limites.sh` avisa se houver mais de um commit de congelamento)
+- `README.md`: acrescentar "Deploy na VPS" sem remover "Como rodar no seu ambiente" (o teste do README exige as duas)
+- servidor só em `127.0.0.1`; ao testar à mão, porta 0 e matar só o PID que subiu
+- nunca baixar mídia do WhatsApp nem buscar URL vinda de payload: a foto vira registro só com metadados (seção 19); o nome do endpoint da Evolution de mídia em base64 e `downloadMedia` não podem aparecer no código nem em comentário (o `verificar-limites.sh` grepa)
+- no loop headless não fazer commit (o loop faz); no /goal interativo, commit local a cada checkpoint; nunca criar repo remoto nem fazer push
+
+## Portões humanos (parar e perguntar)
+- teste que contradiz a especificação (registrar em `failures.md` com o trecho exato e parar — não "ajustar" o teste)
+- qualquer chamada a API real (Evolution, Telegram, LLM, Pix, análise de imagem) — durante a execução só os servidores falsos locais dos testes; dependência externa
+- deploy na VPS (é do humano, com as credenciais dele)
+- mudança de contrato, criar repo, push, publicar
+# Estado — atualizado 2026-10-19 14:09
+
+## Funciona
+- Python 3/biblioteca padrão, HTTP com threads, SQLite transacional em --dados, semente única, auth e agenda presencial/online. Versão 0.4.0.
+- Conversa persistente: normalização de decimais, prioridades emergência/alerta, parar/lembretes, fila humana única com silêncio enquanto aberta, respostas/encerramento pela API, FAQ e agendamento com modalidade; conflito oferece novos horários.
+- Confirmações idempotentes, pendências exatas, espera no mesmo horário/profissional, retorno por presença, caixa de saída simulada; remarcação renova confirmação.
+- Planos versionados, consulta por refeição/completo, envio simulado e dúvida encaminhada ao humano; sem prescrição automática.
+- Diário de água/refeições/peso, ROUND_HALF_UP e resposta neutra; metas/lembretes com tolerância e unicidade; exportação /dados com histórico completo.
+- Campanhas com validação antes do envio/consentimento; LGPD com anonimização e remoção de dados de saúde; Raio-X HTTP/CLI com merge idempotente.
+- Cadastros: criação/edição/inativação de profissionais e serviços, edição de pacientes com telefone único, criação/exclusão de FAQ com efeito imediato. Horários por profissional, bloqueios com conflitos sem cancelamento automático e exclusão que libera horários.
+- Backup consistente pelo SQLite com servidor ativo; restauração atômica com servidor parado. Teste de backup preservou paciente, agenda e plano após reinício.
+- Suíte completa: **79 passed / 20 failed** em 76,76 s. **LIMITES OK** (hash 9529d2ce312095d9; 99 testes).
+- Verificação local adicional: horário próprio vazio não herda o geral; edição inválida preserva cadastro; backup inválido não substitui banco; restauração em diretório novo funciona.
+
+## Falta
+- Evolution: entrada de texto/foto apenas por metadados, saída síncrona e retry. Telegram: avisos, encaminhamento, resposta e comandos. Testar exclusivamente contra servidores falsos locais; caixa de saída atual simula e reenviadas é zero.
+- Dockerfile, compose, .env.exemplo e seção Deploy na VPS preservando o README existente.
+- Páginas chat/equipe em web/; ainda retornam 404.
+- Não marcar concluído: restam 20 testes falhando, todos nas áreas acima. Nenhum conflito teste/spec identificado.
+
+## Como retomar
+1. Ler goal → state → plan → canal → fim de progress/failures. Especificação inteira e conftest lidos neste ciclo.
+2. storage.py persiste documentos; domain.py agenda/roteamento; registrations.py cadastros/bloqueios; backup.py cópia/restauração; conversation.py fluxo/prioridades; tasks.py saída/tarefas; nutrition.py plano/diário/metas; reporting.py campanhas/LGPD/Raio-X.
+3. Próximo passo: Evolution via Tasks.output e Conversation.message, sem duplicar histórico; depois Telegram, Docker/README e páginas.
+4. Rodar suíte inteira com saída em arquivo e ler apenas tail -n 30. Log deste ciclo: /tmp/atende-nutricao-ciclo4-pytest.log.
+5. Rodar verificar-limites.sh e atualizar registros. Não alterar arquivos protegidos, não fazer commit nem chamadas externas.
+# Plano
+
+## Próximos 3 passos
+1. Implementar Evolution: segredo próprio, deduplicação, texto/foto por metadados e saída síncrona com retry; testar apenas no servidor falso local, preservando os 79 testes aprovados.
+2. Implementar Telegram: abertura/encaminhamento, resposta por referência, comandos e avisos de agenda/cancelamento, só por variáveis da spec e servidor falso.
+3. Entregar Docker/compose/env e Deploy na VPS sem remover README; páginas chat/equipe funcionais. Rodar suíte + limites, registrar resultados; marcar concluído somente com ambos aprovados.
+# Canal — nutri-v1 (só acrescentar; nunca reescrever)
+
+Conhecimento do projeto que a compactação perde: fatos descobertos, aprendizados, glossário, armadilhas, onde estão as coisas.
+Não é estado da tarefa (isso vai em state/plan/progress). Preencha cedo — o hook avisa na faixa 1 (~50% do contexto).
+
+Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
+
+- 2026-10-05 16:30 · fato · Molde é o `~/projetos/atende-clinica` (93/93); o que muda está na seção 0 da spec. Config é `nutricao.json` (não `clinica.json`); relógio fixo por `ATENDE_AGORA`; o conftest limpa `EVOLUTION_*`, `TELEGRAM_*`, `WEBHOOK_*` e `ATENDE_*` do ambiente.
+- 2026-10-05 16:30 · armadilha · Normalização da conversa preserva `,` e `.` entre dígitos (`82,5`); todo o resto da pontuação some. Regras novas (peso/água/refeição) casam por token inteiro, não por substring.
+- 2026-10-05 16:30 · armadilha · Pendência de confirmação/espera só consome texto IGUAL a `1`/`sim`/`confirmo`/`2`/`cancelar`/`nao`; `nao comi` e `1 copo` seguem para o registro do diário (testes `test_responder_*`).
+- 2026-10-05 16:30 · armadilha · `retorno_atual_pct` conta QUALQUER serviço realizado em `(data_origem, data + 30]` (pontas: origem exclusiva, fim inclusivo); com `retorno_dias = 30` o atendimento de origem cai exatamente em `data − 30` e NÃO pode contar.
+- 2026-10-05 16:30 · armadilha · Lembrete de água/refeição só sai dentro de `[H, H + lembrete_tolerancia_min]`; fora disso o lembrete daquele dia nunca sai (não acumula). `enviadas` conta mensagens criadas mesmo com envio `pendente`; `nao_contatar` não cria mensagem.
+- 2026-10-05 16:30 · armadilha · Foto do WhatsApp: só `mimetype`/`caption` viram registro; nunca chamar `getBase64FromMediaMessage` nem buscar a `url` do payload (o verificar-limites.sh acusa).
+- 2026-10-05 19:00 · armadilha · (validação) Oferta da lista de espera é do MESMO horário e MESMO profissional liberados: o `1` não cai em outro profissional livre (§7). `/api/horarios` com profissional existente que não faz o serviço → 200 `[]`. `/dados.mensagens` inclui as respostas do bot na conversa como `saida`. Peso: `79.25` → `79,3 kg` (ROUND_HALF_UP, não `round()`). Diário ordenado por `quando`, depois `id` (um teste sobe servidor em 07/10 06:00 por isso).
+- 2026-10-05 16:30 · fato · Os checks 2–4 do briefing exigem 0 passed sem implementação: Dockerfile, compose, `.env.exemplo` e a seção "Deploy na VPS" do README são do implementador; o README já traz "Como rodar no seu ambiente" e o teste exige as duas seções.
+
+- 2026-10-19 13:51 · fato · Primeira implementação em src/storage.py, src/domain.py e src/server.py. Estado em estado.sqlite3; semeia coleções só quando marcador sistema/semente inexiste. Agenda e pacientes persistiram em reinício manual; teste global de persistência ainda depende de plano/peso.
+- 2026-10-19 13:51 · armadilha · Testes de agenda incluem leitura /pacientes/id/dados; teste de autenticação termina com conversa pública. Ambos podem falhar por módulos pendentes embora as partes anteriores funcionem. Não criar respostas vazias artificiais para fazer esses testes passarem.
+
+- 2026-10-19 13:57 · fato · conversation.py implementa prioridades e fluxo; nutrition.py implementa plano/metas/diário; tasks.py cria saída simulada, confirmação/espera/retorno/lembretes. A integração futura precisa enviar por Tasks.output e encaminhar mensagens de Conversation.message sem duplicar o histórico.
+- 2026-10-19 13:57 · armadilha · Pendência usa exclusivamente a última saída do telefone, não mensagens da conversa; guarda inicio para não confirmar agendamento remarcado com uma mensagem antiga. Oferta de espera guarda profissional, inicio, servico e modalidade.
+- 2026-10-19 13:57 · fato · GET /dados já agrega as coleções reais, mas exclusão LGPD ainda falta. Pesos são uma visão dos registros tipo peso do diário: não criar outra série divergente. Preferências antes de cadastro ficam em preferencias por telefone.
+
+- 2026-10-19 14:03 · fato · src/reporting.py implementa campanhas, DELETE /pacientes/id e Raio-X HTTP/CLI. Histórico anonimizado usa paciente_id: nunca selecionar mensagens por telefone null (misturaria pacientes removidos). Verificação adicional local cobriu dois removidos, retorno no último dia e fora da janela, merge do mês anterior e repetição sem duplicata.
+
+- 2026-10-19 14:09 · fato · src/registrations.py implementa edição/inativação, FAQ e bloqueios; src/backup.py implementa CLI backup/restaurar. Checagem extra confirmou restauração inválida preservando banco, restauração em diretório novo e edição inválida sem mutação.
+- 2026-10-19 14:09 · armadilha · Horários próprios vazios não herdam os do consultório: só null herda. Agenda corrigida; Raio-X já distinguia null corretamente.
+==> longrun/2026-10-05-nutri-v1/progress.md <==
+# Progresso (só acrescentar)
+
+| data/hora | checkpoint | commit | critério atingido? | tokens in/cached/out | compactações |
+|---|---|---|---|---|---|
+| 2026-10-19 13:51 | Base HTTP/SQLite/auth e agenda presencial/online implementadas; persistência manual OK; LIMITES OK | sem commit (loop externo) | pytest: 19 passed / 80 failed (34,72 s) | — | 0 |
+| 2026-10-19 13:58 | Conversa/fila humana, confirmação/espera/retorno, planos, diário/peso/metas/lembretes e leitura /dados; v0.2.0; validação local extra OK; LIMITES OK | sem commit (loop externo) | pytest: 62 passed / 37 failed (76,24 s); +43 aprovados | — | 0 |
+| 2026-10-19 14:04 | Campanhas, exclusão LGPD e Raio-X HTTP/CLI; v0.3.0; verificação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 70 passed / 29 failed (76,08 s); +8 aprovados | — | 0 |
+| 2026-10-19 14:09 | Cadastros, bloqueios e backup/restauração; v0.4.0; validação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 79 passed / 20 failed (76,76 s); +9 aprovados | — | 0 |
+
+==> longrun/2026-10-05-nutri-v1/failures.md <==
+# Falhas (só acrescentar; ao fim, a menor correção vira linha no FALHAS.md do projeto)
+
+| data | o que quebrou | tentativa | resultado | prompt \| infra |
+|---|---|---|---|---|
+| 2026-10-19 13:51 | Suíte inicial: 80 testes falham por funções ainda ausentes (conversa, plano, /dados, tarefas, integrações, entrega e páginas) | Implementadas base e agenda; executada suíte inteira | 19 passed / 80 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
+| 2026-10-19 13:58 | Suíte com funcionalidades pendentes (campanhas, exclusão LGPD, Raio-X, cadastros/bloqueios/backup, integrações, páginas e Docker) | Implementados conversa/tarefas/nutrição, com suíte inteira repetida após ajuste de tokens | 62 passed / 37 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
+| 2026-10-19 14:04 | Restam cadastros/bloqueios/backup, páginas, integrações e Docker | Implementados campanhas/LGPD/Raio-X e executada suíte inteira | 70 passed / 29 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
+| 2026-10-19 14:09 | Restam integrações, páginas e Docker/README | Implementados cadastros/bloqueios/backup; suíte inteira executada | 79 passed / 20 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |
+
+exec
+/bin/bash -lc 'cat CLAUDE.md; for f in context/overview.md context/current-state.md tasks/current.md handoffs/latest.md; do if [ -f "$f" ]; then cat "$f"; fi; done; cat docs/ESPECIFICACAO.md tests/conftest.py' in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+# CLAUDE.md — atende-nutricao
+
+Sistema de atendimento ao paciente para um consultório de nutrição: agenda (presencial/online), confirmação, lista de espera, retorno, plano alimentar, diário (água, refeições, peso, foto por metadados) com lembretes e metas, FAQ, fila humana, sinais de alerta, campanhas com trava mínima, LGPD de dado de saúde, WhatsApp pela Evolution, equipe pelo Telegram e exportação para o Painel do Raio-X de Margem (pacote `clinica`).
+
+- Repo local (sem remoto ainda). Autor de commit: `inematds <inematds@gmail.com>` (config local).
+- **Contrato:** `docs/ESPECIFICACAO.md`. Testes caixa-preta em `tests/` (pytest sobe `./atende serve --porta 0`). Contrato e testes são **protegidos** durante a execução longa — só humano altera, e aí recongela o hash (`longrun/.../congelar.sh`).
+- Decisões pendentes: `docs/DECISOES-ABERTAS.md` (⚠ trava do CFN é mínimo comum: o dono confirma antes de publicar campanha). Relação com o Raio-X: `docs/MAPA-RAIO-X.md`.
+- Execução longa: `longrun/2026-10-05-nutri-v1/` (método em `~/projetos/execucao-longa`). Como rodar: `README.md`, seção "Como rodar no seu ambiente".
+- `python3` (não existe `python` neste host). Sem dependência externa no v1 (biblioteca padrão + SQLite).
+- Nenhuma API (WhatsApp/Meta, LLM pago, análise de imagem, Pix/PSP, OpenRouter, Groq) sem autorização explícita. Sem rede externa no código; nunca baixar mídia do WhatsApp (foto = só `mimetype`/`caption`).
+- O bot **nunca prescreve**: só plano do paciente + FAQ; peso registrado sem comentário (lista de palavras proibidas na seção 10 da spec).
+- Servidor de teste: só `127.0.0.1`, porta 0; matar só o PID que subiu (nunca `pkill -f`).
+- Versão em `VERSION` (semver do CLAUDE global: minor carrega o patch).
+
+## Self-learning
+
+When I correct you, or you catch yourself making a mistake: before continuing, add the lesson as a one-line rule under ## Lessons, so it never happens again.
+
+## Lessons
+- `congelar.sh` grava `BASE = HEAD` antes do commit de congelamento: `BASE` é o **pai** do commit "contrato congelado", não ele. Toda guarda sobre o congelamento compara com `git show <commit-congelamento>:hash-congelado.txt` e `<commit>^`, e se prova num clone antes de valer. (05/10/2026)
+- Horário próprio vazio (`{}`) significa sem janelas; somente `null` herda os horários do consultório. Evitar fallback por truthiness. (19/10/2026)
+# Especificação v1 — atende-nutricao (contrato congelado)
+
+> Este arquivo é **protegido** durante a execução longa: o agente implementa contra ele e não o altera.
+> Os testes em `tests/` verificam exatamente o que está aqui. Mudança de contrato = humano edita, recongela o hash e reinicia o longrun.
+
+## 0. O que é
+
+Sistema de atendimento ao paciente para **um consultório de nutrição**: agenda de consultas (primeira consulta e retornos, **presencial ou online** com link informado pela equipe), confirmação automática, lista de espera, retorno programado, **plano alimentar** registrado pelo nutricionista e consultado pelo paciente na conversa, **diário** (água, refeições feitas/puladas, peso, foto de refeição) com lembretes opt-in, FAQ, passagem para humano, sinais de alerta, campanhas com trava mínima de publicidade e LGPD de dado de saúde, e exportação de números para o **Painel de Recuperação do Raio-X de Margem** (pacote `clinica`).
+
+Base: o desenho do `atende-clinica` (agenda, confirmação, espera, retorno, FAQ, fila humana, campanhas, LGPD, cadastros, bloqueios, backup, Evolution, Telegram, Docker). O que muda está nas seções 2, 3, 5, 6, 8, 9, 10, 11, 12, 13, 15, 19 e 20.
+
+Canais: **chat web**, **WhatsApp pela Evolution API** (seção 19) e caixa de saída **simulada** quando a Evolution não está configurada. Equipe interna atende pelo **Telegram** (seção 20) e pela página `/equipe`. Cadastros (seção 16), gestão de agenda (seção 17), backup (seção 18), entrega em **Docker** para VPS (seção 21).
+
+**O bot nunca prescreve** dieta, suplemento, cálculo calórico ou substituição de alimento: ele só mostra o que está no plano daquele paciente e no FAQ. Dúvida fora disso vai para o humano (seção 6).
+
+## 1. Execução
+
+- Ponto de entrada: arquivo executável `./atende` na raiz do repo.
+- `./atende serve --porta N --dados DIR [--host H]`
+  - `--porta 0` = porta livre escolhida pelo sistema. A **primeira linha** do stdout é `PORTA=<n>` (com flush), impressa quando o servidor já aceita conexões.
+  - Escuta em `--host` (padrão `127.0.0.1`; no Docker, `0.0.0.0` passado pelo comando do container — nunca escrito no código).
+  - `DIR/nutricao.json` = configuração (seção 2). Se não existir, copiar `exemplos/nutricao.json`.
+  - Todo o estado persiste em `DIR/` (ex.: SQLite). **Cria `DIR` se não existir** (no container, `/dados` pode não ter volume montado). Reiniciar com o mesmo `DIR` mantém tudo.
+  - O servidor aceita **conexões simultâneas** (os testes disparam 10 pedidos ao mesmo tempo); use servidor com threads e transação no banco.
+- **Relógio:** variável de ambiente `ATENDE_AGORA` (`AAAA-MM-DDTHH:MM`, hora local do consultório, sem fuso) fixa o "agora" do processo. Sem ela, usa o relógio real. Datas/horas no contrato são sempre `AAAA-MM-DDTHH:MM` local; datas soltas, `AAAA-MM-DD`; horas soltas, `HH:MM`.
+- `./atende raiox --dados DIR --mes AAAA-MM --acompanhamento ARQ` (seção 12).
+- `./atende backup` / `./atende restaurar` (seção 18).
+- Integrações externas **só** por variáveis de ambiente (seções 19–20). Sem elas, nenhuma chamada de rede sai do processo. Nenhuma URL externa, chave ou token escrito no código. O sistema **nunca baixa mídia** recebida pelo webhook (seção 19).
+
+## 2. `nutricao.json`
+
+```json
+{
+  "nome": "Nutri Bem",
+  "token": "segredo",                 // exigido no header X-Token das rotas da equipe [E]
+  "passo_min": 30,                    // grade de horários
+  "antecedencia_min_horas": 2,        // não oferece/aceita horário antes de agora + isto
+  "janela_dias": 14,                  // até quantos dias à frente o chat oferece horários
+  "confirmacao_horas": 48,            // pede confirmação quando a consulta começa em até 48 h
+  "retorno_aviso_dias": 7,            // avisa o retorno quando faltam até 7 dias
+  "lembrete_tolerancia_min": 60,      // lembrete de água/refeição só sai até X min depois do horário
+  "atende_online": true,              // false = toda consulta é presencial (o chat não pergunta)
+  "feriados": ["2026-10-12"],
+  "horarios": { "seg": [["08:00","12:00"],["14:00","18:00"]], "ter": [...], "qua": [...], "qui": [...], "sex": [...], "sab": [["08:00","12:00"]], "dom": [] },
+  "profissionais": [ { "id": "lia", "nome": "Dra. Lia", "servicos": ["primeira","retorno"] } ],
+  "servicos": [ { "id": "primeira", "nome": "Primeira consulta", "duracao_min": 60, "retorno_dias": 30 } ],
+  "faq": [ { "id": "convenios", "perguntas": ["vocês aceitam convênio"], "resposta": "Atendemos Unimed e particular." } ]
+}
+```
+
+`retorno_dias` pode ser `null` (sem retorno). Dias da semana: `seg ter qua qui sex sab dom`. Não há campo de conselho: o consultório é de nutrição (CFN) e a trava de campanha é a da seção 11. A fixture dos testes está em `tests/fixtures/nutricao.json`; `exemplos/nutricao.json` é igual, com token `TROQUE-ESTE-TOKEN`.
+
+## 3. Regras de agenda
+
+- Horário candidato: começa no início de uma janela e anda de `passo_min` em `passo_min`; vale se `[inicio, inicio+duracao)` cabe inteiro na janela (`inicio + duracao <= fim da janela`).
+- **Inválido (422)** se: não é horário candidato (fora da grade ou não cabe na janela); dia em `feriados`; `inicio < agora + antecedencia_min_horas`; profissional não faz o serviço ou está inativo; há bloqueio do profissional sobrepondo `[inicio, fim)` (seção 17); `modalidade` fora de `presencial`/`online`; `modalidade: "online"` com `atende_online: false`.
+- **Ocupado (409)** se é válido mas sobrepõe outro agendamento **ativo** do mesmo profissional (ou, sem profissional indicado, de todos que fazem o serviço). Intervalos semiabertos: sobrepõe se `inicio < outro.fim` e `fim > outro.inicio`.
+- `GET /api/horarios` lista só horários válidos e livres (sem exigir antecedência maior do que a regra acima).
+- Agendamento ativo = status `agendado`, `confirmado`, `realizado` ou `falta`. `cancelado` libera o horário.
+- **Modalidade:** `presencial` (padrão) ou `online`. Consulta online tem `link` (`null` até a equipe informar, seção 5). Remarcar mantém `modalidade` e `link`.
+- Dois pedidos simultâneos para o mesmo horário/profissional: exatamente um vence (201), o outro recebe 409.
+
+## 4. Autenticação
+
+Rotas marcadas **[E]** (equipe) exigem header `X-Token` igual a `nutricao.json.token`; sem ele ou errado → **401**, e essa checagem vem **antes** de qualquer outra (corpo vazio ou inválido sem token → 401, não 422/404). Rotas públicas: `/`, `/equipe` (página; os dados vêm de rotas [E]), `/api/saude`, `GET /api/servicos`, `/api/horarios`, `/api/mensagens`. Webhooks têm segredo próprio (seções 19 e 20).
+
+## 5. API HTTP (JSON, UTF-8)
+
+Toda resposta com corpo JSON (2xx e erros) sai com header `Content-Type: application/json` (os testes só decodificam JSON quando o header diz `json`); `204` sem corpo.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/saude` | — | 200 `{"ok": true, "versao": "<conteúdo de VERSION>"}` |
+| `GET /api/servicos` | — | 200 `{"servicos": [{id, nome, duracao_min}]}` só os ativos, na ordem do JSON e depois ordem de criação |
+| `GET /api/horarios?servico=S&data=AAAA-MM-DD[&profissional=P]` | — | 200 `{"horarios": [{"inicio", "profissional"}]}` ordenado por `inicio`, depois `profissional` (ordem de cadastro dos profissionais); serviço inexistente → 404; profissional inexistente → 404; profissional que **existe** mas não faz o serviço ou está inativo → 200 com `horarios: []` |
+| `POST /api/pacientes` [E] | `{nome, telefone, consentimento_marketing?: bool, email?, nascimento?: "AAAA-MM-DD"}` | 201 `{id}`; telefone já cadastrado → 200 com o mesmo `{id}` (demais campos não mudam); telefone inválido → 400 |
+| `GET /api/pacientes?busca=T` [E] | — | 200 `{"pacientes": [{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}]}`; `busca` casa parte do nome (sem acento, sem caixa) ou dígitos do telefone; sem `busca` = todos, ordem de criação |
+| `PUT /api/pacientes/{id}` [E] | `{nome?, telefone?, email?, nascimento?, consentimento_marketing?, nao_contatar?}` | 200 com o paciente; telefone inválido → 400; telefone de outro paciente → 409 |
+| `GET /api/pacientes/{id}/dados` [E] | — | 200 `{paciente, agendamentos, mensagens, planos, diario, pesos, metas}` (seção 13) |
+| `DELETE /api/pacientes/{id}` [E] | — | 204; anonimiza e apaga o dado de saúde (seção 13). O registro continua existindo com o mesmo `id`: `GET .../dados` depois disso devolve 200 |
+| `POST /api/agendamentos` [E] | `{paciente_id, servico, inicio, profissional?, modalidade?}` | 201 `{id, status: "agendado", inicio, fim, profissional, modalidade, link: null}`; sem `profissional` = o primeiro livre por ordem de cadastro dos profissionais; horário ocupado → 409; inválido (seção 3) → 422; paciente/serviço/profissional inexistente → 404 |
+| `GET /api/agendamentos?data=AAAA-MM-DD` [E] | — | 200 `{"agendamentos": [{id, paciente_id, nome, telefone, servico, profissional, inicio, fim, status, modalidade, link}]}` ordenado por `inicio`, depois `id`; inclui cancelados (filtrar pelo `status`) |
+| `GET /api/agendamentos?de=AAAA-MM-DD&ate=AAAA-MM-DD[&profissional=P]` [E] | — | mesma lista, pontas inclusivas |
+| `POST /api/agendamentos/{id}/cancelar` [E] | — | 200 `{status: "cancelado"}`; dispara a lista de espera (seção 7); já cancelado → 409 |
+| `POST /api/agendamentos/{id}/remarcar` [E] | `{inicio}` | 200 com o agendamento no novo horário (mesmo `id`, status `agendado`, a confirmação volta a ser devida); mesmas regras de 409/422 (o próprio agendamento não conta como ocupação) |
+| `POST /api/agendamentos/{id}/presenca` [E] | `{compareceu: bool}` | 200 `{status: "realizado" \| "falta"}`; `realizado` + `retorno_dias` cria retorno (seção 8); pode ser marcada a qualquer momento (não depende do relógio) |
+| `POST /api/agendamentos/{id}/link` [E] | `{link}` | 200 `{id, link}`; `modalidade` presencial → 422; `link` vazio → 422. O link entra na confirmação (seção 8) e na resposta `link` do chat (seção 6) |
+| `POST /api/espera` [E] | `{paciente_id, servico, data}` | 201 `{id}` |
+| `POST /api/tarefas/rodar` [E] | `{agora?}` (padrão = relógio do processo; o valor vale **só para esta rodada**) | 200 `{"enviadas": n, "reenviadas": n}` (seções 8 e 19); idempotente: rodar de novo no mesmo instante → `enviadas: 0` |
+| `GET /api/saida` [E] | — | 200 `{"mensagens": [{id, tipo, telefone, paciente_id, texto, agendamento_id, status, quando}]}` em ordem de criação. `tipo` ∈ `confirmacao, espera, retorno, lembrete, plano, campanha, humano`; `agendamento_id` só em `confirmacao` (senão `null`); `status` ∈ `simulado, enviado, pendente` (seção 19); `quando` = o "agora" vigente na criação, `AAAA-MM-DDTHH:MM` (numa rodada `tarefas/rodar {agora}`, esse `agora`) |
+| `POST /api/mensagens` | `{telefone, texto}` | 200 `{"respostas": [texto, ...]}` (seção 6) |
+| `GET /api/atendimento-humano` [E] | — | 200 `{"fila": [{id, telefone, nome, motivo, prioridade, status}]}` só os `aberto`, ordem de abertura; `prioridade` ∈ `normal, alta`; `motivo` ∈ `atendente, nao_entendi, emergencia, alerta, duvida_plano` |
+| `POST /api/atendimento-humano/{id}/responder` [E] / `.../encerrar` [E] | `{texto}` / — | 200 (seção 20) |
+| `POST /api/campanhas` [E] | `{texto}` | 200 `{"enviadas": n}` ou 422 `{"violacoes": [codigos]}` (seção 11); `texto` ausente, vazio ou só espaços → 422 |
+| `GET /api/raiox?mes=AAAA-MM` [E] | — | 200 (seção 12) |
+
+Plano alimentar: seção 9. Diário, metas e peso: seção 10. Cadastros (profissionais, serviços, FAQ): seção 16. Bloqueios: seção 17.
+
+**Ids inexistentes:** qualquer rota com `{id}` no caminho e qualquer referência por id no corpo (`paciente_id`, `servico`, `profissional`) a algo que não existe → **404**, antes das validações de 409/422. Corpo que não é JSON ou sem os campos obrigatórios → **422**.
+
+**Telefone:** aceita com ou sem `+55`, espaços, parênteses e hífen; conta os dígitos: 10 ou 11 dígitos (DDD + 8 ou 9) sem o país, ou 12/13 começando por `55`; normaliza para `+55DDNNNNNNNNN`. Fora disso → inválido. Todas as respostas usam o telefone normalizado.
+
+**Rotas síncronas:** `POST /api/mensagens`, `tarefas/rodar`, `campanhas`, `agendamentos/{id}/cancelar` (oferta da lista de espera), `pacientes/{id}/plano/enviar` e `atendimento-humano/{id}/responder` só devolvem a resposta HTTP depois de criar as mensagens de saída e tentar os envios (o `status` em `/api/saida` já está definido). Respostas ao webhook da Evolution e avisos ao Telegram podem ser assíncronos.
+
+## 6. Conversa (`POST /api/mensagens`)
+
+**Normalização:** minúsculas, sem acento, sem pontuação — **exceto `,` e `.` entre dois dígitos**, que são preservados (`82,5` continua `82,5`). *Token* = palavra inteira do texto normalizado (separado por espaço). "Contém `x`" = substring do texto normalizado; "contém o token `x`" = palavra inteira. *Número* = primeiro trecho `\d+([.,]\d+)?` do texto normalizado.
+
+Ordem de decisão (a primeira regra que casa responde; cada regra diz se agenda ou registra algo):
+
+1. **Emergência física** — contém um destes: `dor no peito`, `falta de ar`, `desmaio`, `desmaiei`, `desmaiou`, `convulsao`, `sangramento`, `sangrando`, `infarto`, `avc`, `nao paro de vomitar`, `vomitando sem parar`, `vomito sem parar`, `hipoglicemia`, `suor frio`, `visao turva`, `tremedeira`. Resposta contém `192` e `pronto-socorro`; entra na fila humana com `prioridade: "alta"`, `motivo: "emergencia"`. Não agenda nem registra nada.
+2. **Alerta comportamental** — contém um destes: `me matar`, `suicidio`, `me machucar`, `me cortar`, `compulsao`, `vomitei de proposito`, `forcei o vomito`, `provoquei o vomito`, `laxante`, `parei de comer`, `nao como ha dias`, `sem comer ha dias`, `jejum de dias`. Resposta contém `188` (CVV) e `nutricionista`; fila humana `prioridade: "alta"`, `motivo: "alerta"`. Não agenda nem registra nada. As regras 1 e 2 respondem **mesmo com atendimento humano aberto** (seção 20).
+3. **Parar** — texto igual a `parar`, `sair` ou `pare`: paciente fica `nao_contatar`; resposta contém `não vai mais receber`. As mensagens automáticas (`confirmacao`, `espera`, `retorno`, `lembrete`, `campanha`) **não são criadas** para esse telefone; `plano/enviar` recusa com 409 (seção 9); respostas da equipe (`humano`) continuam. Telefone sem paciente cadastrado: a preferência fica guardada pelo telefone e se aplica ao paciente quando ele for criado (pela API ou pelo chat).
+4. **Parar lembretes** — texto igual a `parar lembretes`: `lembretes_agua` vira `[]` e `lembretes_refeicoes` vira `false` (seção 10); `nao_contatar` **não** muda; resposta contém `lembretes`.
+5. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana `normal`, `motivo: "atendente"`; resposta contém `atendente`.
+6. **Fluxo em andamento** (agendamento pelo chat, abaixo) consome a mensagem.
+7. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`; respostas do bot na conversa não contam) para o telefone foi `confirmacao` (sem resposta ainda): texto **igual a** `1`, `sim` ou `confirmo` → status `confirmado`, resposta contém `confirmad`; texto **igual a** `2`, `cancelar` ou `nao` → status `cancelado` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): texto igual a `1` ou `sim` → agenda **o mesmo horário e o mesmo profissional** liberados (seção 7) se ainda livres (resposta contém `agendad`), senão resposta contém `ocupado` (outro profissional livre no mesmo horário **não** é usado). Qualquer outro texto **não consome** a pendência (ex.: `nao comi` e `1 copo` seguem para a regra 8).
+8. **Registro no diário** (seção 10), nesta ordem:
+   - **Peso:** contém o token `kg`, `quilo`, `quilos`, `peso`, `pesei` ou `pesando` **e** um número → registra o peso (regras de faixa, arredondamento e resposta na seção 10). Com o token `peso` e **sem** número → resposta contém o último peso registrado (o de maior `quando`; empate → maior `id`; vale o registrado pela equipe também) no formato `<v> kg` ou `nenhum peso`.
+   - **Água:** contém o token `copo` ou `copos` → registra copos de água (quantidade = primeiro inteiro do texto; sem inteiro = 1).
+   - **Refeição:** contém `pulei`, `pulou`, `nao comi`, `nao fiz` ou `nao tomei` → `pulada`; senão contém o token `comi`, `fiz`, `tomei`, `feita`, `feito`, `almocei` ou `jantei` → `feita`. Sem plano ativo: resposta contém `nutricionista` e nada é registrado.
+9. **Plano alimentar** — contém `meu plano`, `plano alimentar`, `cardapio`, `dieta`, `posso comer`, `pode comer`, `o que comer` ou `o que como`:
+   - sem plano ativo (inclusive telefone sem paciente) → resposta contém `nutricionista` (e nada mais acontece);
+   - casa uma **refeição** (regra de casamento na seção 9) → responde **só a linha daquela refeição** (os nomes das outras refeições não aparecem na resposta);
+   - não casa refeição e contém `posso comer`, `pode comer`, `o que comer` ou `o que como` (ex.: `posso comer chocolate?`) → dúvida fora do plano: resposta contém `plano`, `nutricionista` e `atendente`; entra na fila humana `normal`, `motivo: "duvida_plano"`;
+   - senão (`meu plano`, `plano alimentar`, `cardapio`, `dieta`) → responde o plano inteiro (formato na seção 9).
+10. **Link** — contém o token `link`: próximo agendamento `online` com status `agendado`/`confirmado` e `inicio >= agora` do telefone (menor `inicio`): com `link` → resposta contém o link; sem `link` → resposta contém `equipe`; não há consulta online → resposta contém `não encontrei`.
+11. **Agendar** — contém `agendar`, `marcar` ou `consulta`: inicia o fluxo.
+12. **FAQ** — palavras significativas (≥ 3 letras, fora de artigos/preposições/pronomes comuns) de alguma pergunta do FAQ: se ≥ 60 % delas aparecem no texto, responde **exatamente** a `resposta` daquele item (só ela, uma mensagem). Mais de um item casa → o de maior %; empate → o primeiro do FAQ.
+13. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana (`normal`, `motivo: "nao_entendi"`) automaticamente.
+
+**Fluxo de agendamento pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
+- telefone sem paciente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome, o paciente é criado (`consentimento_marketing: false`) e **a resposta a essa mensagem já lista os serviços** (passo seguinte). Telefone com paciente pula este passo e a resposta ao gatilho já lista os serviços;
+- lista os serviços ativos numerados `1 - <nome>` na ordem da seção 5;
+- escolhido o número, oferece os **3 primeiros** horários livres a partir de `agora + antecedencia_min_horas`, dentro de `janela_dias`, em todos os profissionais ativos, ordem da seção 5; cada linha `N) DD/MM HH:MM com <nome do profissional>`;
+- escolhido o número: com `atende_online: true`, pergunta a modalidade — resposta contém `1 - Presencial` e `2 - Online`; `1` = presencial, `2` = online. Com `atende_online: false`, não pergunta (presencial);
+- cria o agendamento; resposta contém `agendad`, `DD/MM` e `HH:MM`; se online, contém também `online`. Se o horário escolhido foi ocupado nesse meio-tempo, resposta contém `ocupado` e oferece de novo os 3 primeiros.
+- número inválido em qualquer passo → repete as opções do passo. `cancelar` dentro do fluxo → sai do fluxo (resposta contém `cancelad` e nada é agendado).
+- O bot **nunca** inventa preço, diagnóstico, dieta, suplemento ou cálculo: fora do plano e do FAQ cai nas regras 9 (fila humana) ou 13.
+
+## 7. Lista de espera
+
+Ao cancelar (pela API ou pela conversa), o primeiro pedido de espera ainda não atendido com o mesmo `servico` e a mesma `data` do horário liberado (ordem de criação), cujo paciente não esteja `nao_contatar`, recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. A oferta é do **horário e do profissional** que foram liberados (o `1` da regra 7 agenda exatamente esse par; se esse par estiver ocupado, resposta `ocupado`, mesmo que outro profissional esteja livre). O pedido fica `ofertado` (não recebe outra oferta do mesmo horário). Não há oferta se nenhum pedido serve.
+
+## 8. Confirmação, retorno e lembretes (`POST /api/tarefas/rodar`)
+
+- **Confirmação:** todo agendamento `agendado` com `agora < inicio <= agora + confirmacao_horas` que ainda não recebeu confirmação (desde a última criação/remarcação) → mensagem `tipo: "confirmacao"` com `agendamento_id`. Texto contém o nome do serviço, `DD/MM`, `HH:MM`, `1` (confirmar) e `2` (cancelar). **Não contém valor em R$.** Consulta `online`: o texto contém `online` e, se houver `link`, o link; sem link, contém a palavra `link` (a equipe vai mandar). Consulta presencial: o texto **não** contém `online`.
+- **Retorno:** presença `realizado` de serviço com `retorno_dias` cria um retorno com `data = data do atendimento + retorno_dias` e guarda a data do atendimento de origem. Quando `agora >= data − retorno_aviso_dias` e ainda não avisado → mensagem `tipo: "retorno"` com o nome do serviço. Uma vez só.
+- **Lembretes** (seção 10): para cada paciente com telefone, não `nao_contatar`:
+  - para cada `H` em `lembretes_agua`: com `T = data(agora) + H`, se `T <= agora <= T + lembrete_tolerancia_min` e ainda não houve lembrete de água para (paciente, `data(agora)`, `H`) → mensagem `tipo: "lembrete"` cujo texto contém `água`. Fora da janela de tolerância o lembrete daquele dia **não sai nunca** (não acumula);
+  - com `lembretes_refeicoes: true` e plano ativo: para cada refeição do plano com horário `H`, mesma janela e mesma unicidade por (paciente, dia, refeição) → `tipo: "lembrete"` cujo texto contém o nome da refeição e suas opções.
+- `enviadas` = mensagens criadas nesta rodada (mesmo que o envio pela Evolution fique `pendente`); `reenviadas` = `pendente` que viraram `enviado` (seção 19). Paciente `nao_contatar` nunca recebe (a mensagem **não é criada**). Confirmação, retorno e lembrete **não** dependem de `consentimento_marketing` (LGPD art. 11, II, f — tutela da saúde, pedidos do próprio paciente); campanha depende (seção 11).
+
+## 9. Plano alimentar
+
+Texto estruturado, escrito pelo nutricionista; **sem cálculo nutricional** no v1 (nem calorias, nem macros — ficam para o nutricionista).
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `POST /api/pacientes/{id}/plano` [E] | `{refeicoes: [{horario: "HH:MM", nome, opcoes: [texto, ...], observacoes?}], observacoes?}` | 201 `{id, versao}`; `versao` = 1 + nº de planos anteriores do paciente; o novo plano vira o **ativo**. 422 se `refeicoes` ausente/vazio, `horario` fora de `HH:MM`, `nome` vazio ou `opcoes` vazio; paciente inexistente → 404 |
+| `GET /api/pacientes/{id}/plano` [E] | — | 200 `{id, versao, refeicoes: [{horario, nome, opcoes, observacoes}], observacoes, criado_em, enviado_em}` (o ativo); `refeicoes` **ordenadas por `horario`** (empate: ordem enviada); `observacoes` ausente (do plano ou de uma refeição) = `""`; `enviado_em` = `null` até o envio; sem plano → 404 |
+| `GET /api/pacientes/{id}/planos` [E] | — | 200 `{"planos": [{id, versao, criado_em, enviado_em}]}` em ordem crescente de `versao` |
+| `POST /api/pacientes/{id}/plano/enviar` [E] | — | 200 `{"enviadas": 1}`: cria mensagem `tipo: "plano"` com o texto do plano (abaixo) e grava `enviado_em = agora`; sem plano → 404; paciente `nao_contatar` → 409 `{"erro": "nao_contatar"}` |
+
+**Texto do plano** (o mesmo na mensagem `plano` e na resposta do chat):
+
+```
+Seu plano alimentar (versão <versao>, de DD/MM/AAAA):
+<HH:MM> <nome>: <opção 1> / <opção 2> / ...[ — <observações da refeição>]
+...
+[<observações gerais>]
+```
+
+Uma linha por refeição, na ordem de `horario`; as opções separadas por ` / `; o sufixo ` — <observações>` só quando há observação; a última linha é `observacoes` do plano, quando não vazia. `DD/MM/AAAA` = data de `criado_em`.
+
+**Casamento de refeição** (regra 9 da seção 6): palavras significativas do `nome` de cada refeição (≥ 3 letras, fora de artigos/preposições — `da`, `de`, `do`, `das`, `dos`, `com`, `para`, `pre`, `pos` não contam); a refeição que tem **mais** palavras presentes como tokens do texto vence (precisa de ao menos uma); empate → a de menor `horario`. Ex.: com `Café da manhã (07:30)`, `Lanche da manhã (10:00)`, `Almoço (12:30)`, `Lanche da tarde (16:00)`, `Jantar (20:00)`: `o que posso comer no lanche da tarde` → `Lanche da tarde` (2 palavras); `o que como no lanche` → `Lanche da manhã` (empate, menor horário); `posso comer chocolate` → nenhuma → dúvida fora do plano.
+
+Linha de uma refeição na resposta: `<HH:MM> <nome>: <opções>[ — <observações>]` (igual à do texto do plano).
+
+## 10. Diário, metas e peso
+
+Todo registro tem `quando` = relógio do processo no momento (`AAAA-MM-DDTHH:MM`). *Dia* de um registro = `data(quando)`.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/pacientes/{id}/diario[?de=AAAA-MM-DD&ate=AAAA-MM-DD]` [E] | — | 200 `{"registros": [{id, tipo, quando, valor, refeicao, status, mimetype, caption, message_id, origem}], "resumo": {agua_copos, refeicoes_feitas, refeicoes_puladas, adesao_pct, fotos}}`; `tipo` ∈ `agua, refeicao, peso, foto`; campos que não se aplicam = `null`; ordem por `quando`, depois `id`; filtro por dia, pontas inclusivas; sem filtro = tudo. `resumo` sobre os registros filtrados: `agua_copos` = soma de `valor` dos `agua`; `refeicoes_feitas`/`refeicoes_puladas` = contagens; `adesao_pct` = `feitas ÷ (feitas + puladas) × 100` com 1 casa (0 se não houver); `fotos` = contagem |
+| `GET /api/pacientes/{id}/pesos` [E] | — | 200 `{"pesos": [{id, quando, peso, origem}], "variacao": <último − primeiro, 1 casa> ou null se houver menos de 2}`; ordem por `quando`, depois `id`; `origem` ∈ `chat, equipe` |
+| `POST /api/pacientes/{id}/pesos` [E] | `{peso, quando?}` | 201 `{id}` com `origem: "equipe"`; `peso` fora de `[20, 400]` ou não numérico → 422; `quando` fora do formato → 422; padrão `quando` = agora |
+| `GET /api/pacientes/{id}/metas` [E] | — | 200 `{lembretes_agua: ["HH:MM", ...], lembretes_refeicoes: bool, meta_agua_copos: int \| null}`; padrão `[]`, `false`, `null` |
+| `PUT /api/pacientes/{id}/metas` [E] | qualquer subconjunto dos três campos | 200 com os três campos; campo omitido não muda; horário fora de `HH:MM` ou `meta_agua_copos` não inteiro positivo (ou `null`) → 422 |
+
+**Peso pela conversa** (regra 8): valor = número com `,` ou `.` como separador (`82,5` e `82.5` valem o mesmo), arredondado a **1 casa (meio para cima)**: `79.25` → `79.3` (não é o `round()` do Python, que dá `79.2`; use `decimal` com `ROUND_HALF_UP`). Faixa aceita `20 <= peso <= 400`; fora dela a resposta contém `entre 20 e 400` e nada é registrado. Registro `{tipo: "peso", valor, origem: "chat"}`. A resposta é **neutra**: contém `registrad` e o valor no formato `<inteiro>,<decimal> kg` (ex.: `82,5 kg`; `82 kg` vira `82,0 kg`) e **não contém** nenhum destes trechos: `parabens`, `otimo`, `muito bem`, `que pena`, `cuidado`, `engordou`, `emagreceu`, `ganhou`, `perdeu`, `ruim` (texto normalizado). O sistema **nunca comenta** a evolução do peso com o paciente; a série é para o nutricionista.
+
+**Água pela conversa:** registro `{tipo: "agua", valor: n}`; resposta contém `registrad` e o total do dia: `<total> de <meta> copos` quando `meta_agua_copos` está definida, senão `<total> copo` (`1 copo`, `3 copos`).
+
+**Refeição pela conversa:** exige plano ativo. A refeição é a que **casa pelo nome** (regra da seção 9); se nenhuma casa, a refeição do plano com **maior `horario <= hora(agora)`**, ou a primeira do plano se não houver. Registro `{tipo: "refeicao", refeicao: <nome>, status: "feita" | "pulada"}`; resposta contém `registrad` e o nome da refeição.
+
+**Foto de refeição** (seção 19): registro `{tipo: "foto", mimetype, caption, message_id, origem: "whatsapp"}` só com metadados (`message_id` = `key.id` da Evolution, a referência para achar a imagem no próprio WhatsApp); a mídia **não é baixada nem guardada**.
+
+Telefone **sem paciente** cadastrado: peso, água, refeição e foto não são registrados; a resposta contém `cadastro` (o paciente precisa estar cadastrado pela equipe ou ter agendado pelo chat). Essa checagem vem **antes** da de plano ativo: `comi` de telefone desconhecido responde `cadastro`, não `nutricionista`.
+
+## 11. Campanhas e trava de publicidade
+
+`POST /api/campanhas {texto}` cria `tipo: "campanha"` só para pacientes com `consentimento_marketing: true`, sem `nao_contatar` e com telefone (LGPD art. 11, I — consentimento específico para dado de saúde). Antes de enviar, valida o texto em minúsculas e sem acento (**pontuação mantida**, para `100%`). O `422` lista **todos** os códigos violados; qualquer violação → 422 e nada é enviado.
+
+| Código | Detecta |
+|---|---|
+| `promessa_resultado` | `garantido`, `garantia de resultado`, `resultado garantido`, `garantimos`, `100%` |
+| `antes_depois` | `antes e depois` |
+
+⚠ **Mínimo comum seguro**, não a regra do CFN: o Raio-X (`docs/setores/servicos-pesquisa-2026-10.md`) não pesquisou o Conselho Federal de Nutricionistas; os dois códigos acima vêm do que CFM, CFO e COFFITO proíbem em comum (promessa de resultado e antes-e-depois). **O dono confirma as regras do CFN antes de publicar campanha** (`docs/DECISOES-ABERTAS.md`). Nenhum artigo de resolução do CFN é citado aqui de propósito.
+
+## 12. Exportação para o Raio-X (Painel de Recuperação)
+
+`GET /api/raiox?mes=AAAA-MM` → `{"pacote": "clinica", "mes": "AAAA-MM", "valores": {...}}`, com números arredondados a 1 casa (meio para cima):
+
+- `atendimentos_mes` = agendamentos `realizado` com `inicio` no mês (inteiro);
+- `falta_pct` = `falta ÷ (realizado + falta) × 100` no mês (0 se não houver);
+- `ocupacao_pct` = minutos de agendamentos ativos no mês ÷ minutos disponíveis no mês (todas as janelas de todos os profissionais ativos, menos feriados; horário próprio do profissional quando houver) × 100;
+- `clientes_novos_mes` = pacientes cujo **primeiro** `realizado` cai no mês;
+- `retorno_atual_pct` = dos retornos (seção 8) com `data` no mês, % cujo paciente tem **outro** agendamento `realizado` (qualquer serviço, diferente do que gerou o retorno) com `data(inicio)` em `(data_origem, data + 30 dias]` — isto é, depois do atendimento de origem e até 30 dias depois da data prevista (0 se não houver retornos).
+
+Só esses cinco ids vão em `valores` (são entradas do pacote `clinica` do Raio-X). `./atende raiox --dados DIR --mes M --acompanhamento ARQ`: lê `ARQ` (formato do `raio-x-margem/app/painel-motor.js`: `{tipo: "acompanhamento", pacote, cliente, base: {data, valores}, meses: [{mes, valores, obs}]}`), insere ou substitui o mês `M` com `valores` = os da rota acima **mesclados** sobre os valores do mês anterior (ou da base, se não houver mês anterior) e `obs: "atende-nutricao"`, e grava de volta. Campos que o sistema não mede (ex.: `ticket_medio`, `glosa_pct`) ficam como estavam. Sai com código 0.
+
+## 13. LGPD (dado de saúde = sensível, art. 11)
+
+- `GET /api/pacientes/{id}/dados` devolve tudo o que há do paciente: `paciente` `{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}`, `agendamentos` (mesmo formato da listagem), `mensagens` = recebidas e enviadas, cada uma `{direcao: "entrada" | "saida", texto, quando}` — `entrada` = toda mensagem do paciente (chat e webhook); `saida` = **as respostas do bot na conversa** e as mensagens da caixa de saída (`/api/saida`) para o telefone dele; em ordem de criação —, `planos` = todos os planos com refeições (ordem de versão), `diario` = registros (formato da seção 10), `pesos` (formato da seção 10) e `metas` (formato da seção 10).
+- `DELETE /api/pacientes/{id}`: nome vira `removido`, telefone vira `null`, `email`/`nascimento` viram `null`, agendamentos `agendado`/`confirmado` viram `cancelado` (os `realizado`/`falta` ficam), textos de mensagens dele viram `""`, **planos, diário e pesos são apagados** (listas vazias em `/dados`) e `metas` volta ao padrão. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando os atendimentos passados.
+
+## 14. Fora do v1 (não implementar; portão humano ou próxima versão)
+
+Cálculo nutricional automático (calorias, macros, substituições), análise de imagem da foto de refeição (só metadados no v1), download/armazenamento de mídia, WhatsApp Cloud API oficial da Meta (v1 usa a Evolution), SMS/e-mail, deploy na VPS (é do humano: README explica), cobrança/sinal por Pix e planos/assinatura (PSP), prontuário e anamnese, convênio/glosa/TISS, vários consultórios no mesmo servidor, login por usuário, LLM nas respostas (pode entrar depois atrás de uma opção desligada por padrão; os testes nunca a usam), videochamada própria (o link é de ferramenta externa, informado pela equipe), interface EN/ES.
+
+## 15. Páginas
+
+- `GET /` → HTML do chat do paciente, com elemento `id="chat"`, que usa `/api/mensagens`.
+- `GET /equipe` → HTML da equipe com elementos `id="agenda"`, `id="fila-humano"`, `id="saida"`, `id="pacientes"`, `id="plano"`, `id="diario"`, `id="pesos"` e `id="faq"`; pede o token e usa as rotas [E] (agenda, pacientes, plano alimentar por paciente, diário/adesão e série de peso por paciente, FAQ, fila humana com responder/encerrar). Sem dependência de CDN.
+
+## 16. Cadastros [E]
+
+`nutricao.json` é lido a cada início para `nome, token, passo_min, antecedencia_min_horas, janela_dias, confirmacao_horas, retorno_aviso_dias, lembrete_tolerancia_min, atende_online, feriados, horarios`. Já `profissionais`, `servicos` e `faq` só **semeiam** o banco na primeira vez (banco vazio); depois o banco é a fonte e se edita pela API.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/profissionais` | — | 200 `{"profissionais": [{id, nome, servicos, registro, horarios, ativo}]}` ordem de cadastro (`registro` = CRN, pode ser `null`; `horarios` = `null` quando usa o do consultório) |
+| `POST /api/profissionais` | `{id, nome, servicos, registro?, horarios?}` | 201; `id` repetido → 409; serviço inexistente → 422 |
+| `PUT /api/profissionais/{id}` | campos parciais | 200 com o registro atualizado; inexistente → 404 |
+| `DELETE /api/profissionais/{id}` | — | 200 `{"ativo": false}`. Inativo some de `/api/horarios`, do chat e não aceita agendamento novo (422); os agendamentos já feitos continuam |
+| `GET /api/servicos` (público) | — | só os ativos |
+| `POST /api/servicos` | `{id, nome, duracao_min, retorno_dias?}` | 201; `id` repetido → 409 |
+| `PUT /api/servicos/{id}` / `DELETE /api/servicos/{id}` | parcial / — | 200 / 200 `{"ativo": false}` (some da lista pública e do chat) |
+| `GET /api/faq` | — | 200 `{"faq": [{id, perguntas, resposta}]}` ordem de cadastro |
+| `POST /api/faq` | `{perguntas: [..], resposta}` | 201 `{id}`; o bot passa a usar na hora |
+| `DELETE /api/faq/{id}` | — | 204; o bot para de usar na hora |
+
+## 17. Gestão de agenda [E]
+
+- **Horário por profissional:** `horarios` do profissional (mesmo formato do consultório) substitui o do consultório só para ele. `null` = o do consultório.
+- **Bloqueios** (férias, folga, congresso): `POST /api/bloqueios {profissional, inicio, fim, motivo}` → 201 `{id, conflitos: [ids de agendamentos ativos que caem no bloqueio]}` (não cancela nada sozinho). Horários que sobrepõem `[inicio, fim)` somem de `/api/horarios` e o agendamento neles dá 422. `GET /api/bloqueios?profissional=P` → 200 `{"bloqueios": [{id, profissional, inicio, fim, motivo}]}` ordem por `inicio`, depois `id`. `DELETE /api/bloqueios/{id}` → 204 e libera.
+- **Listagem por período:** `GET /api/agendamentos?de=AAAA-MM-DD&ate=AAAA-MM-DD[&profissional=P]` (inclusivo nas duas pontas), ordenado por `inicio`, depois `id`; continua valendo `?data=`.
+
+## 18. Banco de dados
+
+- `./atende backup --dados DIR --saida ARQ` → grava em `ARQ` uma cópia consistente de todo o estado (pode rodar com o servidor ligado). Código 0.
+- `./atende restaurar --dados DIR --entrada ARQ` → com o servidor parado, substitui o estado de `DIR` pelo do backup. Código 0. Ao subir de novo, tudo volta como estava no momento do backup.
+
+## 19. WhatsApp pela Evolution API
+
+Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080` — este exemplo fica **só nesta spec e no README**: no código e no `.env.exemplo` nenhuma URL além de `127.0.0.1`/`localhost`, senão o `verificar-limites.sh` e o teste do `.env.exemplo` acusam), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
+
+**Entrada** — `POST /webhook/evolution/{WEBHOOK_SEGREDO}` (segredo errado → 404). Formato da Evolution v2:
+```json
+{"event": "messages.upsert", "instance": "nutricao",
+ "data": {"key": {"remoteJid": "5541999990001@s.whatsapp.net", "fromMe": false, "id": "ABC123"},
+          "pushName": "Maria", "message": {"conversation": "oi"}, "messageType": "conversation"}}
+```
+- Sempre responde 200. Ignora: `event` diferente de `messages.upsert`, `fromMe: true`, `remoteJid` de grupo (`@g.us`), `key.id` já processado (a Evolution reenvia).
+- Texto = `message.conversation` ou `message.extendedTextMessage.text`. Passa pela mesma conversa da seção 6 (o mesmo paciente, o mesmo estado).
+- **Foto** = `message.imageMessage` presente (ou `messageType: "imageMessage"`): registra no diário do paciente `{tipo: "foto", mimetype: imageMessage.mimetype, caption: imageMessage.caption ou null, message_id: key.id}` (seção 10) e responde texto contendo `foto` e `registrad`; telefone sem paciente → resposta contém `cadastro`. **Nunca** baixa, pede à Evolution (o endpoint dela de obter mídia em base64 fica proibido no código, inclusive em comentário — o `verificar-limites.sh` grepa o nome dele) nem guarda a mídia: só esses metadados.
+- Sem texto nem foto (áudio, documento, figurinha...) → responde `Por enquanto só consigo ler mensagens de texto e fotos.`
+- Telefone = dígitos do `remoteJid` antes do `@`, normalizado como na seção 5.
+- Cada resposta da conversa vai por `POST {EVOLUTION_URL}/message/sendText/{EVOLUTION_INSTANCIA}` com header `apikey: {EVOLUTION_API_KEY}` e corpo `{"number": "<dígitos com 55>", "text": "<texto>"}`, na ordem.
+
+**Saída** (confirmação, espera, retorno, lembrete, plano, campanha, humano): com a Evolution configurada, cada mensagem da caixa de saída é enviada do mesmo jeito. Em `/api/saida` cada mensagem tem `status`: `enviado` (2xx), `pendente` (erro HTTP ou de conexão) ou `simulado`. `POST /api/tarefas/rodar` reenvia as `pendente` e devolve `"reenviadas": n` (as que viraram `enviado`). Rotas síncronas: seção 5.
+
+## 20. Atendimento interno pelo Telegram
+
+Variáveis: `TELEGRAM_API_URL` (ex.: `https://api.telegram.org` — só nesta spec e no README; nunca no código nem no `.env.exemplo`), `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (grupo da equipe), `TELEGRAM_SEGREDO`. Sem elas, nada vai ao Telegram (o resto funciona igual). Envio: `POST {TELEGRAM_API_URL}/bot{TELEGRAM_TOKEN}/sendMessage` com `{"chat_id", "text"[, "reply_to_message_id"]}`; a resposta do Telegram traz `result.message_id`.
+
+**Atendimento humano** (`/api/atendimento-humano`, seção 5):
+- Ao abrir (pedido de atendente, emergência, alerta, dúvida fora do plano, 2º "não entendi"): manda ao grupo um texto com `#<id>`, telefone, nome (se houver), motivo, a última mensagem do paciente e, se `prioridade` for `alta`, a palavra `ALTA`. Guarda o `message_id`. Um telefone tem no máximo **um** atendimento `aberto`; nova causa enquanto aberto não abre outro (mas emergência/alerta elevam a prioridade para `alta`).
+- Enquanto o atendimento do telefone estiver `aberto`, o bot **não responde** sozinho (`respostas: []`), exceto regras 1 e 2 da seção 6; cada mensagem do paciente vai ao grupo como `#<id> <nome ou telefone>: <texto>`, em resposta (`reply_to_message_id`) à mensagem de abertura.
+- `POST /webhook/telegram` exige header `X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_SEGREDO}` (senão 401). Só aceita updates com `message.chat.id` igual a `TELEGRAM_CHAT_ID` (comparados como **texto**); os outros são ignorados (200, sem efeito).
+- Mensagem da equipe que é resposta (`reply_to_message.message_id`) a uma mensagem do atendimento `#id` → o texto vai ao paciente (caixa de saída `tipo: "humano"`, e pela Evolution se configurada).
+- Comandos: `/responder <id> <texto>` (o mesmo, sem precisar responder em cima); `/encerrar <id>` → status `encerrado`, o bot volta a responder aquele telefone; `/fila` → o bot manda a lista dos abertos (cada um com `#id`); `/alertas` → só os abertos com `prioridade: "alta"` (cada um com `#id` e o motivo); nenhum → texto contém `nenhum`; `/agenda [AAAA-MM-DD]` (padrão: hoje pelo relógio) → manda os agendamentos ativos do dia, uma linha `HH:MM <nome do paciente> — <nome do serviço> (<nome do profissional>)` cada, com o sufixo ` [online]` quando a consulta é online.
+- Pela página [E]: `POST /api/atendimento-humano/{id}/responder {texto}` e `POST /api/atendimento-humano/{id}/encerrar` fazem o mesmo.
+- **Avisos à equipe:** agendamento feito pelo chat → `Novo agendamento: DD/MM HH:MM <nome> — <serviço> com <profissional>` (mais ` (online)` quando online); cancelamento pelo chat → texto começando com `Cancelado:` e com `DD/MM HH:MM`.
+
+## 21. Docker / VPS
+
+- `Dockerfile` (imagem oficial `python:3-slim` ou similar, **sem `pip install`**) que roda `./atende serve --host 0.0.0.0 --porta 8080 --dados /dados`, com `HEALTHCHECK` em `/api/saude` (a imagem não tem `curl`: usar `python3 -c` com `urllib`). O container precisa subir **sem volume** em `/dados` (a verificação independente faz `docker run` sem `-v`): o `serve` cria a pasta (seção 1).
+- `docker-compose.yml` com o serviço `atende`: `build: .`, `restart: unless-stopped`, `env_file: .env`, volume para `/dados`, porta publicada só em loopback — a linha é literalmente `"127.0.0.1:8080:8080"` (na VPS fica atrás de proxy reverso com HTTPS).
+- `.env.exemplo` com todas as variáveis das seções 19 e 20, **valores vazios** (`VARIAVEL=` e nada depois do `=`; nenhum segredo, nenhuma URL, e a palavra `http` não aparece em linha nenhuma — nem em comentário).
+- `README.md` com a seção **Deploy na VPS** (acrescentada pelo implementador **sem remover** a seção "Como rodar no seu ambiente"): subir o compose, proxy HTTPS, configurar o webhook da Evolution para `/webhook/evolution/<segredo>` (evento `MESSAGES_UPSERT`), registrar o webhook do Telegram com `setWebhook` + `secret_token`, e o backup diário (`./atende backup` no cron).
+"""Testes de aceitação caixa-preta do atende-nutricao (contrato: docs/ESPECIFICACAO.md).
+
+Sobem `./atende serve --porta 0 --dados <tmp>` com relógio fixo e falam só HTTP/CLI,
+então valem para qualquer linguagem de implementação.
+"""
+import json
+import os
+import pathlib
+import shutil
+import signal
+import subprocess
+import threading
+import unicodedata
+import urllib.error
+import urllib.request
+
+import pytest
+
+RAIZ = pathlib.Path(__file__).resolve().parent.parent
+FIXTURE = pathlib.Path(__file__).resolve().parent / "fixtures" / "nutricao.json"
+TOKEN = "segredo-teste"
+AGORA = "2026-10-06T09:00"  # terça-feira; horários 08–12 e 14–18 na fixture, antecedência 2 h → oferece a partir das 11:00
+
+# plano alimentar padrão dos testes (ordem de horário já respeitada)
+PLANO = {
+    "refeicoes": [
+        {"horario": "07:30", "nome": "Café da manhã", "opcoes": ["ovos mexidos com pão integral", "iogurte natural com aveia"], "observacoes": "sem açúcar"},
+        {"horario": "10:00", "nome": "Lanche da manhã", "opcoes": ["1 fruta", "castanhas"]},
+        {"horario": "12:30", "nome": "Almoço", "opcoes": ["arroz, feijão, frango grelhado e salada", "quinoa com legumes e peixe"]},
+        {"horario": "16:00", "nome": "Lanche da tarde", "opcoes": ["iogurte com granola", "pão integral com queijo branco"]},
+        {"horario": "20:00", "nome": "Jantar", "opcoes": ["sopa de legumes com carne", "omelete com salada"]},
+    ],
+    "observacoes": "Beba água ao longo do dia.",
+}
+
+
+def norm(s):
+    """Minúsculas e sem acento, para comparar trechos de resposta."""
+    return "".join(c for c in unicodedata.normalize("NFD", s.lower()) if unicodedata.category(c) != "Mn")
+
+
+def chaves(d, **esperado):
+    """Compara chave a chave (um corpo HTTP pode ganhar campos novos sem quebrar o contrato)."""
+    for k, v in esperado.items():
+        assert d.get(k) == v, (k, d)
+
+
+class Cliente:
+    def __init__(self, base):
+        self.base = base
+
+    def req(self, metodo, rota, corpo=None, token=TOKEN):
+        dados = None if corpo is None else json.dumps(corpo).encode()
+        r = urllib.request.Request(self.base + rota, data=dados, method=metodo)
+        if dados is not None:
+            r.add_header("Content-Type", "application/json")
+        if token:
+            r.add_header("X-Token", token)
+        try:
+            with urllib.request.urlopen(r, timeout=10) as resp:
+                texto = resp.read().decode()
+                return resp.status, (json.loads(texto) if texto and "json" in resp.headers.get("Content-Type", "") else texto)
+        except urllib.error.HTTPError as e:
+            texto = e.read().decode()
+            try:
+                return e.code, json.loads(texto)
+            except ValueError:
+                return e.code, texto
+
+    def get(self, rota, **kw):
+        return self.req("GET", rota, **kw)
+
+    def post(self, rota, corpo=None, **kw):
+        return self.req("POST", rota, {} if corpo is None else corpo, **kw)
+
+    def put(self, rota, corpo, **kw):
+        return self.req("PUT", rota, corpo, **kw)
+
+    def delete(self, rota, **kw):
+        return self.req("DELETE", rota, **kw)
+
+    # atalhos (usam padrões da fixture; no verificar-independente passar tudo explícito)
+    def paciente(self, nome="Maria Silva", telefone="(41) 99999-0001", marketing=False, **extra):
+        corpo = {"nome": nome, "telefone": telefone, "consentimento_marketing": marketing, **extra}
+        st, r = self.post("/api/pacientes", corpo)
+        assert st in (200, 201), (st, r)
+        return r["id"]
+
+    def agenda(self, paciente_id, inicio, servico="retorno", profissional=None, **extra):
+        corpo = {"paciente_id": paciente_id, "servico": servico, "inicio": inicio, **extra}
+        if profissional:
+            corpo["profissional"] = profissional
+        return self.post("/api/agendamentos", corpo)
+
+    def plano(self, paciente_id, plano=None):
+        st, r = self.post(f"/api/pacientes/{paciente_id}/plano", PLANO if plano is None else plano)
+        assert st == 201, (st, r)
+        return r
+
+    def msg(self, telefone, texto):
+        st, r = self.post("/api/mensagens", {"telefone": telefone, "texto": texto}, token=None)
+        assert st == 200, (st, r)
+        return "\n".join(r["respostas"])
+
+    def saida(self, tipo=None):
+        st, r = self.get("/api/saida")
+        assert st == 200, (st, r)
+        return [m for m in r["mensagens"] if tipo is None or m["tipo"] == tipo]
+
+    def agendamentos(self, data):
+        st, r = self.get(f"/api/agendamentos?data={data}")
+        assert st == 200, (st, r)
+        return r["agendamentos"]
+
+    def por_id(self, data, ag_id):
+        return next(a for a in self.agendamentos(data) if a["id"] == ag_id)
+
+
+SERVIDORES = []
+
+
+@pytest.fixture(autouse=True)
+def _parar_servidores():
+    """Derruba todo servidor subido no teste, mesmo quando uma asserção falha antes do parar() explícito
+    (em 05/10 um `serve` ficou órfão 14 h no projeto irmão por isso)."""
+    yield
+    while SERVIDORES:
+        SERVIDORES.pop().parar()
+
+
+class Servidor:
+    def __init__(self, dados, agora=AGORA, env=None):
+        SERVIDORES.append(self)  # o teardown autouse para todos; parar() é idempotente
+        self.dados = dados
+        self.agora = agora
+        self.env = env or {}
+        self.proc = None
+
+    def subir(self):
+        exe = RAIZ / "atende"
+        if not exe.exists():
+            pytest.fail("./atende não existe (ponto de entrada da seção 1 da especificação)")
+        env = {k: v for k, v in os.environ.items()
+               if not k.startswith(("EVOLUTION_", "TELEGRAM_", "WEBHOOK_", "ATENDE_"))}
+        env.update(ATENDE_AGORA=self.agora, **self.env)
+        self.proc = subprocess.Popen(
+            [str(exe), "serve", "--porta", "0", "--dados", str(self.dados)],
+            cwd=RAIZ, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+        )
+        linha = {}
+
+        def ler():
+            linha["v"] = self.proc.stdout.readline()
+
+        t = threading.Thread(target=ler, daemon=True)
+        t.start()
+        t.join(15)
+        primeira = (linha.get("v") or "").strip()
+        if not primeira.startswith("PORTA="):
+            self.parar()
+            pytest.fail(f"servidor não imprimiu PORTA=<n> na 1ª linha (veio {primeira!r})")
+        # drena o resto do stdout para o processo não travar com o pipe cheio
+        threading.Thread(target=lambda: [None for _ in self.proc.stdout], daemon=True).start()
+        return Cliente(f"http://127.0.0.1:{int(primeira.split('=', 1)[1])}")
+
+    def parar(self):
+        if self.proc and self.proc.poll() is None:
+            self.proc.send_signal(signal.SIGTERM)
+            try:
+                self.proc.wait(5)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                self.proc.wait(5)
+
+
+@pytest.fixture
+def dados(tmp_path):
+    d = tmp_path / "dados"
+    d.mkdir()
+    shutil.copy(FIXTURE, d / "nutricao.json")
+    return d
+
+
+@pytest.fixture
+def servidor(dados):
+    s = Servidor(dados)
+    yield s
+    s.parar()
+
+
+@pytest.fixture
+def api(servidor):
+    return servidor.subir()
+
+
+def com_config(dados, **mudancas):
+    """Altera chaves do nutricao.json antes de subir (ex.: atende_online=False)."""
+    cfg = json.loads((dados / "nutricao.json").read_text())
+    cfg.update(mudancas)
+    (dados / "nutricao.json").write_text(json.dumps(cfg, ensure_ascii=False))
+
+
+class Externo:
+    """Servidor falso local que faz o papel da Evolution API e da API do Telegram. Grava cada pedido."""
+
+    def __init__(self):
+        import http.server
+        self.pedidos = []
+        self.falhas = 0          # quantos próximos pedidos devolvem 500
+        self.prox_msg = 1000
+        self.trava = threading.Lock()
+        externo = self
+
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_POST(self):
+                corpo = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+                try:
+                    dados = json.loads(corpo or b"{}")
+                except ValueError:
+                    dados = {}
+                pedido = {"rota": self.path, "headers": {k.lower(): v for k, v in self.headers.items()}, "json": dados}
+                with externo.trava:
+                    if externo.falhas > 0:
+                        externo.falhas -= 1
+                        pedido["status"] = 500
+                        externo.pedidos.append(pedido)
+                        self.send_response(500)
+                        self.send_header("Content-Length", "0")
+                        self.end_headers()
+                        return
+                    externo.prox_msg += 1
+                    pedido["status"], pedido["message_id"] = 200, externo.prox_msg
+                    externo.pedidos.append(pedido)
+                resp = {"ok": True, "result": {"message_id": pedido["message_id"]}, "key": {"id": f"X{pedido['message_id']}"}}
+                b = json.dumps(resp).encode()
+                self.send_response(201 if "/message/" in self.path else 200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(b)))
+                self.end_headers()
+                self.wfile.write(b)
+
+            def log_message(self, *a):
+                pass
+
+        self.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+        self.url = f"http://127.0.0.1:{self.srv.server_address[1]}"
+        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+
+    def whats(self, ok=True):
+        return [p for p in self.pedidos if p["rota"] == "/message/sendText/nutricao" and (not ok or p["status"] == 200)]
+
+    def telegram(self):
+        return [p for p in self.pedidos if p["rota"] == "/botTOKEN123/sendMessage" and p["status"] == 200]
+
+    def fechar(self):
+        self.srv.shutdown()
+        self.srv.server_close()
+
+
+SEGREDO_WH = "wh-segredo"
+CHAT_EQUIPE = -100777
+SEGREDO_TG = "tg-segredo"
+
+
+def env_integracoes(externo):
+    return {
+        "EVOLUTION_URL": externo.url, "EVOLUTION_API_KEY": "chave-evo", "EVOLUTION_INSTANCIA": "nutricao",
+        "WEBHOOK_SEGREDO": SEGREDO_WH,
+        "TELEGRAM_API_URL": externo.url, "TELEGRAM_TOKEN": "TOKEN123", "TELEGRAM_CHAT_ID": str(CHAT_EQUIPE),
+        "TELEGRAM_SEGREDO": SEGREDO_TG,
+    }
+
+
+@pytest.fixture
+def externo():
+    e = Externo()
+    yield e
+    e.fechar()
+
+
+@pytest.fixture
+def api_int(dados, externo):
+    """Servidor com Evolution e Telegram apontando para o falso local."""
+    s = Servidor(dados, env=env_integracoes(externo))
+    yield s.subir()
+    s.parar()
+
+
+def esperar(cond, segundos=5):
+    import time
+    fim = time.time() + segundos
+    while time.time() < fim:
+        if cond():
+            return True
+        time.sleep(0.05)
+    return cond()
+
+exec
+/bin/bash -lc "sed -n '130,300p' docs/ESPECIFICACAO.md" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+13. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana (`normal`, `motivo: "nao_entendi"`) automaticamente.
+
+**Fluxo de agendamento pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
+- telefone sem paciente → pergunta o nome (resposta contém `nome`); a próxima mensagem vira o nome, o paciente é criado (`consentimento_marketing: false`) e **a resposta a essa mensagem já lista os serviços** (passo seguinte). Telefone com paciente pula este passo e a resposta ao gatilho já lista os serviços;
+- lista os serviços ativos numerados `1 - <nome>` na ordem da seção 5;
+- escolhido o número, oferece os **3 primeiros** horários livres a partir de `agora + antecedencia_min_horas`, dentro de `janela_dias`, em todos os profissionais ativos, ordem da seção 5; cada linha `N) DD/MM HH:MM com <nome do profissional>`;
+- escolhido o número: com `atende_online: true`, pergunta a modalidade — resposta contém `1 - Presencial` e `2 - Online`; `1` = presencial, `2` = online. Com `atende_online: false`, não pergunta (presencial);
+- cria o agendamento; resposta contém `agendad`, `DD/MM` e `HH:MM`; se online, contém também `online`. Se o horário escolhido foi ocupado nesse meio-tempo, resposta contém `ocupado` e oferece de novo os 3 primeiros.
+- número inválido em qualquer passo → repete as opções do passo. `cancelar` dentro do fluxo → sai do fluxo (resposta contém `cancelad` e nada é agendado).
+- O bot **nunca** inventa preço, diagnóstico, dieta, suplemento ou cálculo: fora do plano e do FAQ cai nas regras 9 (fila humana) ou 13.
+
+## 7. Lista de espera
+
+Ao cancelar (pela API ou pela conversa), o primeiro pedido de espera ainda não atendido com o mesmo `servico` e a mesma `data` do horário liberado (ordem de criação), cujo paciente não esteja `nao_contatar`, recebe mensagem `tipo: "espera"` contendo `HH:MM` do horário e `1`. A oferta é do **horário e do profissional** que foram liberados (o `1` da regra 7 agenda exatamente esse par; se esse par estiver ocupado, resposta `ocupado`, mesmo que outro profissional esteja livre). O pedido fica `ofertado` (não recebe outra oferta do mesmo horário). Não há oferta se nenhum pedido serve.
+
+## 8. Confirmação, retorno e lembretes (`POST /api/tarefas/rodar`)
+
+- **Confirmação:** todo agendamento `agendado` com `agora < inicio <= agora + confirmacao_horas` que ainda não recebeu confirmação (desde a última criação/remarcação) → mensagem `tipo: "confirmacao"` com `agendamento_id`. Texto contém o nome do serviço, `DD/MM`, `HH:MM`, `1` (confirmar) e `2` (cancelar). **Não contém valor em R$.** Consulta `online`: o texto contém `online` e, se houver `link`, o link; sem link, contém a palavra `link` (a equipe vai mandar). Consulta presencial: o texto **não** contém `online`.
+- **Retorno:** presença `realizado` de serviço com `retorno_dias` cria um retorno com `data = data do atendimento + retorno_dias` e guarda a data do atendimento de origem. Quando `agora >= data − retorno_aviso_dias` e ainda não avisado → mensagem `tipo: "retorno"` com o nome do serviço. Uma vez só.
+- **Lembretes** (seção 10): para cada paciente com telefone, não `nao_contatar`:
+  - para cada `H` em `lembretes_agua`: com `T = data(agora) + H`, se `T <= agora <= T + lembrete_tolerancia_min` e ainda não houve lembrete de água para (paciente, `data(agora)`, `H`) → mensagem `tipo: "lembrete"` cujo texto contém `água`. Fora da janela de tolerância o lembrete daquele dia **não sai nunca** (não acumula);
+  - com `lembretes_refeicoes: true` e plano ativo: para cada refeição do plano com horário `H`, mesma janela e mesma unicidade por (paciente, dia, refeição) → `tipo: "lembrete"` cujo texto contém o nome da refeição e suas opções.
+- `enviadas` = mensagens criadas nesta rodada (mesmo que o envio pela Evolution fique `pendente`); `reenviadas` = `pendente` que viraram `enviado` (seção 19). Paciente `nao_contatar` nunca recebe (a mensagem **não é criada**). Confirmação, retorno e lembrete **não** dependem de `consentimento_marketing` (LGPD art. 11, II, f — tutela da saúde, pedidos do próprio paciente); campanha depende (seção 11).
+
+## 9. Plano alimentar
+
+Texto estruturado, escrito pelo nutricionista; **sem cálculo nutricional** no v1 (nem calorias, nem macros — ficam para o nutricionista).
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `POST /api/pacientes/{id}/plano` [E] | `{refeicoes: [{horario: "HH:MM", nome, opcoes: [texto, ...], observacoes?}], observacoes?}` | 201 `{id, versao}`; `versao` = 1 + nº de planos anteriores do paciente; o novo plano vira o **ativo**. 422 se `refeicoes` ausente/vazio, `horario` fora de `HH:MM`, `nome` vazio ou `opcoes` vazio; paciente inexistente → 404 |
+| `GET /api/pacientes/{id}/plano` [E] | — | 200 `{id, versao, refeicoes: [{horario, nome, opcoes, observacoes}], observacoes, criado_em, enviado_em}` (o ativo); `refeicoes` **ordenadas por `horario`** (empate: ordem enviada); `observacoes` ausente (do plano ou de uma refeição) = `""`; `enviado_em` = `null` até o envio; sem plano → 404 |
+| `GET /api/pacientes/{id}/planos` [E] | — | 200 `{"planos": [{id, versao, criado_em, enviado_em}]}` em ordem crescente de `versao` |
+| `POST /api/pacientes/{id}/plano/enviar` [E] | — | 200 `{"enviadas": 1}`: cria mensagem `tipo: "plano"` com o texto do plano (abaixo) e grava `enviado_em = agora`; sem plano → 404; paciente `nao_contatar` → 409 `{"erro": "nao_contatar"}` |
+
+**Texto do plano** (o mesmo na mensagem `plano` e na resposta do chat):
+
+```
+Seu plano alimentar (versão <versao>, de DD/MM/AAAA):
+<HH:MM> <nome>: <opção 1> / <opção 2> / ...[ — <observações da refeição>]
+...
+[<observações gerais>]
+```
+
+Uma linha por refeição, na ordem de `horario`; as opções separadas por ` / `; o sufixo ` — <observações>` só quando há observação; a última linha é `observacoes` do plano, quando não vazia. `DD/MM/AAAA` = data de `criado_em`.
+
+**Casamento de refeição** (regra 9 da seção 6): palavras significativas do `nome` de cada refeição (≥ 3 letras, fora de artigos/preposições — `da`, `de`, `do`, `das`, `dos`, `com`, `para`, `pre`, `pos` não contam); a refeição que tem **mais** palavras presentes como tokens do texto vence (precisa de ao menos uma); empate → a de menor `horario`. Ex.: com `Café da manhã (07:30)`, `Lanche da manhã (10:00)`, `Almoço (12:30)`, `Lanche da tarde (16:00)`, `Jantar (20:00)`: `o que posso comer no lanche da tarde` → `Lanche da tarde` (2 palavras); `o que como no lanche` → `Lanche da manhã` (empate, menor horário); `posso comer chocolate` → nenhuma → dúvida fora do plano.
+
+Linha de uma refeição na resposta: `<HH:MM> <nome>: <opções>[ — <observações>]` (igual à do texto do plano).
+
+## 10. Diário, metas e peso
+
+Todo registro tem `quando` = relógio do processo no momento (`AAAA-MM-DDTHH:MM`). *Dia* de um registro = `data(quando)`.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/pacientes/{id}/diario[?de=AAAA-MM-DD&ate=AAAA-MM-DD]` [E] | — | 200 `{"registros": [{id, tipo, quando, valor, refeicao, status, mimetype, caption, message_id, origem}], "resumo": {agua_copos, refeicoes_feitas, refeicoes_puladas, adesao_pct, fotos}}`; `tipo` ∈ `agua, refeicao, peso, foto`; campos que não se aplicam = `null`; ordem por `quando`, depois `id`; filtro por dia, pontas inclusivas; sem filtro = tudo. `resumo` sobre os registros filtrados: `agua_copos` = soma de `valor` dos `agua`; `refeicoes_feitas`/`refeicoes_puladas` = contagens; `adesao_pct` = `feitas ÷ (feitas + puladas) × 100` com 1 casa (0 se não houver); `fotos` = contagem |
+| `GET /api/pacientes/{id}/pesos` [E] | — | 200 `{"pesos": [{id, quando, peso, origem}], "variacao": <último − primeiro, 1 casa> ou null se houver menos de 2}`; ordem por `quando`, depois `id`; `origem` ∈ `chat, equipe` |
+| `POST /api/pacientes/{id}/pesos` [E] | `{peso, quando?}` | 201 `{id}` com `origem: "equipe"`; `peso` fora de `[20, 400]` ou não numérico → 422; `quando` fora do formato → 422; padrão `quando` = agora |
+| `GET /api/pacientes/{id}/metas` [E] | — | 200 `{lembretes_agua: ["HH:MM", ...], lembretes_refeicoes: bool, meta_agua_copos: int \| null}`; padrão `[]`, `false`, `null` |
+| `PUT /api/pacientes/{id}/metas` [E] | qualquer subconjunto dos três campos | 200 com os três campos; campo omitido não muda; horário fora de `HH:MM` ou `meta_agua_copos` não inteiro positivo (ou `null`) → 422 |
+
+**Peso pela conversa** (regra 8): valor = número com `,` ou `.` como separador (`82,5` e `82.5` valem o mesmo), arredondado a **1 casa (meio para cima)**: `79.25` → `79.3` (não é o `round()` do Python, que dá `79.2`; use `decimal` com `ROUND_HALF_UP`). Faixa aceita `20 <= peso <= 400`; fora dela a resposta contém `entre 20 e 400` e nada é registrado. Registro `{tipo: "peso", valor, origem: "chat"}`. A resposta é **neutra**: contém `registrad` e o valor no formato `<inteiro>,<decimal> kg` (ex.: `82,5 kg`; `82 kg` vira `82,0 kg`) e **não contém** nenhum destes trechos: `parabens`, `otimo`, `muito bem`, `que pena`, `cuidado`, `engordou`, `emagreceu`, `ganhou`, `perdeu`, `ruim` (texto normalizado). O sistema **nunca comenta** a evolução do peso com o paciente; a série é para o nutricionista.
+
+**Água pela conversa:** registro `{tipo: "agua", valor: n}`; resposta contém `registrad` e o total do dia: `<total> de <meta> copos` quando `meta_agua_copos` está definida, senão `<total> copo` (`1 copo`, `3 copos`).
+
+**Refeição pela conversa:** exige plano ativo. A refeição é a que **casa pelo nome** (regra da seção 9); se nenhuma casa, a refeição do plano com **maior `horario <= hora(agora)`**, ou a primeira do plano se não houver. Registro `{tipo: "refeicao", refeicao: <nome>, status: "feita" | "pulada"}`; resposta contém `registrad` e o nome da refeição.
+
+**Foto de refeição** (seção 19): registro `{tipo: "foto", mimetype, caption, message_id, origem: "whatsapp"}` só com metadados (`message_id` = `key.id` da Evolution, a referência para achar a imagem no próprio WhatsApp); a mídia **não é baixada nem guardada**.
+
+Telefone **sem paciente** cadastrado: peso, água, refeição e foto não são registrados; a resposta contém `cadastro` (o paciente precisa estar cadastrado pela equipe ou ter agendado pelo chat). Essa checagem vem **antes** da de plano ativo: `comi` de telefone desconhecido responde `cadastro`, não `nutricionista`.
+
+## 11. Campanhas e trava de publicidade
+
+`POST /api/campanhas {texto}` cria `tipo: "campanha"` só para pacientes com `consentimento_marketing: true`, sem `nao_contatar` e com telefone (LGPD art. 11, I — consentimento específico para dado de saúde). Antes de enviar, valida o texto em minúsculas e sem acento (**pontuação mantida**, para `100%`). O `422` lista **todos** os códigos violados; qualquer violação → 422 e nada é enviado.
+
+| Código | Detecta |
+|---|---|
+| `promessa_resultado` | `garantido`, `garantia de resultado`, `resultado garantido`, `garantimos`, `100%` |
+| `antes_depois` | `antes e depois` |
+
+⚠ **Mínimo comum seguro**, não a regra do CFN: o Raio-X (`docs/setores/servicos-pesquisa-2026-10.md`) não pesquisou o Conselho Federal de Nutricionistas; os dois códigos acima vêm do que CFM, CFO e COFFITO proíbem em comum (promessa de resultado e antes-e-depois). **O dono confirma as regras do CFN antes de publicar campanha** (`docs/DECISOES-ABERTAS.md`). Nenhum artigo de resolução do CFN é citado aqui de propósito.
+
+## 12. Exportação para o Raio-X (Painel de Recuperação)
+
+`GET /api/raiox?mes=AAAA-MM` → `{"pacote": "clinica", "mes": "AAAA-MM", "valores": {...}}`, com números arredondados a 1 casa (meio para cima):
+
+- `atendimentos_mes` = agendamentos `realizado` com `inicio` no mês (inteiro);
+- `falta_pct` = `falta ÷ (realizado + falta) × 100` no mês (0 se não houver);
+- `ocupacao_pct` = minutos de agendamentos ativos no mês ÷ minutos disponíveis no mês (todas as janelas de todos os profissionais ativos, menos feriados; horário próprio do profissional quando houver) × 100;
+- `clientes_novos_mes` = pacientes cujo **primeiro** `realizado` cai no mês;
+- `retorno_atual_pct` = dos retornos (seção 8) com `data` no mês, % cujo paciente tem **outro** agendamento `realizado` (qualquer serviço, diferente do que gerou o retorno) com `data(inicio)` em `(data_origem, data + 30 dias]` — isto é, depois do atendimento de origem e até 30 dias depois da data prevista (0 se não houver retornos).
+
+Só esses cinco ids vão em `valores` (são entradas do pacote `clinica` do Raio-X). `./atende raiox --dados DIR --mes M --acompanhamento ARQ`: lê `ARQ` (formato do `raio-x-margem/app/painel-motor.js`: `{tipo: "acompanhamento", pacote, cliente, base: {data, valores}, meses: [{mes, valores, obs}]}`), insere ou substitui o mês `M` com `valores` = os da rota acima **mesclados** sobre os valores do mês anterior (ou da base, se não houver mês anterior) e `obs: "atende-nutricao"`, e grava de volta. Campos que o sistema não mede (ex.: `ticket_medio`, `glosa_pct`) ficam como estavam. Sai com código 0.
+
+## 13. LGPD (dado de saúde = sensível, art. 11)
+
+- `GET /api/pacientes/{id}/dados` devolve tudo o que há do paciente: `paciente` `{id, nome, telefone, email, nascimento, consentimento_marketing, nao_contatar}`, `agendamentos` (mesmo formato da listagem), `mensagens` = recebidas e enviadas, cada uma `{direcao: "entrada" | "saida", texto, quando}` — `entrada` = toda mensagem do paciente (chat e webhook); `saida` = **as respostas do bot na conversa** e as mensagens da caixa de saída (`/api/saida`) para o telefone dele; em ordem de criação —, `planos` = todos os planos com refeições (ordem de versão), `diario` = registros (formato da seção 10), `pesos` (formato da seção 10) e `metas` (formato da seção 10).
+- `DELETE /api/pacientes/{id}`: nome vira `removido`, telefone vira `null`, `email`/`nascimento` viram `null`, agendamentos `agendado`/`confirmado` viram `cancelado` (os `realizado`/`falta` ficam), textos de mensagens dele viram `""`, **planos, diário e pesos são apagados** (listas vazias em `/dados`) e `metas` volta ao padrão. Depois disso, mensagens ao telefone antigo são tratadas como de telefone desconhecido. Números agregados do `/api/raiox` continuam contando os atendimentos passados.
+
+## 14. Fora do v1 (não implementar; portão humano ou próxima versão)
+
+Cálculo nutricional automático (calorias, macros, substituições), análise de imagem da foto de refeição (só metadados no v1), download/armazenamento de mídia, WhatsApp Cloud API oficial da Meta (v1 usa a Evolution), SMS/e-mail, deploy na VPS (é do humano: README explica), cobrança/sinal por Pix e planos/assinatura (PSP), prontuário e anamnese, convênio/glosa/TISS, vários consultórios no mesmo servidor, login por usuário, LLM nas respostas (pode entrar depois atrás de uma opção desligada por padrão; os testes nunca a usam), videochamada própria (o link é de ferramenta externa, informado pela equipe), interface EN/ES.
+
+## 15. Páginas
+
+- `GET /` → HTML do chat do paciente, com elemento `id="chat"`, que usa `/api/mensagens`.
+- `GET /equipe` → HTML da equipe com elementos `id="agenda"`, `id="fila-humano"`, `id="saida"`, `id="pacientes"`, `id="plano"`, `id="diario"`, `id="pesos"` e `id="faq"`; pede o token e usa as rotas [E] (agenda, pacientes, plano alimentar por paciente, diário/adesão e série de peso por paciente, FAQ, fila humana com responder/encerrar). Sem dependência de CDN.
+
+## 16. Cadastros [E]
+
+`nutricao.json` é lido a cada início para `nome, token, passo_min, antecedencia_min_horas, janela_dias, confirmacao_horas, retorno_aviso_dias, lembrete_tolerancia_min, atende_online, feriados, horarios`. Já `profissionais`, `servicos` e `faq` só **semeiam** o banco na primeira vez (banco vazio); depois o banco é a fonte e se edita pela API.
+
+| Método e rota | Corpo | Resposta |
+|---|---|---|
+| `GET /api/profissionais` | — | 200 `{"profissionais": [{id, nome, servicos, registro, horarios, ativo}]}` ordem de cadastro (`registro` = CRN, pode ser `null`; `horarios` = `null` quando usa o do consultório) |
+| `POST /api/profissionais` | `{id, nome, servicos, registro?, horarios?}` | 201; `id` repetido → 409; serviço inexistente → 422 |
+| `PUT /api/profissionais/{id}` | campos parciais | 200 com o registro atualizado; inexistente → 404 |
+| `DELETE /api/profissionais/{id}` | — | 200 `{"ativo": false}`. Inativo some de `/api/horarios`, do chat e não aceita agendamento novo (422); os agendamentos já feitos continuam |
+| `GET /api/servicos` (público) | — | só os ativos |
+| `POST /api/servicos` | `{id, nome, duracao_min, retorno_dias?}` | 201; `id` repetido → 409 |
+| `PUT /api/servicos/{id}` / `DELETE /api/servicos/{id}` | parcial / — | 200 / 200 `{"ativo": false}` (some da lista pública e do chat) |
+| `GET /api/faq` | — | 200 `{"faq": [{id, perguntas, resposta}]}` ordem de cadastro |
+| `POST /api/faq` | `{perguntas: [..], resposta}` | 201 `{id}`; o bot passa a usar na hora |
+| `DELETE /api/faq/{id}` | — | 204; o bot para de usar na hora |
+
+## 17. Gestão de agenda [E]
+
+- **Horário por profissional:** `horarios` do profissional (mesmo formato do consultório) substitui o do consultório só para ele. `null` = o do consultório.
+- **Bloqueios** (férias, folga, congresso): `POST /api/bloqueios {profissional, inicio, fim, motivo}` → 201 `{id, conflitos: [ids de agendamentos ativos que caem no bloqueio]}` (não cancela nada sozinho). Horários que sobrepõem `[inicio, fim)` somem de `/api/horarios` e o agendamento neles dá 422. `GET /api/bloqueios?profissional=P` → 200 `{"bloqueios": [{id, profissional, inicio, fim, motivo}]}` ordem por `inicio`, depois `id`. `DELETE /api/bloqueios/{id}` → 204 e libera.
+- **Listagem por período:** `GET /api/agendamentos?de=AAAA-MM-DD&ate=AAAA-MM-DD[&profissional=P]` (inclusivo nas duas pontas), ordenado por `inicio`, depois `id`; continua valendo `?data=`.
+
+## 18. Banco de dados
+
+- `./atende backup --dados DIR --saida ARQ` → grava em `ARQ` uma cópia consistente de todo o estado (pode rodar com o servidor ligado). Código 0.
+- `./atende restaurar --dados DIR --entrada ARQ` → com o servidor parado, substitui o estado de `DIR` pelo do backup. Código 0. Ao subir de novo, tudo volta como estava no momento do backup.
+
+## 19. WhatsApp pela Evolution API
+
+Variáveis: `EVOLUTION_URL` (ex.: `http://evolution:8080` — este exemplo fica **só nesta spec e no README**: no código e no `.env.exemplo` nenhuma URL além de `127.0.0.1`/`localhost`, senão o `verificar-limites.sh` e o teste do `.env.exemplo` acusam), `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCIA`, `WEBHOOK_SEGREDO`. Sem `EVOLUTION_URL` → canal simulado (só caixa de saída, `status: "simulado"`).
+
+**Entrada** — `POST /webhook/evolution/{WEBHOOK_SEGREDO}` (segredo errado → 404). Formato da Evolution v2:
+```json
+{"event": "messages.upsert", "instance": "nutricao",
+ "data": {"key": {"remoteJid": "5541999990001@s.whatsapp.net", "fromMe": false, "id": "ABC123"},
+          "pushName": "Maria", "message": {"conversation": "oi"}, "messageType": "conversation"}}
+```
+- Sempre responde 200. Ignora: `event` diferente de `messages.upsert`, `fromMe: true`, `remoteJid` de grupo (`@g.us`), `key.id` já processado (a Evolution reenvia).
+- Texto = `message.conversation` ou `message.extendedTextMessage.text`. Passa pela mesma conversa da seção 6 (o mesmo paciente, o mesmo estado).
+- **Foto** = `message.imageMessage` presente (ou `messageType: "imageMessage"`): registra no diário do paciente `{tipo: "foto", mimetype: imageMessage.mimetype, caption: imageMessage.caption ou null, message_id: key.id}` (seção 10) e responde texto contendo `foto` e `registrad`; telefone sem paciente → resposta contém `cadastro`. **Nunca** baixa, pede à Evolution (o endpoint dela de obter mídia em base64 fica proibido no código, inclusive em comentário — o `verificar-limites.sh` grepa o nome dele) nem guarda a mídia: só esses metadados.
+- Sem texto nem foto (áudio, documento, figurinha...) → responde `Por enquanto só consigo ler mensagens de texto e fotos.`
+- Telefone = dígitos do `remoteJid` antes do `@`, normalizado como na seção 5.
+- Cada resposta da conversa vai por `POST {EVOLUTION_URL}/message/sendText/{EVOLUTION_INSTANCIA}` com header `apikey: {EVOLUTION_API_KEY}` e corpo `{"number": "<dígitos com 55>", "text": "<texto>"}`, na ordem.
+
+**Saída** (confirmação, espera, retorno, lembrete, plano, campanha, humano): com a Evolution configurada, cada mensagem da caixa de saída é enviada do mesmo jeito. Em `/api/saida` cada mensagem tem `status`: `enviado` (2xx), `pendente` (erro HTTP ou de conexão) ou `simulado`. `POST /api/tarefas/rodar` reenvia as `pendente` e devolve `"reenviadas": n` (as que viraram `enviado`). Rotas síncronas: seção 5.
+
+## 20. Atendimento interno pelo Telegram
+
+Variáveis: `TELEGRAM_API_URL` (ex.: `https://api.telegram.org` — só nesta spec e no README; nunca no código nem no `.env.exemplo`), `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID` (grupo da equipe), `TELEGRAM_SEGREDO`. Sem elas, nada vai ao Telegram (o resto funciona igual). Envio: `POST {TELEGRAM_API_URL}/bot{TELEGRAM_TOKEN}/sendMessage` com `{"chat_id", "text"[, "reply_to_message_id"]}`; a resposta do Telegram traz `result.message_id`.
+
+**Atendimento humano** (`/api/atendimento-humano`, seção 5):
+- Ao abrir (pedido de atendente, emergência, alerta, dúvida fora do plano, 2º "não entendi"): manda ao grupo um texto com `#<id>`, telefone, nome (se houver), motivo, a última mensagem do paciente e, se `prioridade` for `alta`, a palavra `ALTA`. Guarda o `message_id`. Um telefone tem no máximo **um** atendimento `aberto`; nova causa enquanto aberto não abre outro (mas emergência/alerta elevam a prioridade para `alta`).
+- Enquanto o atendimento do telefone estiver `aberto`, o bot **não responde** sozinho (`respostas: []`), exceto regras 1 e 2 da seção 6; cada mensagem do paciente vai ao grupo como `#<id> <nome ou telefone>: <texto>`, em resposta (`reply_to_message_id`) à mensagem de abertura.
+- `POST /webhook/telegram` exige header `X-Telegram-Bot-Api-Secret-Token: {TELEGRAM_SEGREDO}` (senão 401). Só aceita updates com `message.chat.id` igual a `TELEGRAM_CHAT_ID` (comparados como **texto**); os outros são ignorados (200, sem efeito).
+- Mensagem da equipe que é resposta (`reply_to_message.message_id`) a uma mensagem do atendimento `#id` → o texto vai ao paciente (caixa de saída `tipo: "humano"`, e pela Evolution se configurada).
+- Comandos: `/responder <id> <texto>` (o mesmo, sem precisar responder em cima); `/encerrar <id>` → status `encerrado`, o bot volta a responder aquele telefone; `/fila` → o bot manda a lista dos abertos (cada um com `#id`); `/alertas` → só os abertos com `prioridade: "alta"` (cada um com `#id` e o motivo); nenhum → texto contém `nenhum`; `/agenda [AAAA-MM-DD]` (padrão: hoje pelo relógio) → manda os agendamentos ativos do dia, uma linha `HH:MM <nome do paciente> — <nome do serviço> (<nome do profissional>)` cada, com o sufixo ` [online]` quando a consulta é online.
+- Pela página [E]: `POST /api/atendimento-humano/{id}/responder {texto}` e `POST /api/atendimento-humano/{id}/encerrar` fazem o mesmo.
+- **Avisos à equipe:** agendamento feito pelo chat → `Novo agendamento: DD/MM HH:MM <nome> — <serviço> com <profissional>` (mais ` (online)` quando online); cancelamento pelo chat → texto começando com `Cancelado:` e com `DD/MM HH:MM`.
+
+## 21. Docker / VPS
+
+
+exec
+/bin/bash -lc 'cat src/tasks.py src/server.py; rg --files tests src; cat src/storage.py' in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+"""Caixa de saída, ofertas de espera e tarefas idempotentes."""
+from datetime import timedelta
+from .domain import now, timestamp, required
+from .storage import Error
+
+
+class Tasks:
+    def __init__(self, domain):
+        self.d = domain
+
+    def output(self, p, kind, text, instant=None, **extra):
+        if not p['telefone'] or (p['nao_contatar'] and kind != 'humano'):
+            return None
+        message = self.d.save('saida', dict(tipo=kind, telefone=p['telefone'], paciente_id=p['id'], texto=text,
+                            agendamento_id=None, status='simulado', quando=(instant or now()).isoformat(timespec='minutes'), **extra))
+        self.d.save('mensagens', dict(telefone=p['telefone'], direcao='saida', texto=text, quando=message['quando']))
+        return message
+
+    def cancel(self, a):
+        d = self.d
+        if a['status'] == 'cancelado':
+            raise Error(409, 'Já cancelado')
+        a['status'] = 'cancelado'
+        d.save('agendamentos', a)
+        for request in d.all('espera'):
+            if request['status'] != 'aguardando' or request['servico'] != a['servico'] or request['data'] != a['inicio'][:10]:
+                continue
+            p = d.get('pacientes', request['paciente_id'])
+            msg = self.output(p, 'espera', f"Horário disponível em {timestamp(a['inicio']).strftime('%d/%m %H:%M')}. Responda 1 para agendar.", inicio=a['inicio'], profissional=a['profissional'], servico=a['servico'], modalidade=a['modalidade'])
+            if msg:
+                request['status'] = 'ofertado'
+                d.save('espera', request)
+                break
+        return a
+
+    def presence(self, a):
+        d = self.d
+        service = d.get('servicos', a['servico'])
+        if a['status'] == 'realizado' and service.get('retorno_dias') is not None:
+            if not any(r['agendamento_id'] == a['id'] for r in d.all('retornos')):
+                d.save('retornos', dict(paciente_id=a['paciente_id'], agendamento_id=a['id'], servico=a['servico'],
+                    data_origem=a['inicio'][:10], data=(timestamp(a['inicio']) + timedelta(days=service['retorno_dias'])).strftime('%Y-%m-%d'), avisado=False))
+
+    def run(self, body):
+        d = self.d
+        instant = timestamp(body['agora']) if 'agora' in body else now()
+        count = 0
+        for a in d.all('agendamentos'):
+            if a['status'] != 'agendado' or a.get('confirmacao_enviada') or not instant < timestamp(a['inicio']) <= instant + timedelta(hours=d.config['confirmacao_horas']):
+                continue
+            p = d.get('pacientes', a['paciente_id'])
+            service = d.get('servicos', a['servico'])
+            text = f"{service['nome']} em {timestamp(a['inicio']).strftime('%d/%m %H:%M')}. Responda 1 para confirmar ou 2 para cancelar."
+            if a['modalidade'] == 'online':
+                text += ' Consulta online: ' + (a['link'] or 'a equipe enviará o link.')
+            msg = self.output(p, 'confirmacao', text, instant, inicio=a['inicio'])
+            if msg:
+                msg['agendamento_id'] = a['id']
+                d.save('saida', msg)
+                a['confirmacao_enviada'] = True
+                d.save('agendamentos', a)
+                count += 1
+        for r in d.all('retornos'):
+            if r['avisado'] or instant.date() < (timestamp(r['data'] + 'T00:00') - timedelta(days=d.config['retorno_aviso_dias'])).date():
+                continue
+            p = d.get('pacientes', r['paciente_id'])
+            if self.output(p, 'retorno', f"É hora de agendar seu retorno de {d.get('servicos', r['servico'])['nome']}.", instant):
+                r['avisado'] = True
+                d.save('retornos', r)
+                count += 1
+        from .nutrition import Nutrition, meal_line
+        nutrition = Nutrition(d)
+        for p in d.all('pacientes'):
+            goals = nutrition.goals(p['id'])
+            reminders = [('agua:' + h, h, 'Lembrete de água.') for h in goals['lembretes_agua']]
+            plan = nutrition.active(p['id'])
+            if goals['lembretes_refeicoes'] and plan:
+                reminders.extend(('refeicao:' + m['nome'], m['horario'], meal_line(m)) for m in plan['refeicoes'])
+            for key, h, text in reminders:
+                target = timestamp(instant.strftime('%Y-%m-%d') + 'T' + h)
+                marker = f"{p['id']}:{instant.strftime('%Y-%m-%d')}:{key}"
+                if not target <= instant <= target + timedelta(minutes=d.config['lembrete_tolerancia_min']):
+                    continue
+                if any(r['id'] == marker for r in d.all('lembretes_enviados')):
+                    continue
+                if self.output(p, 'lembrete', text, instant):
+                    d.save('lembretes_enviados', {'id': marker})
+                    count += 1
+        return {'enviadas': count, 'reenviadas': 0}
+
+    def route(self, method, path, body):
+        d = self.d
+        if path == '/api/saida' and method == 'GET':
+            return 200, {'mensagens': d.all('saida')}
+        if path == '/api/tarefas/rodar' and method == 'POST':
+            return 200, self.run(body)
+        if path == '/api/espera' and method == 'POST':
+            required(body, 'paciente_id', 'servico', 'data')
+            d.get('pacientes', body['paciente_id'])
+            d.get('servicos', body['servico'])
+            timestamp(body['data'] + 'T00:00')
+            return 201, d.save('espera', dict(paciente_id=body['paciente_id'], servico=body['servico'], data=body['data'], status='aguardando'))
+        return None
+"""Servidor HTTP com autenticação prévia e SQLite transacional."""
+import argparse
+import hmac
+import json
+import traceback
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qsl, urlsplit
+from .domain import Domain
+from .storage import Error, ROOT, Store
+
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+    def respond(self, status, body):
+        data = b'' if status == 204 else json.dumps(body, ensure_ascii=False).encode('utf-8')
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json; charset=utf-8')
+        self.send_header('Content-Length', str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def handle_request(self):
+        route = urlsplit(self.path)
+        public = (self.command, route.path) in {
+            ('GET', '/'), ('GET', '/equipe'), ('GET', '/api/saude'),
+            ('GET', '/api/servicos'), ('GET', '/api/horarios'), ('POST', '/api/mensagens')}
+        try:
+            if not public and not hmac.compare_digest(self.headers.get('X-Token', '').encode(), self.server.store.config['token'].encode()):
+                raise Error(401, 'Token inválido')
+            body = {}
+            if self.command in ('POST', 'PUT'):
+                try:
+                    body = json.loads(self.rfile.read(int(self.headers.get('Content-Length', '0'))) or b'{}')
+                except (ValueError, UnicodeError):
+                    raise Error(422, 'JSON inválido')
+                if not isinstance(body, dict):
+                    raise Error(422, 'JSON deve ser objeto')
+            if route.path == '/api/saude' and self.command == 'GET':
+                return self.respond(200, {'ok': True, 'versao': (ROOT / 'VERSION').read_text().strip()})
+            db = self.server.store.connect()
+            try:
+                with db:
+                    # Reserva a escrita antes de verificar disponibilidade: duas reservas não vencem juntas.
+                    db.execute('BEGIN IMMEDIATE')
+                    status, result = Domain(self.server.store, db).route(self.command, route.path, dict(parse_qsl(route.query)), body)
+            finally:
+                db.close()
+            self.respond(status, result)
+        except Error as exc:
+            self.respond(exc.status, {'erro': exc.message})
+        except (ValueError, TypeError):
+            self.respond(422, {'erro': 'Dados inválidos'})
+        except Exception:
+            traceback.print_exc()
+            self.respond(500, {'erro': 'Erro interno'})
+
+    do_GET = do_POST = do_PUT = do_DELETE = handle_request
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Atendimento do consultório de nutrição')
+    commands = parser.add_subparsers(dest='command', required=True)
+    serve = commands.add_parser('serve')
+    serve.add_argument('--porta', type=int, default=8080)
+    serve.add_argument('--dados', required=True)
+    serve.add_argument('--host', default='127.0.0.1')
+    report = commands.add_parser('raiox')
+    report.add_argument('--dados', required=True)
+    report.add_argument('--mes', required=True)
+    report.add_argument('--acompanhamento', required=True)
+    backup = commands.add_parser('backup')
+    backup.add_argument('--dados', required=True)
+    backup.add_argument('--saida', required=True)
+    restore = commands.add_parser('restaurar')
+    restore.add_argument('--dados', required=True)
+    restore.add_argument('--entrada', required=True)
+    args = parser.parse_args()
+    if args.command in ('backup', 'restaurar'):
+        from .backup import transfer
+        transfer(args.dados, args.saida if args.command == 'backup' else args.entrada,
+                 restore=args.command == 'restaurar')
+        return
+    store = Store(args.dados)
+    if args.command == 'raiox':
+        from .reporting import Reporting
+        db = store.connect()
+        try:
+            with db:
+                db.execute('BEGIN')
+                Reporting(Domain(store, db)).export(args.mes, args.acompanhamento)
+        finally:
+            db.close()
+        return
+    server = ThreadingHTTPServer((args.host, args.porta), Handler)
+    server.store = store
+    print(f'PORTA={server.server_address[1]}', flush=True)
+    try:
+        server.serve_forever()
+    finally:
+        server.server_close()
+src/backup.py
+src/registrations.py
+src/storage.py
+src/reporting.py
+src/server.py
+src/domain.py
+src/conversation.py
+src/nutrition.py
+src/tasks.py
+tests/test_lembretes.py
+tests/test_campanhas.py
+tests/test_diario.py
+tests/test_cadastros.py
+tests/test_integracoes.py
+tests/test_lgpd_raiox.py
+tests/test_basico.py
+tests/test_conversa.py
+tests/test_plano.py
+tests/test_agenda.py
+tests/conftest.py
+tests/test_docker.py
+tests/fixtures/nutricao.json
+"""Estado persistente; uma transação por operação HTTP."""
+import json
+import shutil
+import sqlite3
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+class Error(Exception):
+    def __init__(self, status, message):
+        self.status = status
+        self.message = message
+
+
+class Store:
+    def __init__(self, directory):
+        self.directory = Path(directory)
+        self.directory.mkdir(parents=True, exist_ok=True)
+        config = self.directory / 'nutricao.json'
+        if not config.exists():
+            shutil.copyfile(ROOT / 'exemplos/nutricao.json', config)
+        self.config = json.loads(config.read_text())
+        self.path = self.directory / 'estado.sqlite3'
+        with self.connect() as db:
+            db.execute('CREATE TABLE IF NOT EXISTS registros (colecao TEXT, id TEXT, documento TEXT NOT NULL, PRIMARY KEY (colecao,id))')
+            if not db.execute("SELECT 1 FROM registros WHERE colecao='sistema' AND id='semente'").fetchone():
+                for collection in ('servicos', 'profissionais', 'faq'):
+                    for entry in self.config.get(collection, []):
+                        entry = dict(entry)
+                        if collection != 'faq':
+                            entry['ativo'] = True
+                        if collection == 'profissionais':
+                            entry.setdefault('registro', None)
+                            entry.setdefault('horarios', None)
+                        self.save(db, collection, entry)
+                self.save(db, 'sistema', {'id': 'semente'})
+
+    def connect(self):
+        return sqlite3.connect(self.path, timeout=20)
+
+    def all(self, db, collection):
+        return [json.loads(row[0]) for row in db.execute(
+            'SELECT documento FROM registros WHERE colecao=? ORDER BY rowid', (collection,))]
+
+    def get(self, db, collection, key):
+        row = db.execute('SELECT documento FROM registros WHERE colecao=? AND id=?', (collection, str(key))).fetchone()
+        if row is None:
+            raise Error(404, 'Registro inexistente')
+        return json.loads(row[0])
+
+    def save(self, db, collection, entry):
+        if 'id' not in entry:
+            row = db.execute('SELECT MAX(CAST(id AS INTEGER)) FROM registros WHERE colecao=?', (collection,)).fetchone()
+            entry['id'] = (row[0] or 0) + 1
+        db.execute('INSERT INTO registros VALUES (?,?,?) ON CONFLICT(colecao,id) DO UPDATE SET documento=excluded.documento',
+                   (collection, str(entry['id']), json.dumps(entry, ensure_ascii=False)))
+        return entry
+
+codex
+Os 79 testes aprovados cobrem a base e as funções clínicas; restam integrações, Docker e páginas. Neste ciclo vou implementar a Evolution: entrada deduplicada, fotos apenas como metadados, envio síncrono e reenvio de pendências, usando somente o servidor falso local.
+
+exec
+/bin/bash -lc "cat tests/test_integracoes.py; cat src/conversation.py; rg -n 'def |route|record' src/nutrition.py src/domain.py; sed -n '115,132p' docs/ESPECIFICACAO.md" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+"""Seções 19 e 20: WhatsApp pela Evolution API (texto e foto) e atendimento interno pelo Telegram (contra servidor falso local)."""
+import json
+import time
+import urllib.error
+import urllib.request
+
+from conftest import CHAT_EQUIPE, SEGREDO_TG, SEGREDO_WH, esperar, norm
+
+TEL = "41988887777"
+NUM = "5541988887777"
+ESTAC = "Temos convênio com o estacionamento ao lado (1 hora grátis)."
+
+_ids = iter(range(1, 10 ** 6))
+
+
+def evo(api, texto=None, numero=NUM, msg_id=None, from_me=False, sufixo="@s.whatsapp.net",
+        evento="messages.upsert", message=None, tipo="conversation", segredo=SEGREDO_WH):
+    if message is None:
+        message = {"conversation": texto}
+    corpo = {"event": evento, "instance": "nutricao",
+             "data": {"key": {"remoteJid": numero + sufixo, "fromMe": from_me, "id": msg_id or f"M{next(_ids)}"},
+                      "pushName": "Paciente", "message": message, "messageType": tipo}}
+    st, _ = api.post(f"/webhook/evolution/{segredo}", corpo, token=None)
+    return st
+
+
+def tg(api, texto, reply_to=None, chat=CHAT_EQUIPE, segredo=SEGREDO_TG):
+    """Entrega um update do Telegram no webhook; devolve o status HTTP."""
+    msg = {"message_id": next(_ids), "chat": {"id": chat}, "from": {"id": 7, "first_name": "Rita"}, "text": texto}
+    if reply_to:
+        msg["reply_to_message"] = {"message_id": reply_to}
+    q = urllib.request.Request(api.base + "/webhook/telegram", method="POST",
+                               data=json.dumps({"update_id": next(_ids), "message": msg}).encode(),
+                               headers={"Content-Type": "application/json", "X-Telegram-Bot-Api-Secret-Token": segredo})
+    try:
+        with urllib.request.urlopen(q, timeout=10) as resp:
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+
+
+def textos_whats(externo):
+    return [p["json"]["text"] for p in externo.whats()]
+
+
+def textos_tg(externo):
+    return [p["json"]["text"] for p in externo.telegram()]
+
+
+def abre_atendimento(api, externo, tel=TEL):
+    api.msg(tel, "quero falar com um atendente")
+    assert esperar(lambda: len(externo.telegram()) >= 1)
+    at = next(f for f in api.get("/api/atendimento-humano")[1]["fila"] if f["telefone"] == "+55" + tel)
+    abertura = next(p for p in externo.telegram() if f"#{at['id']}" in p["json"]["text"])
+    return at, abertura
+
+
+# --- WhatsApp (Evolution) ---------------------------------------------------------------
+
+def test_whatsapp_responde_pela_evolution(api_int, externo):
+    assert evo(api_int, "tem estacionamento?") == 200
+    assert esperar(lambda: len(externo.whats()) == 1)
+    [p] = externo.whats()
+    assert p["json"]["number"] == NUM and p["json"]["text"] == ESTAC
+    assert p["headers"].get("apikey") == "chave-evo"
+
+
+def test_whatsapp_ignora_o_que_nao_e_do_paciente(api_int, externo):
+    assert evo(api_int, "tem estacionamento?", segredo="errado") == 404
+    evo(api_int, "tem estacionamento?", msg_id="DUP1")
+    evo(api_int, "tem estacionamento?", msg_id="DUP1")            # reenvio da Evolution
+    evo(api_int, "tem estacionamento?", from_me=True)              # mensagem do próprio consultório
+    evo(api_int, "tem estacionamento?", numero="1203630", sufixo="@g.us")  # grupo
+    evo(api_int, "tem estacionamento?", evento="connection.update")
+    time.sleep(0.8)
+    assert textos_whats(externo) == [ESTAC]
+
+
+def test_whatsapp_sem_texto_nem_foto(api_int, externo):
+    evo(api_int, message={"audioMessage": {"seconds": 5}}, tipo="audioMessage")
+    assert esperar(lambda: textos_whats(externo) == ["Por enquanto só consigo ler mensagens de texto e fotos."])
+
+
+def test_whatsapp_foto_vira_registro_no_diario(api_int, externo):
+    pid = api_int.paciente("Maria", TEL)
+    foto = {"imageMessage": {"mimetype": "image/jpeg", "caption": "almoço de hoje", "url": "https://mmg.exemplo/abc.enc",
+                             "fileLength": "12345"}}
+    evo(api_int, message=foto, tipo="imageMessage", msg_id="FOTO-77")
+    assert esperar(lambda: any("foto" in norm(t) and "registrad" in norm(t) for t in textos_whats(externo)))
+    st, d = api_int.get(f"/api/pacientes/{pid}/diario")
+    [reg] = d["registros"]
+    assert (reg["tipo"], reg["mimetype"], reg["caption"], reg["message_id"], reg["origem"]) == \
+        ("foto", "image/jpeg", "almoço de hoje", "FOTO-77", "whatsapp")
+    assert d["resumo"]["fotos"] == 1
+    assert not any(p["rota"].endswith("getBase64FromMediaMessage") for p in externo.pedidos)   # nunca baixa a mídia
+    evo(api_int, numero="5541900001111", message=foto, tipo="imageMessage")   # telefone sem paciente
+    assert esperar(lambda: any("cadastro" in norm(t) for t in textos_whats(externo)))
+
+
+def test_whatsapp_agenda_e_avisa_equipe(api_int, externo):
+    def tem(trecho):
+        return esperar(lambda: any(trecho in norm(t) for t in textos_whats(externo)))
+
+    evo(api_int, "quero marcar uma consulta")
+    assert tem("nome")
+    evo(api_int, "João Souza")
+    assert tem("1 - primeira consulta")
+    evo(api_int, "1")
+    assert tem("2) 06/10 11:00 com dr. marcos")
+    evo(api_int, "2")
+    assert tem("1 - presencial")
+    evo(api_int, "2")
+    assert tem("agendad")
+    [a] = api_int.agendamentos("2026-10-06")
+    assert (a["telefone"], a["profissional"], a["inicio"], a["modalidade"]) == ("+" + NUM, "marcos", "2026-10-06T11:00", "online")
+    assert esperar(lambda: any("Novo agendamento: 06/10 11:00 João Souza — Primeira consulta com Dr. Marcos" in t and "online" in t
+                               for t in textos_tg(externo)))
+    assert all(str(p["json"]["chat_id"]) == str(CHAT_EQUIPE) for p in externo.telegram())
+
+
+def test_saida_pela_evolution_com_reenvio_e_plano_sincrono(api_int, externo):
+    pid = api_int.paciente("Maria", TEL)
+    api_int.agenda(pid, "2026-10-07T09:00", profissional="lia")
+    externo.falhas = 1
+    st, r = api_int.post("/api/tarefas/rodar", {})
+    assert r["enviadas"] == 1                 # criada, mesmo com o envio falhando
+    [m] = api_int.saida("confirmacao")
+    assert m["status"] == "pendente"
+    st, r = api_int.post("/api/tarefas/rodar", {})
+    assert r["enviadas"] == 0 and r["reenviadas"] == 1
+    assert api_int.saida("confirmacao")[0]["status"] == "enviado"
+    [p] = externo.whats()
+    assert p["json"]["number"] == NUM and "07/10" in p["json"]["text"]
+    api_int.plano(pid)
+    assert api_int.post(f"/api/pacientes/{pid}/plano/enviar")[0] == 200
+    assert api_int.saida("plano")[0]["status"] == "enviado"   # rota síncrona: já tentou o envio
+    assert any("Seu plano alimentar" in t and "16:00 Lanche da tarde" in t for t in textos_whats(externo))
+
+
+# --- Telegram (equipe) ------------------------------------------------------------------
+
+def test_abertura_vai_ao_grupo(api_int, externo):
+    at, abertura = abre_atendimento(api_int, externo)
+    t = abertura["json"]["text"]
+    assert TEL in t.replace(" ", "").replace("-", "") and f"#{at['id']}" in t
+    assert str(abertura["json"]["chat_id"]) == str(CHAT_EQUIPE)
+    assert at["status"] == "aberto"
+
+
+def test_alerta_marca_alta_e_comando_alertas(api_int, externo):
+    normal, _ = abre_atendimento(api_int, externo)
+    api_int.msg("41988880000", "parei de comer ha dias")
+    assert esperar(lambda: any("ALTA" in t for t in textos_tg(externo)))
+    alta = next(f for f in api_int.get("/api/atendimento-humano")[1]["fila"] if f["prioridade"] == "alta")
+    assert alta["motivo"] == "alerta" and alta["id"] != normal["id"]
+    n = len(externo.telegram())
+    tg(api_int, "/alertas")
+    assert esperar(lambda: any(f"#{alta['id']}" in t and f"#{normal['id']}" not in t for t in textos_tg(externo)[n:]))
+    tg(api_int, f"/encerrar {alta['id']}")
+    n = len(externo.telegram())
+    tg(api_int, "/alertas")
+    assert esperar(lambda: any("nenhum" in norm(t) for t in textos_tg(externo)[n:]))
+
+
+def test_atendimento_aberto_silencia_bot_e_repassa(api_int, externo):
+    at, abertura = abre_atendimento(api_int, externo)
+    st, r = api_int.post("/api/mensagens", {"telefone": TEL, "texto": "tem estacionamento?"}, token=None)
+    assert r["respostas"] == []
+    assert esperar(lambda: any(p["json"].get("reply_to_message_id") == abertura["message_id"]
+                               and "tem estacionamento" in p["json"]["text"] for p in externo.telegram()))
+    # emergência e alerta continuam respondendo
+    assert "192" in api_int.msg(TEL, "agora estou com falta de ar")
+    assert "188" in api_int.msg(TEL, "estou pensando em me machucar")
+
+
+def test_equipe_responde_em_cima_da_mensagem(api_int, externo):
+    at, abertura = abre_atendimento(api_int, externo)
+    assert tg(api_int, "Olá, aqui é a Rita. Como posso ajudar?", reply_to=abertura["message_id"]) == 200
+    assert esperar(lambda: any(m["texto"] == "Olá, aqui é a Rita. Como posso ajudar?" for m in api_int.saida("humano")))
+    assert api_int.saida("humano")[0]["telefone"] == "+" + NUM
+    assert esperar(lambda: "Olá, aqui é a Rita. Como posso ajudar?" in textos_whats(externo))
+
+
+def test_webhook_telegram_protegido(api_int, externo):
+    at, abertura = abre_atendimento(api_int, externo)
+    assert tg(api_int, "invasor", reply_to=abertura["message_id"], segredo="errado") == 401
+    assert tg(api_int, "outro grupo", reply_to=abertura["message_id"], chat=-1009999) == 200
+    time.sleep(0.5)
+    assert api_int.saida("humano") == []
+
+
+def test_comandos_responder_encerrar_fila(api_int, externo):
+    at, _ = abre_atendimento(api_int, externo)
+    tg(api_int, f"/responder {at['id']} Já te ligo")
+    assert esperar(lambda: [m["texto"] for m in api_int.saida("humano")] == ["Já te ligo"])
+    n = len(externo.telegram())
+    tg(api_int, "/fila")
+    assert esperar(lambda: any(f"#{at['id']}" in t for t in textos_tg(externo)[n:]))
+    tg(api_int, f"/encerrar {at['id']}")
+    assert esperar(lambda: api_int.get("/api/atendimento-humano")[1]["fila"] == [])
+    assert api_int.msg(TEL, "tem estacionamento?") == ESTAC
+
+
+def test_comando_agenda(api_int, externo):
+    pid = api_int.paciente("Maria Lima", "41999990001")
+    api_int.agenda(pid, "2026-10-07T09:00", "retorno", "lia")
+    api_int.agenda(pid, "2026-10-07T14:00", "primeira", "lia", modalidade="online")
+    _, c = api_int.agenda(pid, "2026-10-07T15:00", "retorno", "marcos")
+    api_int.post(f"/api/agendamentos/{c['id']}/cancelar")
+    tg(api_int, "/agenda 2026-10-07")
+
+    def achou():
+        return any("09:00 Maria Lima — Retorno (Dra. Lia)" in t and "14:00 Maria Lima — Primeira consulta (Dra. Lia) [online]" in t
+                   and "15:00" not in t for t in textos_tg(externo))
+    assert esperar(achou)
+
+
+def test_equipe_responde_e_encerra_pela_pagina(api_int, externo):
+    at, _ = abre_atendimento(api_int, externo)
+    assert api_int.post(f"/api/atendimento-humano/{at['id']}/responder", {"texto": "Pode vir às 10h"})[0] == 200
+    assert [m["texto"] for m in api_int.saida("humano")] == ["Pode vir às 10h"]
+    assert api_int.saida("humano")[0]["status"] == "enviado"   # rota síncrona
+    assert api_int.post(f"/api/atendimento-humano/{at['id']}/encerrar")[0] == 200
+    assert api_int.get("/api/atendimento-humano")[1]["fila"] == []
+
+
+def test_cancelamento_pelo_chat_avisa_equipe(api_int, externo):
+    pid = api_int.paciente("Maria", TEL)
+    api_int.agenda(pid, "2026-10-07T09:00", profissional="lia")
+    api_int.post("/api/tarefas/rodar", {})
+    assert "cancelad" in norm(api_int.msg(TEL, "2"))
+    assert esperar(lambda: any(t.startswith("Cancelado:") and "07/10 09:00" in t for t in textos_tg(externo)))
+"""Conversa determinística, com fluxo e histórico persistentes."""
+import re
+from datetime import timedelta
+from .domain import normalized, now, phone, required, timestamp
+from .storage import Error
+
+EMERGENCIAS = ('dor no peito', 'falta de ar', 'desmaio', 'desmaiei', 'desmaiou', 'convulsao', 'sangramento', 'sangrando', 'infarto', 'avc', 'nao paro de vomitar', 'vomitando sem parar', 'vomito sem parar', 'hipoglicemia', 'suor frio', 'visao turva', 'tremedeira')
+ALERTAS = ('me matar', 'suicidio', 'me machucar', 'me cortar', 'compulsao', 'vomitei de proposito', 'forcei o vomito', 'provoquei o vomito', 'laxante', 'parei de comer', 'nao como ha dias', 'sem comer ha dias', 'jejum de dias')
+IGNORADAS = set('que quem qual quais onde como quando uma umas uns voce voces vcs seu sua seus suas meu minha meus minhas nos nosso nossa esse essa isso este esta tem fica para com por dos das de do da pre pos'.split())
+
+
+def normalize(text):
+    text = normalized(text)
+    return ' '.join(''.join(c if c.isalnum() or c.isspace() or (c in ',.' and i > 0 and i + 1 < len(text) and text[i-1].isdigit() and text[i+1].isdigit()) else ' ' for i, c in enumerate(text)).split())
+
+
+def significant(text):
+    return {w for w in normalize(text).split() if len(w) >= 3 and w not in IGNORADAS}
+
+
+class Conversation:
+    def __init__(self, domain):
+        self.d = domain
+
+    def human(self, number, reason, priority='normal'):
+        d = self.d
+        row = next((r for r in d.all('atendimentos') if r['telefone'] == number and r['status'] == 'aberto'), None)
+        if row:
+            if priority == 'alta':
+                row.update(prioridade=priority, motivo=reason)
+                d.save('atendimentos', row)
+            return row
+        p = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
+        return d.save('atendimentos', dict(telefone=number, nome=p['nome'] if p else None, motivo=reason, prioridade=priority, status='aberto'))
+
+    def message(self, body):
+        required(body, 'telefone', 'texto')
+        if not isinstance(body['texto'], str):
+            raise Error(422, 'Texto inválido')
+        d = self.d
+        number, original = phone(body['telefone']), body['texto']
+        text = normalize(original)
+        state = next((s for s in d.all('conversas') if s['id'] == number), {'id': number, 'fluxo': None, 'nao_entendi': 0})
+        patient = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
+        d.save('mensagens', dict(telefone=number, direcao='entrada', texto=original, quando=now().isoformat(timespec='minutes')))
+        previous_misses = state['nao_entendi']
+        state['nao_entendi'] = 0
+        answer = self.decide(number, original, text, state, patient, previous_misses)
+        d.save('conversas', state)
+        responses = [] if answer is None else [answer]
+        for response in responses:
+            d.save('mensagens', dict(telefone=number, direcao='saida', texto=response, quando=now().isoformat(timespec='minutes')))
+        return {'respostas': responses}
+
+    def decide(self, number, original, text, state, p, misses):
+        d = self.d
+        if any(t in text for t in EMERGENCIAS):
+            self.human(number, 'emergencia', 'alta')
+            return 'Ligue 192 ou procure um pronto-socorro. A equipe foi avisada.'
+        if any(t in text for t in ALERTAS):
+            self.human(number, 'alerta', 'alta')
+            return 'Você pode ligar 188 (CVV). Vou chamar o nutricionista e a equipe.'
+        if any(r['telefone'] == number and r['status'] == 'aberto' for r in d.all('atendimentos')):
+            return None
+        if text in ('parar', 'sair', 'pare'):
+            d.save('preferencias', {'id': number, 'nao_contatar': True})
+            if p:
+                p['nao_contatar'] = True
+                d.save('pacientes', p)
+            return 'Você não vai mais receber mensagens automáticas.'
+        if text == 'parar lembretes':
+            if p:
+                metas = next((m for m in d.all('metas') if m['id'] == p['id']), {'id': p['id'], 'meta_agua_copos': None})
+                metas.update(lembretes_agua=[], lembretes_refeicoes=False)
+                d.save('metas', metas)
+            return 'Seus lembretes foram desativados.'
+        if any(t in text for t in ('atendente', 'humano', 'falar com alguem')):
+            self.human(number, 'atendente')
+            return 'Vou chamar um atendente.'
+        if state['fluxo']:
+            return self.flow(number, original, text, state, p)
+        pending = [m for m in d.all('saida') if m['telefone'] == number]
+        if pending and not pending[-1].get('respondida'):
+            m = pending[-1]
+            if m['tipo'] == 'confirmacao' and text in ('1', 'sim', 'confirmo', '2', 'cancelar', 'nao'):
+                a = d.get('agendamentos', m['agendamento_id'])
+                if a['status'] == 'agendado' and a['inicio'] == m['inicio']:
+                    m['respondida'] = True
+                    d.save('saida', m)
+                    if text in ('1', 'sim', 'confirmo'):
+                        a['status'] = 'confirmado'
+                        d.save('agendamentos', a)
+                        return 'Agendamento confirmado.'
+                    d.cancel(a)
+                    return 'Agendamento cancelado.'
+            if m['tipo'] == 'espera' and text in ('1', 'sim'):
+                m['respondida'] = True
+                d.save('saida', m)
+                try:
+                    a = d.book(dict(paciente_id=p['id'], servico=m['servico'], inicio=m['inicio'], profissional=m['profissional'], modalidade=m['modalidade']))
+                    return self.booked(a)
+                except Error as exc:
+                    if exc.status not in (409, 422):
+                        raise
+                    return 'Esse horário está ocupado ou indisponível.'
+        from .nutrition import Nutrition
+        nutrition = Nutrition(d)
+        words = set(text.split())
+        has_number = re.search(r'\d+(?:[.,]\d+)?', text) is not None
+        recording = (has_number and bool(words & {'kg', 'quilo', 'quilos', 'peso', 'pesei', 'pesando'})) or 'peso' in words or bool(words & {'copo', 'copos', 'comi', 'fiz', 'tomei', 'feita', 'feito', 'almocei', 'jantei'}) or any(t in text for t in ('pulei', 'pulou', 'nao comi', 'nao fiz', 'nao tomei'))
+        if recording:
+            return nutrition.chat_record(p, text)
+        if any(t in text for t in ('meu plano', 'plano alimentar', 'cardapio', 'dieta', 'posso comer', 'pode comer', 'o que comer', 'o que como')):
+            return nutrition.chat_plan(p, text, self, number)
+        if 'link' in words:
+            appointments = sorted((a for a in d.all('agendamentos') if p and a['paciente_id'] == p['id'] and a['modalidade'] == 'online' and a['status'] in ('agendado', 'confirmado') and a['inicio'] >= now().isoformat(timespec='minutes')), key=lambda a: a['inicio'])
+            return (appointments[0]['link'] or 'A equipe vai informar o link.') if appointments else 'Não encontrei uma consulta online futura.'
+        if any(t in text for t in ('agendar', 'marcar', 'consulta')):
+            state['fluxo'] = 'servico' if p else 'nome'
+            return self.prompt(state)
+        best, score = None, 0
+        for item in d.all('faq'):
+            for question in item['perguntas']:
+                tokens = significant(question)
+                ratio = len(tokens & words) / len(tokens) if tokens else 0
+                if ratio >= .6 and ratio > score:
+                    best, score = item['resposta'], ratio
+        if best is not None:
+            return best
+        state['nao_entendi'] = misses + 1
+        if state['nao_entendi'] >= 2:
+            self.human(number, 'nao_entendi')
+        return 'Não entendi. Você pode pedir um atendente.'
+
+    def prompt(self, state):
+        if state['fluxo'] == 'nome':
+            return 'Qual é seu nome?'
+        if state['fluxo'] == 'servico':
+            state['servicos'] = [s['id'] for s in self.d.all('servicos') if s['ativo']]
+            return '\n'.join(f"{i} - {self.d.get('servicos', sid)['nome']}" for i, sid in enumerate(state['servicos'], 1)) or 'Não há serviços disponíveis.'
+        if state['fluxo'] == 'modalidade':
+            return '1 - Presencial\n2 - Online'
+        return '\n'.join(f"{i}) {timestamp(s['inicio']).strftime('%d/%m %H:%M')} com {self.d.get('profissionais', s['profissional'])['nome']}" for i, s in enumerate(state['horarios'], 1)) or 'Não há horários disponíveis nesta janela.'
+
+    def offer(self, state):
+        state['fluxo'], state['horarios'] = 'horario', []
+        for day in range(self.d.config['janela_dias'] + 1):
+            state['horarios'].extend(self.d.slots({'servico': state['servico'], 'data': (now() + timedelta(days=day)).strftime('%Y-%m-%d')}))
+            if len(state['horarios']) >= 3:
+                break
+        state['horarios'] = state['horarios'][:3]
+        return self.prompt(state)
+
+    def booked(self, a):
+        return f"Agendado para {timestamp(a['inicio']).strftime('%d/%m %H:%M')} ({a['modalidade']})."
+
+    def flow(self, number, original, text, state, p):
+        if text == 'cancelar':
+            state['fluxo'] = None
+            return 'Fluxo cancelado.'
+        if state['fluxo'] == 'nome':
+            _, created = self.d.patient({'nome': original, 'telefone': number})
+            state['fluxo'] = 'servico'
+            return self.prompt(state)
+        choice = int(text) - 1 if text.isdigit() else -1
+        if state['fluxo'] == 'servico':
+            if choice not in range(len(state['servicos'])):
+                return self.prompt(state)
+            state['servico'] = state['servicos'][choice]
+            return self.offer(state)
+        if state['fluxo'] == 'horario':
+            if choice not in range(len(state['horarios'])):
+                return self.prompt(state)
+            state['escolhido'] = state['horarios'][choice]
+            if self.d.config['atende_online']:
+                state['fluxo'] = 'modalidade'
+                return self.prompt(state)
+            mode = 'presencial'
+        else:
+            if choice not in (0, 1):
+                return self.prompt(state)
+            mode = ('presencial', 'online')[choice]
+        try:
+            a = self.d.book(dict(state['escolhido'], paciente_id=p['id'], servico=state['servico'], modalidade=mode))
+        except Error as exc:
+            if exc.status not in (409, 422):
+                raise
+            return 'Horário ocupado ou indisponível.\n' + self.offer(state)
+        state['fluxo'] = None
+        return self.booked(a)
+src/domain.py:9:def now():
+src/domain.py:13:def normalized(text):
+src/domain.py:17:def timestamp(value):
+src/domain.py:26:def phone(value):
+src/domain.py:37:def required(body, *keys):
+src/domain.py:43:    def __init__(self, store, db):
+src/domain.py:46:    def all(self, collection):
+src/domain.py:49:    def get(self, collection, key):
+src/domain.py:52:    def save(self, collection, entry):
+src/domain.py:55:    def delete(self, collection, key):
+src/domain.py:58:    def patient(self, body):
+src/domain.py:70:    def candidates(self, service, professional, day):
+src/domain.py:89:    def occupied(self, professional, start, end, ignore=None):
+src/domain.py:93:    def slots(self, query):
+src/domain.py:105:    def book(self, body, previous=None):
+src/domain.py:129:    def appointments(self, query):
+src/domain.py:143:    def cancel(self, appointment):
+src/domain.py:147:    def route(self, method, path, query, body):
+src/domain.py:153:        registration_result = Registrations(self).route(method, path, query, body)
+src/domain.py:156:        reporting_result = Reporting(self).route(method, path, query, body)
+src/domain.py:159:        nutrition_result = Nutrition(self).route(method, path, query, body)
+src/domain.py:162:        task_result = Tasks(self).route(method, path, body)
+src/nutrition.py:8:def rounded(value):
+src/nutrition.py:12:def hour(value):
+src/nutrition.py:18:def meal_line(meal):
+src/nutrition.py:22:def plan_text(plan):
+src/nutrition.py:31:    def __init__(self, domain):
+src/nutrition.py:34:    def plans(self, pid):
+src/nutrition.py:37:    def active(self, pid):
+src/nutrition.py:41:    def goals(self, pid):
+src/nutrition.py:45:    def entries(self, pid, query=None):
+src/nutrition.py:49:    def diary(self, pid, query):
+src/nutrition.py:55:    def weights(self, pid):
+src/nutrition.py:59:    def record(self, pid, kind, **fields):
+src/nutrition.py:64:    def weight(self, pid, value, origin, when=None):
+src/nutrition.py:74:        return self.record(pid, 'peso', valor=rounded(numeric), origem=origin, quando=when)
+src/nutrition.py:76:    def match_meal(self, plan, text):
+src/nutrition.py:83:    def chat_record(self, p, text):
+src/nutrition.py:99:            self.record(pid, 'agua', valor=int(integer[0]) if integer else 1)
+src/nutrition.py:112:        self.record(pid, 'refeicao', refeicao=meal['nome'], status=status)
+src/nutrition.py:115:    def chat_plan(self, p, text, conversation, number):
+src/nutrition.py:127:    def route(self, method, path, query, body):
+5. **Humano** — contém `atendente`, `humano` ou `falar com alguem`: fila humana `normal`, `motivo: "atendente"`; resposta contém `atendente`.
+6. **Fluxo em andamento** (agendamento pelo chat, abaixo) consome a mensagem.
+7. **Resposta a pendência:** se a última mensagem da **caixa de saída** (`/api/saida`; respostas do bot na conversa não contam) para o telefone foi `confirmacao` (sem resposta ainda): texto **igual a** `1`, `sim` ou `confirmo` → status `confirmado`, resposta contém `confirmad`; texto **igual a** `2`, `cancelar` ou `nao` → status `cancelado` (dispara espera), resposta contém `cancelad`. Se foi `espera` (sem resposta): texto igual a `1` ou `sim` → agenda **o mesmo horário e o mesmo profissional** liberados (seção 7) se ainda livres (resposta contém `agendad`), senão resposta contém `ocupado` (outro profissional livre no mesmo horário **não** é usado). Qualquer outro texto **não consome** a pendência (ex.: `nao comi` e `1 copo` seguem para a regra 8).
+8. **Registro no diário** (seção 10), nesta ordem:
+   - **Peso:** contém o token `kg`, `quilo`, `quilos`, `peso`, `pesei` ou `pesando` **e** um número → registra o peso (regras de faixa, arredondamento e resposta na seção 10). Com o token `peso` e **sem** número → resposta contém o último peso registrado (o de maior `quando`; empate → maior `id`; vale o registrado pela equipe também) no formato `<v> kg` ou `nenhum peso`.
+   - **Água:** contém o token `copo` ou `copos` → registra copos de água (quantidade = primeiro inteiro do texto; sem inteiro = 1).
+   - **Refeição:** contém `pulei`, `pulou`, `nao comi`, `nao fiz` ou `nao tomei` → `pulada`; senão contém o token `comi`, `fiz`, `tomei`, `feita`, `feito`, `almocei` ou `jantei` → `feita`. Sem plano ativo: resposta contém `nutricionista` e nada é registrado.
+9. **Plano alimentar** — contém `meu plano`, `plano alimentar`, `cardapio`, `dieta`, `posso comer`, `pode comer`, `o que comer` ou `o que como`:
+   - sem plano ativo (inclusive telefone sem paciente) → resposta contém `nutricionista` (e nada mais acontece);
+   - casa uma **refeição** (regra de casamento na seção 9) → responde **só a linha daquela refeição** (os nomes das outras refeições não aparecem na resposta);
+   - não casa refeição e contém `posso comer`, `pode comer`, `o que comer` ou `o que como` (ex.: `posso comer chocolate?`) → dúvida fora do plano: resposta contém `plano`, `nutricionista` e `atendente`; entra na fila humana `normal`, `motivo: "duvida_plano"`;
+   - senão (`meu plano`, `plano alimentar`, `cardapio`, `dieta`) → responde o plano inteiro (formato na seção 9).
+10. **Link** — contém o token `link`: próximo agendamento `online` com status `agendado`/`confirmado` e `inicio >= agora` do telefone (menor `inicio`): com `link` → resposta contém o link; sem `link` → resposta contém `equipe`; não há consulta online → resposta contém `não encontrei`.
+11. **Agendar** — contém `agendar`, `marcar` ou `consulta`: inicia o fluxo.
+12. **FAQ** — palavras significativas (≥ 3 letras, fora de artigos/preposições/pronomes comuns) de alguma pergunta do FAQ: se ≥ 60 % delas aparecem no texto, responde **exatamente** a `resposta` daquele item (só ela, uma mensagem). Mais de um item casa → o de maior %; empate → o primeiro do FAQ.
+13. **Não entendi** — resposta contém `não entendi` e oferece `atendente`. Na **segunda** seguida sem entender, entra na fila humana (`normal`, `motivo: "nao_entendi"`) automaticamente.
+
+**Fluxo de agendamento pelo chat** (estado por telefone, persistido; em cada passo a resposta faz a pergunta do passo):
+
+exec
+/bin/bash -lc "sed -n '55,65p' src/nutrition.py; sed -n '147,200p' src/domain.py; cat VERSION; cat FALHAS.md" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+    def weights(self, pid):
+        rows = [dict(id=r['id'], quando=r['quando'], peso=r['valor'], origem=r['origem']) for r in self.entries(pid) if r['tipo'] == 'peso']
+        return {'pesos': rows, 'variacao': rounded(Decimal(str(rows[-1]['peso'])) - Decimal(str(rows[0]['peso']))) if len(rows) >= 2 else None}
+
+    def record(self, pid, kind, **fields):
+        row = dict(paciente_id=pid, tipo=kind, quando=now().isoformat(timespec='minutes'), valor=None, refeicao=None, status=None, mimetype=None, caption=None, message_id=None, origem='chat')
+        row.update(fields)
+        return self.d.save('diario', row)
+
+    def weight(self, pid, value, origin, when=None):
+        try:
+    def route(self, method, path, query, body):
+        from .conversation import Conversation
+        from .tasks import Tasks
+        from .nutrition import Nutrition
+        from .reporting import Reporting
+        from .registrations import Registrations
+        registration_result = Registrations(self).route(method, path, query, body)
+        if registration_result is not None:
+            return registration_result
+        reporting_result = Reporting(self).route(method, path, query, body)
+        if reporting_result is not None:
+            return reporting_result
+        nutrition_result = Nutrition(self).route(method, path, query, body)
+        if nutrition_result is not None:
+            return nutrition_result
+        task_result = Tasks(self).route(method, path, body)
+        if task_result is not None:
+            return task_result
+        if path == '/api/mensagens' and method == 'POST':
+            return 200, Conversation(self).message(body)
+        if path == '/api/atendimento-humano' and method == 'GET':
+            return 200, {'fila': [r for r in self.all('atendimentos') if r['status'] == 'aberto']}
+        human_match = re.fullmatch(r'/api/atendimento-humano/([^/]+)/(responder|encerrar)', path)
+        if human_match and method == 'POST':
+            row = self.get('atendimentos', human_match[1])
+            if human_match[2] == 'encerrar':
+                row['status'] = 'encerrado'
+                self.save('atendimentos', row)
+            else:
+                required(body, 'texto')
+                if not isinstance(body['texto'], str) or not body['texto'].strip():
+                    raise Error(422, 'Texto vazio')
+                p = next((p for p in self.all('pacientes') if p['telefone'] == row['telefone']), None)
+                Tasks(self).output(p or {'id': None, 'telefone': row['telefone'], 'nao_contatar': False}, 'humano', body['texto'])
+            return 200, row
+        if path == '/api/servicos' and method == 'GET':
+            return 200, {'servicos': [s for s in self.all('servicos') if s['ativo']]}
+        if path == '/api/profissionais' and method == 'GET':
+            return 200, {'profissionais': self.all('profissionais')}
+        if path == '/api/faq' and method == 'GET':
+            return 200, {'faq': self.all('faq')}
+        if path == '/api/horarios' and method == 'GET':
+            return 200, {'horarios': self.slots(query)}
+        if path == '/api/pacientes':
+            if method == 'POST':
+                return self.patient(body)
+            if method == 'GET':
+                term = normalized(query.get('busca', ''))
+                digits = re.sub(r'\D', '', term)
+                return 200, {'pacientes': [p for p in self.all('pacientes') if term in normalized(p['nome']) or (digits and digits in (p['telefone'] or ''))]}
+        if path == '/api/agendamentos':
+            if method == 'POST':
+                return 201, self.book(body)
+            if method == 'GET':
+0.4.0
+# FALHAS
+
+| data | o que quebrou | menor correção | prompt \| infra |
+|---|---|---|---|
+| 2026-10-19 14:09 | Cadastros/bloqueios/backup ausentes; horário profissional vazio herdava o geral | Acrescentar rotas e cópia SQLite; herdar horário somente quando null | infra (implementação incompleta) |
+| 2026-10-19 14:03 | Campanhas, exclusão LGPD e Raio-X ausentes | Acrescentar módulo de validação/anonimização/agregação e comando raiox, preservando a transação existente | infra (implementação incompleta) |
+| 2026-10-19 13:57 | Conversa/tarefas/plano/diário ausentes impediam atendimento e persistência funcional | Acrescentar os módulos sobre a transação existente, com pendência exata e Decimal para peso | infra (implementação incompleta) |
+| 2026-10-05 | validação: `test_refeicao_sem_nome_usa_horario_e_exige_plano` subia o 3º servidor em 06/10 **06:00** e esperava esse registro por último, mas a §10 ordena o diário por `quando` (o das 06:00 iria para o início) → implementador honesto reprovava | 3º servidor em `2026-10-07T06:00` (mesmo cenário "nenhuma refeição ≤ 06:00") + asserção explícita da ordem por `quando` | prompt |
+| 2026-10-05 | validação: `test_espera_horario_ja_ocupado` exigia `ocupado` com o Dr. Marcos livre no mesmo horário, e a spec não dizia de qual profissional era a oferta da lista de espera | §7 e regra 7 da §6: oferta e `1` são do **mesmo horário e mesmo profissional** liberados | prompt |
+| 2026-10-05 | validação: `test_horarios_so_de_quem_faz_o_servico` esperava 200 `[]` para profissional existente que não faz o serviço; a §5 só previa "inexistente → 404" | linha de `/api/horarios` na §5: existente que não faz o serviço ou inativo → 200 `horarios: []`; ordem "depois `profissional`" definida como ordem de cadastro | prompt |
+| 2026-10-05 | validação: `test_dados_e_exclusao` exigia direção `saida` em `/dados` sem nenhuma mensagem da caixa de saída; a §13 não dizia que as respostas do bot na conversa contam como enviadas | §13: `saida` = respostas do bot na conversa + caixa de saída | prompt |
+| 2026-10-05 | validação: fluxo do chat — teste espera a lista de serviços já na resposta ao nome do paciente novo; a §6 deixava implícito | §6: "a resposta a essa mensagem já lista os serviços" | prompt |
+| 2026-10-05 | validação: ponto de atenção "peso com ponto" e "meio para cima" (§10) não tinham teste nenhum (`round()` do Python passaria) | asserção em `test_peso_fora_da_faixa_e_sem_cadastro`: `estou pesando 79.25` → `79,3 kg`; exemplo na §10 | prompt |
+| 2026-10-05 | validação: `goal.md`/prompts proibiam editar `congelar.sh` mas não rodá-lo; `verificar-limites.sh` aceitaria um commit "contrato congelado" forjado que também mudasse um teste | "nem rodar congelar.sh" no goal e nos prompts; guarda: commit de congelamento só pode tocar `hash-congelado.txt` + aviso se houver mais de um (provado no clone) | prompt |
+| 2026-10-05 | validação (cosmético): `test_compose` exige o literal `127.0.0.1:8080:8080` e a §21 só dizia "127.0.0.1:8080"; `comi` de telefone desconhecido tinha duas regras possíveis (`cadastro` × `nutricionista`) | §21 com o literal; §10: `cadastro` vem antes | prompt |
+| 2026-10-05 | revisão: `test_publico_so_com_consentimento_e_sem_parar` exigia 422 para `{"texto": "   "}` e a spec só previa 422 com `violacoes` (implementador honesto falharia) | linha de `/api/campanhas` na §5: "texto ausente, vazio ou só espaços → 422" | prompt |
+| 2026-10-05 | revisão: dois testes do diário deixavam 2–3 `atende serve` vivos ao mesmo tempo no mesmo `--dados` (a spec só promete reinício, não acesso simultâneo ao SQLite → "database is locked" possível) | `s.parar()` antes de subir o próximo servidor | prompt |
+| 2026-10-05 | planejamento: guarda nova do `verificar-limites.sh` exigia que `BASE` fosse o commit "contrato congelado", mas `congelar.sh` grava `BASE = HEAD` **antes** de commitar (BASE é o pai desse commit) → `LIMITES OK` nunca saía no clone de teste | checar que `hash-congelado.txt` da árvore é igual ao do último commit de congelamento e que `BASE` é o pai dele (provado no clone: stub honesto OK, `BASE` forjado → violação) | prompt |
+
+apply patch
+patch: completed
+/home/nmaldaner/projetos/atende-nutricao/src/integrations.py
+diff --git a/src/integrations.py b/src/integrations.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..395da01c568b8890c55fae5cf9f6cddb8c577f5c
+--- /dev/null
++++ b/src/integrations.py
+@@ -0,0 +1,88 @@
++"""Transporte configurado exclusivamente pelo ambiente e entrada de metadados."""
++import json
++import os
++from urllib.error import URLError
++from urllib.parse import quote
++from urllib.request import HTTPRedirectHandler, Request, build_opener
++
++from .domain import now, phone
++from .storage import Error
++
++
++class NoRedirect(HTTPRedirectHandler):
++    def redirect_request(self, req, fp, code, msg, headers, newurl):
++        return None
++
++
++def send_whatsapp(number, text):
++    base = os.environ.get('EVOLUTION_URL', '')
++    if not base:
++        return 'simulado'
++    instance = quote(os.environ.get('EVOLUTION_INSTANCIA', ''), safe='')
++    payload = json.dumps({'number': number.lstrip('+'), 'text': text}, ensure_ascii=False).encode()
++    try:
++        request = Request(base.rstrip('/') + '/message/sendText/' + instance, data=payload,
++                          headers={'Content-Type': 'application/json',
++                                   'apikey': os.environ.get('EVOLUTION_API_KEY', '')}, method='POST')
++        with build_opener(NoRedirect).open(request, timeout=3) as response:
++            return 'enviado' if 200 <= response.status < 300 else 'pendente'
++    except (URLError, OSError, ValueError):
++        return 'pendente'
++
++
++class Evolution:
++    def __init__(self, domain):
++        self.d = domain
++
++    def receive(self, body):
++        d = self.d
++        data = body.get('data')
++        if body.get('event') != 'messages.upsert' or not isinstance(data, dict):
++            return {'ok': True}
++        key = data.get('key') or {}
++        jid = key.get('remoteJid', '')
++        identifier = key.get('id')
++        if not isinstance(key, dict) or not isinstance(jid, str) or key.get('fromMe') or jid.endswith('@g.us') or not identifier:
++            return {'ok': True}
++        if any(m['id'] == identifier for m in d.all('evolution_recebidas')):
++            return {'ok': True}
++        try:
++            number = phone(jid.split('@')[0])
++        except Error:
++            return {'ok': True}
++        message = data.get('message') or {}
++        if not isinstance(message, dict):
++            return {'ok': True}
++        d.save('evolution_recebidas', {'id': identifier})
++        if 'imageMessage' in message or data.get('messageType') == 'imageMessage':
++            photo = message.get('imageMessage') or {}
++            photo = photo if isinstance(photo, dict) else {}
++            # Somente estes campos entram no diário; nenhum endereço de mídia é usado.
++            mime = photo.get('mimetype') if isinstance(photo.get('mimetype'), str) else None
++            caption = photo.get('caption') if isinstance(photo.get('caption'), str) else None
++            p = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
++            if p:
++                from .nutrition import Nutrition
++                Nutrition(d).record(p['id'], 'foto', mimetype=mime, caption=caption,
++                                    message_id=identifier, origem='whatsapp')
++                responses = ['Foto registrada no diário.']
++            else:
++                responses = ['É necessário um cadastro para registrar a foto.']
++            self.history(number, caption or '[foto]', responses)
++        else:
++            extended = message.get('extendedTextMessage') or {}
++            text = message.get('conversation') or (extended.get('text') if isinstance(extended, dict) else None)
++            if isinstance(text, str) and text:
++                from .conversation import Conversation
++                responses = Conversation(d).message({'telefone': number, 'texto': text})['respostas']
++            else:
++                responses = ['Por enquanto só consigo ler mensagens de texto e fotos.']
++                self.history(number, '[mensagem sem texto]', responses)
++        for response in responses:
++            send_whatsapp(number, response)
++        return {'ok': True}
++
++    def history(self, number, original, responses):
++        for direction, text in [('entrada', original)] + [('saida', r) for r in responses]:
++            self.d.save('mensagens', dict(telefone=number, direcao=direction, texto=text,
++                                         quando=now().isoformat(timespec='minutes')))
+
+hook: PostToolUse
+hook: PostToolUse Completed
+apply patch
+patch: completed
+/home/nmaldaner/projetos/atende-nutricao/VERSION
+/home/nmaldaner/projetos/atende-nutricao/src/integrations.py
+/home/nmaldaner/projetos/atende-nutricao/src/server.py
+/home/nmaldaner/projetos/atende-nutricao/src/tasks.py
+diff --git a/VERSION b/VERSION
+index 1d0ba9ea182b0f7354f3daf12120744ec5e0c2f8..8f0916f768f0487bcf8d33827ce2c8dcecb645c1
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-0.4.0
++0.5.0
+diff --git a/src/integrations.py b/src/integrations.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..8ef23407a8e95ce168c5bc80702f2f76e99234e1
+--- /dev/null
++++ b/src/integrations.py
+@@ -0,0 +1,90 @@
++"""Transporte configurado exclusivamente pelo ambiente e entrada de metadados."""
++import json
++import os
++from urllib.error import URLError
++from urllib.parse import quote
++from urllib.request import HTTPRedirectHandler, Request, build_opener
++
++from .domain import now, phone
++from .storage import Error
++
++
++class NoRedirect(HTTPRedirectHandler):
++    def redirect_request(self, req, fp, code, msg, headers, newurl):
++        return None
++
++
++def send_whatsapp(number, text):
++    base = os.environ.get('EVOLUTION_URL', '')
++    if not base:
++        return 'simulado'
++    instance = quote(os.environ.get('EVOLUTION_INSTANCIA', ''), safe='')
++    payload = json.dumps({'number': number.lstrip('+'), 'text': text}, ensure_ascii=False).encode()
++    try:
++        request = Request(base.rstrip('/') + '/message/sendText/' + instance, data=payload,
++                          headers={'Content-Type': 'application/json',
++                                   'apikey': os.environ.get('EVOLUTION_API_KEY', '')}, method='POST')
++        with build_opener(NoRedirect).open(request, timeout=3) as response:
++            return 'enviado' if 200 <= response.status < 300 else 'pendente'
++    except (URLError, OSError, ValueError):
++        return 'pendente'
++
++
++class Evolution:
++    def __init__(self, domain):
++        self.d = domain
++
++    def receive(self, body):
++        d = self.d
++        data = body.get('data')
++        if body.get('event') != 'messages.upsert' or not isinstance(data, dict):
++            return {'ok': True}
++        key = data.get('key') or {}
++        if not isinstance(key, dict):
++            return {'ok': True}
++        jid = key.get('remoteJid', '')
++        identifier = key.get('id')
++        if not isinstance(key, dict) or not isinstance(jid, str) or key.get('fromMe') or jid.endswith('@g.us') or not identifier:
++            return {'ok': True}
++        if any(m['id'] == identifier for m in d.all('evolution_recebidas')):
++            return {'ok': True}
++        try:
++            number = phone(jid.split('@')[0])
++        except Error:
++            return {'ok': True}
++        message = data.get('message') or {}
++        if not isinstance(message, dict):
++            return {'ok': True}
++        d.save('evolution_recebidas', {'id': identifier})
++        if 'imageMessage' in message or data.get('messageType') == 'imageMessage':
++            photo = message.get('imageMessage') or {}
++            photo = photo if isinstance(photo, dict) else {}
++            # Somente estes campos entram no diário; nenhum endereço de mídia é usado.
++            mime = photo.get('mimetype') if isinstance(photo.get('mimetype'), str) else None
++            caption = photo.get('caption') if isinstance(photo.get('caption'), str) else None
++            p = next((p for p in d.all('pacientes') if p['telefone'] == number), None)
++            if p:
++                from .nutrition import Nutrition
++                Nutrition(d).record(p['id'], 'foto', mimetype=mime, caption=caption,
++                                    message_id=identifier, origem='whatsapp')
++                responses = ['Foto registrada no diário.']
++            else:
++                responses = ['É necessário um cadastro para registrar a foto.']
++            self.history(number, caption or '[foto]', responses)
++        else:
++            extended = message.get('extendedTextMessage') or {}
++            text = message.get('conversation') or (extended.get('text') if isinstance(extended, dict) else None)
++            if isinstance(text, str) and text:
++                from .conversation import Conversation
++                responses = Conversation(d).message({'telefone': number, 'texto': text})['respostas']
++            else:
++                responses = ['Por enquanto só consigo ler mensagens de texto e fotos.']
++                self.history(number, '[mensagem sem texto]', responses)
++        for response in responses:
++            send_whatsapp(number, response)
++        return {'ok': True}
++
++    def history(self, number, original, responses):
++        for direction, text in [('entrada', original)] + [('saida', r) for r in responses]:
++            self.d.save('mensagens', dict(telefone=number, direcao=direction, texto=text,
++                                         quando=now().isoformat(timespec='minutes')))
+diff --git a/src/server.py b/src/server.py
+index ed0fffc2803f8160962571e74dccc5d3fa99b2e7..aff3c2526b8ddabac92aba497da4a3ed466705ff
+--- a/src/server.py
++++ b/src/server.py
+@@ -2,6 +2,7 @@
+ import argparse
+ import hmac
+ import json
++import os
+ import traceback
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ from urllib.parse import parse_qsl, urlsplit
+@@ -27,6 +28,12 @@
+             ('GET', '/'), ('GET', '/equipe'), ('GET', '/api/saude'),
+             ('GET', '/api/servicos'), ('GET', '/api/horarios'), ('POST', '/api/mensagens')}
+         try:
++            evolution = self.command == 'POST' and route.path.startswith('/webhook/evolution/')
++            if evolution:
++                secret = os.environ.get('WEBHOOK_SEGREDO', '')
++                if not secret or not hmac.compare_digest(route.path.encode(), ('/webhook/evolution/' + secret).encode()):
++                    raise Error(404, 'Rota inexistente')
++                public = True
+             if not public and not hmac.compare_digest(self.headers.get('X-Token', '').encode(), self.server.store.config['token'].encode()):
+                 raise Error(401, 'Token inválido')
+             body = {}
+@@ -44,7 +51,12 @@
+                 with db:
+                     # Reserva a escrita antes de verificar disponibilidade: duas reservas não vencem juntas.
+                     db.execute('BEGIN IMMEDIATE')
+-                    status, result = Domain(self.server.store, db).route(self.command, route.path, dict(parse_qsl(route.query)), body)
++                    domain = Domain(self.server.store, db)
++                    if evolution:
++                        from .integrations import Evolution
++                        status, result = 200, Evolution(domain).receive(body)
++                    else:
++                        status, result = domain.route(self.command, route.path, dict(parse_qsl(route.query)), body)
+             finally:
+                 db.close()
+             self.respond(status, result)
+diff --git a/src/tasks.py b/src/tasks.py
+index fe83269fcae9bd032ef8f7b8c523790a3101cffc..4b399ec736b29731bd74c656a41b0dc5ca8db982
+--- a/src/tasks.py
++++ b/src/tasks.py
+@@ -2,6 +2,7 @@
+ from datetime import timedelta
+ from .domain import now, timestamp, required
+ from .storage import Error
++from .integrations import send_whatsapp
+ 
+ 
+ class Tasks:
+@@ -14,6 +15,8 @@
+         message = self.d.save('saida', dict(tipo=kind, telefone=p['telefone'], paciente_id=p['id'], texto=text,
+                             agendamento_id=None, status='simulado', quando=(instant or now()).isoformat(timespec='minutes'), **extra))
+         self.d.save('mensagens', dict(telefone=p['telefone'], direcao='saida', texto=text, quando=message['quando']))
++        message['status'] = send_whatsapp(p['telefone'], text)
++        self.d.save('saida', message)
+         return message
+ 
+     def cancel(self, a):
+@@ -44,6 +47,19 @@
+     def run(self, body):
+         d = self.d
+         instant = timestamp(body['agora']) if 'agora' in body else now()
++        retried = 0
++        # Apenas pendências anteriores à rodada: uma nova falha espera a próxima execução.
++        for message in d.all('saida'):
++            if message['status'] != 'pendente' or not message['telefone']:
++                continue
++            patient = next((p for p in d.all('pacientes') if p['telefone'] == message['telefone']), None)
++            if patient and patient['nao_contatar'] and message['tipo'] != 'humano':
++                continue
++            status = send_whatsapp(message['telefone'], message['texto'])
++            if status == 'enviado':
++                message['status'] = status
++                d.save('saida', message)
++                retried += 1
+         count = 0
+         for a in d.all('agendamentos'):
+             if a['status'] != 'agendado' or a.get('confirmacao_enviada') or not instant < timestamp(a['inicio']) <= instant + timedelta(hours=d.config['confirmacao_horas']):
+@@ -86,7 +102,7 @@
+                 if self.output(p, 'lembrete', text, instant):
+                     d.save('lembretes_enviados', {'id': marker})
+                     count += 1
+-        return {'enviadas': count, 'reenviadas': 0}
++        return {'enviadas': count, 'reenviadas': retried}
+ 
+     def route(self, method, path, body):
+         d = self.d
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/bin/bash -lc 'python3 -m pytest -q tests/ > /tmp/atende-nutricao-ciclo5-pytest.log 2>&1; tail -n 30 /tmp/atende-nutricao-ciclo5-pytest.log' in /home/nmaldaner/projetos/atende-nutricao
+exec
+/bin/bash -lc "git diff --stat; rg -n 'Estado|estado|0\\.4\\.0' README.md; bash longrun/2026-10-05-nutri-v1/verificar-limites.sh" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 162ms:
+ VERSION                                     |   2 +-
+ longrun/2026-10-05-nutri-v1/loop.log        |   2 +
+ longrun/2026-10-05-nutri-v1/teste-final.log | 250 +++++++---------------------
+ src/server.py                               |  14 +-
+ src/tasks.py                                |  18 +-
+ 5 files changed, 94 insertions(+), 192 deletions(-)
+13:**Estado (19/10/2026): implementação em andamento.** Base, agenda, conversa, fila humana local, confirmação/espera/retorno, plano alimentar, diário, metas, lembretes, campanhas, exclusão LGPD, Raio-X HTTP/CLI, cadastros, bloqueios e backup/restauração implementados; 79 dos 99 testes passam. Integrações, páginas e Docker continuam pendentes. Estado detalhado em `longrun/2026-10-05-nutri-v1/state.md`.
+LIMITES OK (hash 9529d2ce312095d9, 99 testes, escopo ok, sem API/rede)
+
+codex
+A Evolution já usa a conversa existente e tenta enviar as mensagens da caixa de saída antes de devolver a resposta HTTP. O reenvio considera apenas pendências de rodadas anteriores. A suíte completa está em execução; a verificação de limites passou.
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+import sys, tempfile, pathlib, shutil
+sys.path.insert(0, 'tests')
+from conftest import Servidor, Externo, env_integracoes, FIXTURE
+from test_integracoes import evo, NUM, TEL
+with tempfile.TemporaryDirectory() as tmp:
+    dados = pathlib.Path(tmp)
+    shutil.copy(FIXTURE, dados / 'nutricao.json')
+    externo = Externo()
+    s = Servidor(dados, env=env_integracoes(externo))
+    try:
+        api = s.subir()
+        pid = api.paciente('Verificação', TEL)
+        assert evo(api, message={'extendedTextMessage': {'text': 'pesei 81,25'}}, msg_id='persistente') == 200
+        assert api.get(f'/api/pacientes/{pid}/pesos')[1]['pesos'][0]['peso'] == 81.3
+        s.parar()
+        api = s.subir()
+        assert evo(api, 'pesei 81,25', msg_id='persistente') == 200
+        assert len(api.get(f'/api/pacientes/{pid}/pesos')[1]['pesos']) == 1
+        assert len(externo.whats()) == 1
+        photo = {'imageMessage': {'mimetype': 'image/jpeg', 'caption': 'refeição', 'url': externo.url + '/nao-acessar', 'jpegThumbnail': 'nao-guardar'}}
+        assert evo(api, message=photo, msg_id='foto-unica') == 200
+        assert evo(api, message=photo, msg_id='foto-unica') == 200
+        diary = api.get(f'/api/pacientes/{pid}/diario')[1]
+        assert diary['resumo']['fotos'] == 1
+        assert len(externo.pedidos) == 2
+        exported = api.get(f'/api/pacientes/{pid}/dados')[1]
+        assert len(exported['mensagens']) == 4
+        assert 'nao-guardar' not in str(exported) and '/nao-acessar' not in str(exported)
+        print('EXTRA OK: texto estendido, decimal, deduplicação após reinício, foto única, metadados mínimos e histórico sem duplicação')
+    finally:
+        s.parar()
+        externo.fechar()
+PY" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 661ms:
+EXTRA OK: texto estendido, decimal, deduplicação após reinício, foto única, metadados mínimos e histórico sem duplicação
+
+exec
+/bin/bash -lc "date '+%Y-%m-%d %H:%M'; git status --short" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+2026-10-19 14:14
+ M VERSION
+ M longrun/2026-10-05-nutri-v1/loop.log
+ M longrun/2026-10-05-nutri-v1/teste-final.log
+ M src/server.py
+ M src/tasks.py
+?? longrun/2026-10-05-nutri-v1/ciclo-5.log
+?? src/integrations.py
+
+exec
+/bin/bash -lc "cat longrun/2026-10-05-nutri-v1/decisions.md; sed -n '1,60p' src/reporting.py" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 0ms:
+# Decisões (só acrescentar)
+
+| data | decisão | motivo | alternativa descartada |
+|---|---|---|---|
+
+- 2026-10-19 13:51 · SQLite com documentos JSON por coleção/id e ordem por rowid; transação BEGIN IMMEDIATE antes de validar/reservar horário, evitando dupla reserva entre threads. Separação em storage/domain/server permite acrescentar módulos de conversa e tarefas.
+
+- 2026-10-19 13:57 · Conversa, tarefas e nutrição em módulos próprios sobre a mesma transação SQLite. Fluxo, pendências respondidas, confirmações, retornos e marcadores de lembrete persistem no banco; respostas do bot e caixa de saída alimentam um histórico ordenado para /dados. Peso usa Decimal/ROUND_HALF_UP; somente a equipe escreve o plano.
+
+- 2026-10-19 14:03 · Reporting centraliza campanhas, LGPD e Raio-X sobre a transação existente. Anonimização mantém vínculo do histórico por paciente_id, remove telefone/texto e estado da conversa, preservando realizados/faltas e retornos para agregação. CLI mescla o mês anterior cronológico (ou base) e substitui o arquivo por rename.
+
+- 2026-10-19 14:09 · Cadastros editados por lista explícita de campos; inativação preserva referências históricas. Backup usa sqlite3.Connection.backup para snapshot consistente com servidor ativo; valida origem somente leitura e substitui destino por arquivo temporário + rename. Restauração exige servidor parado; configuração nutricao.json permanece externa ao banco, conforme leitura no início.
+"""Campanhas, anonimização e indicadores agregados do consultório."""
+import calendar
+import json
+import re
+from datetime import date, timedelta
+from decimal import Decimal
+from pathlib import Path
+from .domain import normalized, timestamp, required
+from .nutrition import rounded
+from .storage import Error
+from .tasks import Tasks
+
+
+def percentage(numerator, denominator):
+    return rounded(Decimal(numerator) * 100 / Decimal(denominator)) if denominator else 0
+
+
+class Reporting:
+    def __init__(self, domain):
+        self.d = domain
+
+    def campaign(self, body):
+        text = body.get('texto')
+        if not isinstance(text, str) or not text.strip():
+            raise Error(422, 'Texto obrigatório')
+        clean = normalized(text)
+        rules = {'promessa_resultado': ('garantido', 'garantia de resultado', 'resultado garantido', 'garantimos', '100%'),
+                 'antes_depois': ('antes e depois',)}
+        violations = [code for code, terms in rules.items() if any(term in clean for term in terms)]
+        if violations:
+            return 422, {'violacoes': violations}
+        count = 0
+        for patient in self.d.all('pacientes'):
+            if patient['consentimento_marketing'] and Tasks(self.d).output(patient, 'campanha', text):
+                count += 1
+        return 200, {'enviadas': count}
+
+    def erase(self, patient):
+        d = self.d
+        pid, number = patient['id'], patient['telefone']
+        patient.update(nome='removido', telefone=None, email=None, nascimento=None,
+                       consentimento_marketing=False, nao_contatar=True)
+        d.save('pacientes', patient)
+        for appointment in d.all('agendamentos'):
+            if appointment['paciente_id'] == pid:
+                if appointment['status'] in ('agendado', 'confirmado'):
+                    appointment['status'] = 'cancelado'
+                appointment['link'] = None
+                d.save('agendamentos', appointment)
+        for collection in ('mensagens', 'saida'):
+            for row in d.all(collection):
+                if row.get('paciente_id') == pid or (number is not None and row.get('telefone') == number):
+                    row.update(paciente_id=pid, telefone=None, texto='')
+                    d.save(collection, row)
+        for collection in ('planos', 'diario', 'espera'):
+            for row in d.all(collection):
+                if row['paciente_id'] == pid:
+                    d.delete(collection, row['id'])
+        d.delete('metas', pid)
+        if number is not None:
+
+ succeeded in 67477ms:
+api_int = <conftest.Cliente object at 0xfa8ef084c680>
+externo = <conftest.Externo object at 0xfa8ef0765c40>
+
+    def test_cancelamento_pelo_chat_avisa_equipe(api_int, externo):
+        pid = api_int.paciente("Maria", TEL)
+        api_int.agenda(pid, "2026-10-07T09:00", profissional="lia")
+        api_int.post("/api/tarefas/rodar", {})
+        assert "cancelad" in norm(api_int.msg(TEL, "2"))
+>       assert esperar(lambda: any(t.startswith("Cancelado:") and "07/10 09:00" in t for t in textos_tg(externo)))
+E       assert False
+E        +  where False = esperar(<function test_cancelamento_pelo_chat_avisa_equipe.<locals>.<lambda> at 0xfa8ef0843880>)
+
+tests/test_integracoes.py:232: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_basico.py::test_paginas - assert (404 == 200)
+FAILED tests/test_docker.py::test_dockerfile - AssertionError: falta Dockerfile
+FAILED tests/test_docker.py::test_compose - AssertionError: falta docker-comp...
+FAILED tests/test_docker.py::test_env_exemplo_tem_todas_as_variaveis_vazias
+FAILED tests/test_docker.py::test_readme_explica_deploy - AssertionError: ass...
+FAILED tests/test_integracoes.py::test_whatsapp_agenda_e_avisa_equipe - asser...
+FAILED tests/test_integracoes.py::test_abertura_vai_ao_grupo - assert False
+FAILED tests/test_integracoes.py::test_alerta_marca_alta_e_comando_alertas - ...
+FAILED tests/test_integracoes.py::test_atendimento_aberto_silencia_bot_e_repassa
+FAILED tests/test_integracoes.py::test_equipe_responde_em_cima_da_mensagem - ...
+FAILED tests/test_integracoes.py::test_webhook_telegram_protegido - assert False
+FAILED tests/test_integracoes.py::test_comandos_responder_encerrar_fila - ass...
+FAILED tests/test_integracoes.py::test_comando_agenda - assert False
+FAILED tests/test_integracoes.py::test_equipe_responde_e_encerra_pela_pagina
+FAILED tests/test_integracoes.py::test_cancelamento_pelo_chat_avisa_equipe - ...
+15 failed, 84 passed in 67.37s (0:01:07)
+
+codex
+A checagem adicional passou: texto estendido, deduplicação após reinício e foto registrada uma única vez, sem guardar URL ou conteúdo da imagem. O histórico também ficou sem duplicações. Aguardo o resultado completo da suíte para registrar as pendências deste ciclo.
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+from datetime import datetime
+root = Path('longrun/2026-10-05-nutri-v1')
+when = datetime.now().strftime('%Y-%m-%d %H:%M')
+p = root / 'state.md'
+s = p.read_text().replace('2026-10-19 14:09', when).replace('Versão 0.4.0.', 'Versão 0.5.0.')
+s = s.replace('- Suíte completa: **79 passed / 20 failed** em 76,76 s.', '- Suíte completa: **84 passed / 15 failed** em 67,37 s.')
+s = s.replace('## Falta', '- Evolution implementada em src/integrations.py: webhook com segredo próprio, deduplicação persistente, conversa compartilhada, texto estendido e foto só por metadados; saída síncrona com status e reenvio de pendentes.\\n- Verificação local adicional deste ciclo: texto estendido e peso decimal; deduplicação após reinício; foto duplicada vira um registro; nenhum endereço de mídia ou thumbnail armazenado; histórico sem duplicação.\\n\\n## Falta')
+s = s.replace('- Evolution: entrada de texto/foto apenas por metadados, saída síncrona e retry. Telegram: avisos, encaminhamento, resposta e comandos. Testar exclusivamente contra servidores falsos locais; caixa de saída atual simula e reenviadas é zero.', '- Telegram: avisos, encaminhamento, resposta e comandos. Testar exclusivamente contra servidores falsos locais. O teste misto de agendamento WhatsApp já agenda e responde, mas ainda falha no aviso ao Telegram.')
+s = s.replace('restam 20 testes', 'restam 15 testes').replace('Próximo passo: Evolution via Tasks.output e Conversation.message, sem duplicar histórico; depois Telegram, Docker/README e páginas.', 'Próximo passo: Telegram com abertura/encaminhamento em Conversation.message e human; avisos em booked/cancelamento do chat; webhook protegido no Handler. Depois Docker/README e páginas.')
+s = s.replace('ciclo4-pytest.log', 'ciclo5-pytest.log')
+p.write_text(s)
+(root / 'plan.md').write_text('''# Plano
+
+## Próximos 3 passos
+1. Implementar Telegram: abertura/encaminhamento, resposta por referência, comandos e avisos de agenda/cancelamento, só por variáveis da spec e servidor falso; preservar os 84 testes aprovados.
+2. Entregar Dockerfile, compose, .env.exemplo e Deploy na VPS sem remover o README; não realizar deploy.
+3. Implementar páginas chat/equipe funcionais em web/. Rodar suíte inteira + limites e registrar resultados; marcar concluído somente quando ambos passarem.
+''')
+entries = {
+'progress.md': f'| {when} | Evolution: webhook texto/foto, deduplicação persistente, envio síncrono/retry; v0.5.0; validação adicional local OK; LIMITES OK | sem commit (loop externo) | pytest: 84 passed / 15 failed (67,37 s); +5 aprovados | — | 0 |',
+'failures.md': f'| {when} | Restam Telegram, páginas e Docker/README; teste misto WhatsApp/Telegram falha só no aviso à equipe | Implementada Evolution e executada suíte inteira | 84 passed / 15 failed; nenhum conflito teste/spec identificado | infra (implementação incompleta) |',
+'decisions.md': f'- {when} · Evolution reutiliza Conversation para texto e Nutrition.record para foto; só campos explícitos são persistidos. Transporte por urllib sem redirecionamento e timeout de 3 s, configuração somente no ambiente. Tasks.output tenta enviar sincronamente; tarefas reenvia somente pendências existentes no início da rodada. Deduplicação do webhook na mesma transação do estado.',
+'canal.md': f'- {when} · fato · src/integrations.py implementa Evolution e send_whatsapp; Handler valida segredo antes do corpo. Texto usa Conversation.message (já grava histórico); foto/sem texto usa history específico. Deduplicação persiste em evolution_recebidas; confirmada após reinício. Retry não cria novo histórico e respeita nao_contatar para automáticas. Telegram ainda ausente.'
+}
+for filename, entry in entries.items():
+    with (root / filename).open('a') as f:
+        f.write('\\n' + entry + '\\n')
+p = Path('FALHAS.md')
+s = p.read_text()
+marker = '|---|---|---|---|'
+s = s.replace(marker, marker + f'\\n| {when} | Evolution ausente impedia entrada WhatsApp e entrega da caixa de saída | Acrescentar adaptador de texto/metadados, deduplicação persistente e envio/retry centralizado | infra (implementação incompleta) |', 1)
+p.write_text(s)
+p = Path('README.md')
+s = p.read_text().replace('79 dos 99 testes passam. Integrações, páginas e Docker continuam pendentes.', 'Evolution com texto/foto por metadados, envio síncrono e reenvio implementada; 84 dos 99 testes passam. Telegram, páginas e Docker continuam pendentes.')
+p.write_text(s)
+PY
+bash longrun/2026-10-05-nutri-v1/verificar-limites.sh" in /home/nmaldaner/projetos/atende-nutricao
+ succeeded in 267ms:
+LIMITES OK (hash 9529d2ce312095d9, 99 testes, escopo ok, sem API/rede)
+
+codex
+Evolution implementada: texto, fotos só por metadados, deduplicação persistente, envio síncrono e reenvio.
+
+- Pytest: **84 passed / 15 failed** — avanço de 5 testes.
+- **LIMITES OK**.
+- Registros do ciclo atualizados; sem commit ou acesso externo.
+
+Restam Telegram, Docker/README e páginas. Próximo passo: Telegram.
+hook: Stop
+hook: Stop Completed
+tokens used
+67,922
+Evolution implementada: texto, fotos só por metadados, deduplicação persistente, envio síncrono e reenvio.
+
+- Pytest: **84 passed / 15 failed** — avanço de 5 testes.
+- **LIMITES OK**.
+- Registros do ciclo atualizados; sem commit ou acesso externo.
+
+Restam Telegram, Docker/README e páginas. Próximo passo: Telegram.

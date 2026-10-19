@@ -25,3 +25,5 @@ Formato: `- AAAA-MM-DD HH:MM · fato|aprendizado|glossário|armadilha · texto`
 
 - 2026-10-19 14:09 · fato · src/registrations.py implementa edição/inativação, FAQ e bloqueios; src/backup.py implementa CLI backup/restaurar. Checagem extra confirmou restauração inválida preservando banco, restauração em diretório novo e edição inválida sem mutação.
 - 2026-10-19 14:09 · armadilha · Horários próprios vazios não herdam os do consultório: só null herda. Agenda corrigida; Raio-X já distinguia null corretamente.
+
+- 2026-10-19 14:15 · fato · src/integrations.py implementa Evolution e send_whatsapp; Handler valida segredo antes do corpo. Texto usa Conversation.message (já grava histórico); foto/sem texto usa history específico. Deduplicação persiste em evolution_recebidas; confirmada após reinício. Retry não cria novo histórico e respeita nao_contatar para automáticas. Telegram ainda ausente.
